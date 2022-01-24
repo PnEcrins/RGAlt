@@ -21,6 +21,11 @@ CREATE TABLE rgalt.t_events
   author varchar(250),
   date_create date,
   geom geometry(Geometry,2154),
+  --picture_legend varchar(250),
+  --picture_author varchar(250),
+  --picture_date date,
+  --picture_licence integer,
+  --picture_path text,
   CONSTRAINT t_events_pkey PRIMARY KEY (id_event),
   CONSTRAINT type_event_fkey FOREIGN KEY (id_event_type)
       REFERENCES rgalt.t_event_types (id_type) MATCH SIMPLE
@@ -40,6 +45,7 @@ CREATE TABLE rgalt.t_pictures
   legend varchar(250),
   author varchar(250),
   date_picture date,
+  path text,
   id_event integer,
   id_licence integer,
   CONSTRAINT t_pictures_pkey PRIMARY KEY (id_picture),
