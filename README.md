@@ -11,3 +11,5 @@ Le projet Regard d'Altitude est néé de la volonté du Parc National des Ecrins
   Le but de ce projet est de mettre en place un réseau d'observation ouvert, permettant aux usagers de la montagne (professionnels ou non) de partager leurs observations des changements du milieu montagnard, cela dans le but de capitaliser des données. Ces données pourront par la suite être mobilisées pour un usage scientifique d'une part mais aussi pour permettre aux usagers et acteurs de la montagne d'adapter leurs pratiques et d'accroître leur connaissance du milieu d'autre part.
   
   Ainsi en ajoutant vos observations ici, vous contribuez à documenter la connaissances du milieu montagnard et de ses changements et nous vous en remercions.
+
+![LOGO](images/logoRGalt.png)
