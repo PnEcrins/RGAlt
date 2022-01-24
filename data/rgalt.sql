@@ -2,38 +2,51 @@
 
 CREATE SCHEMA IF NOT EXISTS rgalt;
 
-CREATE TABLE rgalt.events
+CREATE TABLE rgalt.t_event_types
 (
-  id_event SERIAL,
-  name character varying(250),
+  id_type serial NOT NULL,
+  type varchar(250),
+  CONSTRAINT t_event_types_pkey PRIMARY KEY (id_type)
+);
+
+CREATE TABLE rgalt.t_events
+(
+  id_event serial NOT NULL,
+  name_event varchar(250),
   date_event date,
-  observers character varying(250),
+  observers varchar(250),
   description text,
   direct_observation boolean,
   id_event_type integer,
-  author character varying(250),
+  author varchar(250),
   date_create date,
-  geometry (geometry,2154)
+  geom geometry(Geometry,2154),
+  CONSTRAINT t_events_pkey PRIMARY KEY (id_event),
+  CONSTRAINT type_event_fkey FOREIGN KEY (id_event_type)
+      REFERENCES rgalt.t_event_types (id_type) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-CREATE TABLE t_event_type
+CREATE TABLE rgalt.t_licences
 (
-  id_type integer,
-  type character varying (250)
+  id_licence SERIAL,
+  licence varchar(250),
+  CONSTRAINT t_licences_pkey PRIMARY KEY (id_licence)
 );
 
-CREATE TABLE t_picture
+CREATE TABLE rgalt.t_pictures
 (
-  id_photo integer,
-  legend text
-  author text
-  date_picture date
-  id_event SERIAL
-  licence integer
-);
-
-CREATE TABLE t_licence
-(
-  id_licence integer
-  licence character varying (250)
+  id_picture SERIAL,
+  legend varchar(250),
+  author varchar(250),
+  date_picture date,
+  id_event integer,
+  id_licence integer,
+  CONSTRAINT t_pictures_pkey PRIMARY KEY (id_picture),
+  CONSTRAINT event_fkey FOREIGN KEY (id_event)
+      REFERENCES rgalt.t_events (id_event) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO action,
+  CONSTRAINT licence_fkey FOREIGN KEY (id_licence)
+      REFERENCES rgalt.t_licences (id_licence) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
 );
