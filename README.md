@@ -1,6 +1,10 @@
 # Regards d'altitude
 
-Description du projet :
+## Base de données
+
+Consultable sur  http://rgalt.ecrins.net.
+
+## Description du projet
 
 Le projet Regard d'Altitude est néé de la volonté du Parc National des Ecrins de créer une base de données permettant de capitaliser de la connaissance sur les évènements naturels remarquables en montagne. Cette volonté émerge de la difficulté à collecter et conserver des données sur les évènements naturels (chute de blocs, avalanche, chute de sérac, phénomènes torrentiels...) qui, lorsque elles existent, sont difficilement exploitables et uniformisées.
 
