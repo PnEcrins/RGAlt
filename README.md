@@ -1,5 +1,3 @@
-==================
-Regards d'altitude
-==================
+# Regards d'altitude
 
 Description du projet
