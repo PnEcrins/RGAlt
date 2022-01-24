@@ -16,3 +16,24 @@ CREATE TABLE rgalt.events
   geometry (geometry,2154)
 );
 
+CREATE TABLE t_event_type
+(
+  id_type integer,
+  type character varying (250)
+);
+
+CREATE TABLE t_picture
+(
+  id_photo integer,
+  legend text
+  author text
+  date_picture date
+  id_event SERIAL
+  licence integer
+);
+
+CREATE TABLE t_licence
+(
+  id_licence integer
+  licence character varying (250)
+);
