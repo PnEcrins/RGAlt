@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Télécharger une zone</h2>
+<mat-dialog-content>
+  Êtes vous-sûr de vouloir télécharger la zone "{{data.name}}" ?
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="downloadCancel()">Annuler</button>
+  <button mat-button (click)="downloadConfirm()" cdkFocusInitial>
+    Télécharger
+  </button>
+</mat-dialog-actions>
