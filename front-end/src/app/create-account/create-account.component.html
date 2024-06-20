@@ -1,0 +1,51 @@
+<form class="login-form" (ngSubmit)="onCreateAccount()">
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input type="email" matInput [formControl]="emailFormControl" />
+    @if (
+      emailFormControl.hasError("email") &&
+      !emailFormControl.hasError("required")
+    ) {
+      <mat-error>Renseignez une adresse email valide</mat-error>
+    }
+    @if (emailFormControl.hasError("required")) {
+      <mat-error>Une adresse email est nécessaire</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Mot de passe</mat-label>
+    <input type="password" matInput [formControl]="passwordFormControl" />
+    @if (
+      passwordFormControl.hasError("password") &&
+      !passwordFormControl.hasError("minLength")
+    ) {
+      <mat-error>Le mot de passe doit avoir au moins 6 caractères</mat-error>
+    }
+    @if (passwordFormControl.hasError("required")) {
+      <mat-error>Un mot de passe est nécessaire</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Confirmer votre mot de passe</mat-label>
+    <input
+      type="password"
+      matInput
+      [formControl]="confirmPasswordFormControl"
+    />
+    @if (
+      passwordFormControl.hasError("password") &&
+      !passwordFormControl.hasError("minLength")
+    ) {
+      <mat-error>Le mot de passe doit avoir au moins 6 caractères</mat-error>
+    }
+    @if (passwordFormControl.hasError("required")) {
+      <mat-error>Un mot de passe est nécessaire</mat-error>
+    }
+  </mat-form-field>
+  <div *ngIf="passwordError" class="password-error-container mat-label-medium">
+    Les mots de passe ne corresponent pas
+  </div>
+  <button type="submit" mat-flat-button color="primary">
+    Créer mon compte
+  </button>
+</form>

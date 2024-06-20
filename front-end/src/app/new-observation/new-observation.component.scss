@@ -1,0 +1,56 @@
+mat-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  padding: 20px;
+  width: 240px;
+  cursor: pointer;
+  .observation-type-icon {
+    font-size: 40px;
+    height: 40px;
+    width: 40px;
+  }
+}
+
+.observation-type-tooltip-container {
+  width: 240px;
+  position: absolute;
+  top: 0px;
+  .observation-type-tooltip {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    z-index: 4;
+  }
+}
+
+.media-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.photo-container {
+  img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+  }
+}
+
+.comment-form-field {
+  width: 240px;
+}
+
+mat-grid-list {
+  margin-top: 24px;
+  mat-grid-tile {
+    overflow: visible;
+  }
+}
+
+#map {
+  height: 400px;
+  width: 100%;
+}

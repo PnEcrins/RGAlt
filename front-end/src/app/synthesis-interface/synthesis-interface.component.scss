@@ -1,0 +1,26 @@
+main {
+  overflow: scroll;
+  height: calc(100vh - var(--mat-toolbar-standard-height));
+  background: var(--mat-toolbar-container-background-color);
+}
+
+@media (max-width: 599px) {
+  main {
+    height: calc(100vh - var(--mat-toolbar-mobile-height));
+    overflow: scroll;
+  }
+}
+
+.tune-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 16px;
+  z-index: 400;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}

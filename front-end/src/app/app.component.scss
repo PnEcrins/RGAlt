@@ -1,0 +1,16 @@
+main {
+  overflow: scroll;
+  height: calc(100vh - var(--mat-toolbar-standard-height));
+  background: var(--mat-toolbar-container-background-color);
+}
+
+@media (max-width: 599px) {
+  main {
+    height: calc(100vh - var(--mat-toolbar-mobile-height));
+    overflow: scroll;
+  }
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}

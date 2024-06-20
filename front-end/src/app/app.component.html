@@ -1,0 +1,42 @@
+<mat-toolbar>
+  <button *ngIf="backButton" (click)="handleBackButton()" mat-icon-button>
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>{{ title }}</span>
+  <span class="toolbar-spacer"></span>
+  <button *ngIf="accountButton" mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-sidenav-container [style.marginTop.px]="0">
+  <mat-sidenav
+    #sidenav
+    mode="over"
+    fixedInViewport="true"
+    fixedTopGap="56"
+    position="end"
+  >
+    <mat-nav-list>
+      @for (
+        currentSideNavItem of currentSideNavItems;
+        track currentSideNavItem.id
+      ) {
+        <a
+          mat-list-item
+          [routerLink]="currentSideNavItem.routerLink"
+          (click)="
+            !currentSideNavItem.routerLink ? currentSideNavItem.click() : null
+          "
+          >{{ currentSideNavItem.text }}</a
+        >
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <main>
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

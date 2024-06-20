@@ -1,0 +1,37 @@
+mat-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  padding: 20px;
+  width: 240px;
+  cursor: pointer;
+  .area-type-icon {
+    font-size: 40px;
+    height: 40px;
+    width: 40px;
+  }
+}
+
+.area-type-tooltip-container {
+  width: 240px;
+  position: absolute;
+  top: 0px;
+  .area-type-tooltip {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    z-index: 4;
+  }
+}
+
+mat-grid-list {
+  margin-top: 24px;
+  mat-grid-tile {
+    overflow: visible;
+  }
+}
+
+.information-container {
+  padding: 16px;
+}

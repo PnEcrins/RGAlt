@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Zone A",
+    "tooltip": "tooltip",
+    "offline": false
+  },
+  {
+    "id": 2,
+    "name": "Zone B",
+    "tooltip": "tooltip",
+    "offline": false
+  },
+  {
+    "id": 3,
+    "name": "Zone C",
+    "tooltip": "tooltip",
+    "offline": false
+  },
+  {
+    "id": 4,
+    "name": "Zone D",
+    "tooltip": "tooltip",
+    "offline": false
+  },
+  {
+    "id": 5,
+    "name": "Zone E",
+    "tooltip": "tooltip",
+    "offline": false
+  },
+  {
+    "id": 6,
+    "name": "Zone F",
+    "tooltip": "tooltip",
+    "offline": false
+  }
+]
