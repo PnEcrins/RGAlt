@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, ViewChild, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, PLATFORM_ID, ViewChild, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -13,6 +13,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { Location } from '@angular/common';
 import { AuthService } from './services/auth.service';
+import { Platform } from '@angular/cdk/platform';
 
 @Component({
   selector: 'app-root',
@@ -85,14 +86,25 @@ export class AppComponent {
 
   currentSideNavItems: any[] = [];
 
+  platform = inject(Platform);
+  platformId = inject(PLATFORM_ID);
+
   handleAuthentification(value: any) {
     this.currentSideNavItems = this.sideNavItems.filter(
       (sideNavItem) => sideNavItem.authenficated === value,
     );
   }
 
+  isPlatformBrowser: boolean = false;
+
+  constructor() {
+    this.isPlatformBrowser = isPlatformBrowser(this.platformId);
+    if (this.isPlatformBrowser) {
+      this.authService.checkAuth();
+    }
+  }
+
   ngOnInit() {
-    this.authService.checkAuth();
     this.authService.isAuth.subscribe((value) => {
       this.handleAuthentification(value);
     });

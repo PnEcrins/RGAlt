@@ -1,12 +1,11 @@
 import {
   Component,
   ElementRef,
-  Inject,
   ViewChild,
-  PLATFORM_ID,
   inject,
+  afterNextRender,
 } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -72,7 +71,6 @@ export class NewObservationComponent {
   };
   mobile?: boolean;
 
-  isPlatformBrowser: boolean = false;
   L: any;
   map: any;
   marker: any;
@@ -111,12 +109,9 @@ export class NewObservationComponent {
   breakpointObserver = inject(BreakpointObserver);
   platform = inject(Platform);
   router = inject(Router);
-  platformId = inject(PLATFORM_ID);
 
   ngOnInit() {
-    this.isPlatformBrowser = isPlatformBrowser(this.platformId);
     this.mobile = this.platform.ANDROID || this.platform.IOS;
-
     this.breakpointObserver
       .observe([
         Breakpoints.XSmall,
@@ -143,49 +138,52 @@ export class NewObservationComponent {
 
     this.initMap();
   }
+  constructor() {
+    afterNextRender(async () => {
+      this.initMap();
+    });
+  }
 
   async initMap() {
-    if (this.isPlatformBrowser) {
-      this.L = await import('leaflet');
-      await import('leaflet.locatecontrol');
-      const { Icon, icon } = await import('leaflet');
+    this.L = await import('leaflet');
+    await import('leaflet.locatecontrol');
+    const { Icon, icon } = await import('leaflet');
 
-      this.map = this.L.map('map', { zoom: 4, center: [47, 2] });
+    this.map = this.L.map('map', { zoom: 4, center: [47, 2] });
 
-      this.L.tileLayer(
-        'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-        {
-          attribution: "<a target='_blank' href='https://ign.fr/'>IGN</a>",
-        },
-      ).addTo(this.map);
+    this.L.tileLayer(
+      'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+      {
+        attribution: "<a target='_blank' href='https://ign.fr/'>IGN</a>",
+      },
+    ).addTo(this.map);
 
-      this.map.on('move', (e: any) => {
-        const center = this.map.getCenter();
-        this.mapForm.value.position = {
-          lat: round(center.lat, 6),
-          lng: round(center.lng, 6),
-        };
-        this.marker.setLatLng(center);
-      });
-
-      this.L.control
-        .locate({ setView: 'once', showPopup: false })
-        .addTo(this.map);
-
+    this.map.on('move', (e: any) => {
       const center = this.map.getCenter();
       this.mapForm.value.position = {
         lat: round(center.lat, 6),
         lng: round(center.lng, 6),
       };
-      this.marker = this.L.marker(center, {
-        icon: icon({
-          ...Icon.Default.prototype.options,
-          iconUrl: 'assets/marker-icon.png',
-          iconRetinaUrl: 'assets/marker-icon-2x.png',
-          shadowUrl: 'assets/marker-shadow.png',
-        }),
-      }).addTo(this.map);
-    }
+      this.marker.setLatLng(center);
+    });
+
+    this.L.control
+      .locate({ setView: 'once', showPopup: false })
+      .addTo(this.map);
+
+    const center = this.map.getCenter();
+    this.mapForm.value.position = {
+      lat: round(center.lat, 6),
+      lng: round(center.lng, 6),
+    };
+    this.marker = this.L.marker(center, {
+      icon: icon({
+        ...Icon.Default.prototype.options,
+        iconUrl: 'assets/marker-icon.png',
+        iconRetinaUrl: 'assets/marker-icon-2x.png',
+        shadowUrl: 'assets/marker-shadow.png',
+      }),
+    }).addTo(this.map);
   }
 
   observationClick(value: any) {
