@@ -56,10 +56,12 @@ export class SynthesisInterfaceComponent {
         pointToLayer: (geoJsonPoint: any, latlng: any) =>
           this.L.default.marker(latlng, {
             icon: this.L.default.divIcon({
-              html: `<div class="observation-marker-container"></div>`,
+              html: `<div class="observation-marker-container">
+              <img src="favicon.ico"/>
+              </div>`,
               className: 'observation-marker',
               iconSize: 32,
-              iconAnchor: [16, 32],
+              iconAnchor: [18, 28],
             } as any),
             autoPanOnFocus: false,
           } as any),
