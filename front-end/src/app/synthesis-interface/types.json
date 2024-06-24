@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Avalanche"
+  },
+  {
+    "id": 2,
+    "name": "Chablis"
+  },
+  {
+    "id": 3,
+    "name": "Chute de blocs"
+  },
+  {
+    "id": 4,
+    "name": "Crue torrentielle"
+  },
+  {
+    "id": 5,
+    "name": "Incendie"
+  },
+  {
+    "id": 6,
+    "name": "Inondation"
+  },
+  {
+    "id": 7,
+    "name": "Lave torrentielle"
+  },
+  {
+    "id": 8,
+    "name": "Ravinement"
+  },
+  {
+    "id": 9,
+    "name": "Volis"
+  },
+  {
+    "id": 10,
+    "name": "Apparition d'un nouveau lac"
+  },
+  {
+    "id": 11,
+    "name": "Glissement de terrain"
+  },
+  {
+    "id": 12,
+    "name": "Phénomène glaciaire"
+  }
+]

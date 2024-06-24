@@ -38,7 +38,8 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss",
               "./node_modules/leaflet/dist/leaflet.css",
-              "./node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min.css"
+              "./node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min.css",
+              "./node_modules/leaflet.markercluster/dist/MarkerCluster.css"
             ],
             "scripts": [],
             "server": "src/main.server.ts",
@@ -66,7 +67,13 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -107,7 +114,8 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss",
               "./node_modules/leaflet/dist/leaflet.css",
-              "./node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min.css"
+              "./node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min.css",
+              "./node_modules/leaflet.markercluster/dist/MarkerCluster.css"
             ],
             "scripts": []
           }
