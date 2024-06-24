@@ -1,5 +1,7 @@
 # Regards d'altitude
 
+![](images/logoRGalt.png)
+
 ## Base de données
 
 Consultable sur  http://rgalt.ecrins.net.
