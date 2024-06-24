@@ -39,6 +39,10 @@ body {
   }
 }
 
+.leaflet-popup {
+  cursor: default !important;
+}
+
 .observation-departure-popup {
   position: relative;
   display: flex;
@@ -51,6 +55,7 @@ body {
     padding: 12px;
   }
   .observation-button {
+    cursor: pointer;
     color: var(--mdc-text-button-label-text-color);
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     text-decoration: none;
