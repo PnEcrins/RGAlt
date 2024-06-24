@@ -1,0 +1,11 @@
+django
+psycopg
+djangorestframework
+djangorestframework-gis
+drf-spectacular
+django-filter
+pillow
+sorl-thumbnail
+pymemcache
+sentry-sdk
+pmtiles

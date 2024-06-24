@@ -1,0 +1,56 @@
+services:
+    memcached:
+        image: memcached:latest
+
+    postgres:
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        image: postgis/postgis:16-3.4
+        ports:
+            - "127.0.0.1:5432:5432"
+        env_file:
+            - .docker/db.env
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+    back:
+        build:
+            context: .
+            dockerfile: .docker/Dockerfile
+            target: dev
+
+        depends_on:
+            postgres:
+                condition: service_healthy
+            memcached:
+                condition: service_started
+        env_file:
+            - .docker/app.env
+            - .docker/db.env
+        environment:
+            - DJANGO_SETTINGS_MODULE=project.settings.dev
+        volumes:
+            - ./backend:/app/backend
+        user: ${UID}:${GID}
+        ports:
+            - "127.0.0.1:${BACK_PORT:-8000}:8000"
+
+    front:
+        build:
+            context: .
+            dockerfile: .docker/Dockerfile
+            target: front-dev
+
+        depends_on:
+            - back
+        volumes:
+            - ./front-end/src:/app/front-end/src
+        ports:
+            - "127.0.0.1:${FRONT_PORT:-4200}:4200"
+        #user: ${UID}:${GID}
+
+volumes:
+    postgres_data:
