@@ -1,0 +1,85 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-06-12 14:36+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: project/accounts/admin.py:7
+msgid "Regard d'altitude config panel"
+msgstr ""
+
+#: project/accounts/admin.py:26
+msgid "Personal info"
+msgstr ""
+
+#: project/accounts/admin.py:35
+msgid "Permissions"
+msgstr ""
+
+#: project/accounts/admin.py:46
+msgid "Important dates"
+msgstr ""
+
+#: project/accounts/apps.py:8
+msgid "Accounts"
+msgstr ""
+
+#: project/accounts/models.py:13
+msgid "email address"
+msgstr ""
+
+#: project/accounts/models.py:15
+msgid "A user with that email already exists."
+msgstr ""
+
+#: project/accounts/models.py:17
+msgid "first name"
+msgstr ""
+
+#: project/accounts/models.py:18
+msgid "last name"
+msgstr ""
+
+#: project/accounts/models.py:20
+msgid "date joined"
+msgstr ""
+
+#: project/accounts/models.py:23
+msgid "staff status"
+msgstr ""
+
+#: project/accounts/models.py:25
+msgid "Designates whether the user can log into this admin site."
+msgstr ""
+
+#: project/accounts/models.py:28
+msgid "active"
+msgstr ""
+
+#: project/accounts/models.py:31
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+
+#: project/accounts/models.py:41
+msgid "user"
+msgstr ""
+
+#: project/accounts/models.py:42
+msgid "users"
+msgstr ""
