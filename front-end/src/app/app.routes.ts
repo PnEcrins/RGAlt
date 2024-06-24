@@ -10,6 +10,7 @@ import { CreateAccountComponent } from './create-account/create-account.componen
 import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { authGuard } from './guards/auth.guard';
+import { ObservationDetailComponent } from './observation-detail/observation-detail.component';
 
 export const routes: Routes = [
   {
@@ -28,6 +29,17 @@ export const routes: Routes = [
     component: NewObservationComponent,
     data: {
       title: 'Nouvelle observation',
+      backButton: true,
+      accountButton: false,
+    },
+    canActivate: [authGuard],
+  },
+  {
+    path: 'detail-d-une-observation/:observation',
+    title: "Détail d'une observation • Regard d'altitude",
+    component: ObservationDetailComponent,
+    data: {
+      title: "Détail d'une observation",
       backButton: true,
       accountButton: false,
     },

@@ -28,7 +28,9 @@
     "express": "^4.18.2",
     "leaflet": "^1.9.4",
     "leaflet.locatecontrol": "^0.81.1",
+    "leaflet.markercluster": "^1.5.3",
     "rxjs": "~7.8.0",
+    "slugify": "^1.6.6",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },
@@ -40,6 +42,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/leaflet": "^1.9.12",
     "@types/leaflet.locatecontrol": "^0.74.5",
+    "@types/leaflet.markercluster": "^1.5.4",
     "@types/node": "^18.18.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
