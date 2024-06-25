@@ -17,23 +17,25 @@ env:
     REGISTRY: ghcr.io
     IMAGE_NAME: ${{ github.repository }}
     CI: false
-    POSTGRES_DB: postgres
-    POSTGRES_PASSWORD: postgres
-    POSTGRES_USER: postgres
 
 jobs:
-    services:
-        postgres:
-            image: postgis/postgis:16-3.4
-            ports:
-                - 5432:5432
-            # Set health checks to wait until postgres has started
-            options: >-
-                --health-cmd pg_isready
-
     python-unittests:
         name: Python Unit tests
         runs-on: ubuntu-latest
+        env:
+            POSTGRES_DB: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_USER: postgres
+
+        services:
+            postgres:
+                image: postgis/postgis:16-3.4
+                ports:
+                    - 5432:5432
+                # Set health checks to wait until postgres has started
+                options: >-
+                    --health-cmd pg_isready
+
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
