@@ -88,10 +88,12 @@ jobs:
                   cache-dependency-path: ./front-end/.nvmrc
 
             - name: Install node dependencies
+              working-directory: ./front-end
               run: |
                 npm ci
 
             - name: Type check
+              working-directory: ./front-end
               run: |
                 npm run format:check
 
@@ -107,9 +109,11 @@ jobs:
                   cache-dependency-path: ./front-end/.nvmrc
 
             - name: Install node dependencies
+              working-directory: ./front-end
               run: |
                 npm ci
 
             - name: Type check
+              working-directory: ./front-end
               run: |
                 npm run type:check
