@@ -1,18 +1,35 @@
-import { Component, afterNextRender, inject } from '@angular/core';
+import {
+  Component,
+  NgZone,
+  afterNextRender,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
 import slugify from 'slugify';
-
-import evenementsRemarquables from './evenements_remarquables.json';
 import { MatDialog } from '@angular/material/dialog';
 import { FilterDialog } from './dialogs/filter-dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { CommonModule } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
+
+import evenementsRemarquables from './evenements_remarquables.json';
 
 @Component({
   selector: 'app-synthesis-interface',
   standalone: true,
-  imports: [MatToolbarModule, MatIconModule, RouterLink, MatButtonModule],
+  imports: [
+    CommonModule,
+    MatToolbarModule,
+    MatIconModule,
+    RouterLink,
+    MatButtonModule,
+    MatExpansionModule,
+    MatListModule,
+  ],
   templateUrl: './synthesis-interface.component.html',
   styleUrl: './synthesis-interface.component.scss',
 })
@@ -22,9 +39,19 @@ export class SynthesisInterfaceComponent {
   L: any;
   map: any;
   observationsFeatureCollection = evenementsRemarquables;
+  currentObservationsFeatureCollection = evenementsRemarquables;
   observationsLayer: any;
   observationsClusterGroup: any;
   router = inject(Router);
+
+  expansionPanelIsOpen = false;
+  bounds: any;
+  private ngZone = inject(NgZone);
+
+  handleObservationsWithinBoundsBind =
+    this.handleObservationsWithinBounds.bind(this);
+
+  slugify = slugify;
 
   constructor() {
     afterNextRender(() => {
@@ -122,6 +149,9 @@ export class SynthesisInterfaceComponent {
 
     this.observationsClusterGroup.addLayer(this.observationsLayer);
     this.map.addLayer(this.observationsClusterGroup);
+
+    this.fitToCurrentObservations();
+    this.map.on('moveend', this.handleObservationsWithinBoundsBind);
   }
 
   openFilterDialog() {
@@ -137,5 +167,61 @@ export class SynthesisInterfaceComponent {
         console.log(result.filter);
       }
     });
+  }
+
+  expansionPanelOpen() {
+    this.expansionPanelIsOpen = true;
+  }
+
+  expansionPanelClose() {
+    this.expansionPanelIsOpen = false;
+  }
+
+  expansionPanelAfterCollapse() {
+    this.map.invalidateSize();
+  }
+
+  expansionPanelAfterExpand() {
+    this.map.invalidateSize();
+  }
+
+  fitToCurrentObservations() {
+    this.bounds = this.L.default.latLngBounds(
+      this.currentObservationsFeatureCollection.features.map((feature) => [
+        feature.geometry.coordinates[1],
+        feature.geometry.coordinates[0],
+      ]),
+    );
+
+    this.bounds && this.map.fitBounds(this.bounds);
+  }
+
+  handleObservationsWithinBounds() {
+    this.ngZone.run(() => {
+      this.currentObservationsFeatureCollection = {
+        ...this.currentObservationsFeatureCollection,
+        features: this.observationsFeatureCollection.features.filter(
+          (feature) =>
+            this.map
+              .getBounds()
+              .contains(
+                this.L.default.latLng(
+                  feature.geometry.coordinates[1],
+                  feature.geometry.coordinates[0],
+                ),
+              ),
+        ),
+      };
+    });
+  }
+
+  handleObservationView(observation: any) {
+    this.map.setView(
+      [
+        observation.geometry.coordinates[1],
+        observation.geometry.coordinates[0],
+      ],
+      19,
+    );
   }
 }
