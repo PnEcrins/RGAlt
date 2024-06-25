@@ -1,0 +1,75 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - main
+      - next
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+    DEBIAN_FRONTEND: noninteractive
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ${{ github.repository }}
+    CI: false
+
+jobs:
+    python-unittests:
+        name: Python Unit tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version-file: ./backend/.python-version
+                  cache: 'pip'
+                  cache-dependency-path: |
+                      ./backend/requirements.txt
+                      ./backend/dev-requirements.txt
+
+    js-build:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+              node-version-file: ./front-end/.nvmrc
+              cache: 'npm'
+              cache-dependency-path: ./front-end/.nvmrc
+
+        - name: Install node dependencies
+          working-directory: ./front-end
+          run: |
+            npm ci --no-audit
+
+        - name: Type check
+          working-directory: ./front-end
+          run: |
+            npm run format:check
+
+    docker-build:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Docker meta
+          id: meta
+          uses: docker/metadata-action@v5
+          with:
+            images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v3
+
+        - name: Build and push
+          uses: docker/build-push-action@v6
+          with:
+              context: .
+              file: .docker/Dockerfile
+              push: false
+              tags: ${{ steps.meta.outputs.tags }}
+              labels: ${{ steps.meta.outputs.labels }}
+              target: prod
+
