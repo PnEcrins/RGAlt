@@ -8,9 +8,8 @@ describe('SynthesisInterfaceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SynthesisInterfaceComponent]
-    })
-    .compileComponents();
+      imports: [SynthesisInterfaceComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SynthesisInterfaceComponent);
     component = fixture.componentInstance;

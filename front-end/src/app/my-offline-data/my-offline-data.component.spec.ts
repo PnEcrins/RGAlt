@@ -8,9 +8,8 @@ describe('MyOfflineDataComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MyOfflineDataComponent]
-    })
-    .compileComponents();
+      imports: [MyOfflineDataComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MyOfflineDataComponent);
     component = fixture.componentInstance;
