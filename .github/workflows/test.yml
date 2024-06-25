@@ -32,6 +32,12 @@ jobs:
                       ./backend/requirements.txt
                       ./backend/dev-requirements.txt
 
+            - name: Install system libraries
+              working-directory: ./backend
+              run: |
+                sudo apt-get -qq update
+                sudo apt-get -qq install -y libpq-dev gdal-bin gettext
+
             - name: Install dependencies
               working-directory: ./backend
               run: |
