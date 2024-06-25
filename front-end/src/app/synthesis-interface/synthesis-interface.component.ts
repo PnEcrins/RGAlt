@@ -6,6 +6,8 @@ import { Router, RouterLink } from '@angular/router';
 import slugify from 'slugify';
 
 import evenementsRemarquables from './evenements_remarquables.json';
+import { MatDialog } from '@angular/material/dialog';
+import { FilterDialog } from './dialogs/filter-dialog';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -15,6 +17,8 @@ import evenementsRemarquables from './evenements_remarquables.json';
   styleUrl: './synthesis-interface.component.scss',
 })
 export class SynthesisInterfaceComponent {
+  readonly dialog = inject(MatDialog);
+
   L: any;
   map: any;
   observationsFeatureCollection = evenementsRemarquables;
@@ -120,5 +124,20 @@ export class SynthesisInterfaceComponent {
 
     this.observationsClusterGroup.addLayer(this.observationsLayer);
     this.map.addLayer(this.observationsClusterGroup);
+  }
+
+  openFilterDialog() {
+    const deleteDialogRef = this.dialog.open(FilterDialog, {
+      width: '100%',
+      maxWidth: '50vw',
+      height: '100%',
+      maxHeight: '50vh',
+    });
+
+    deleteDialogRef.afterClosed().subscribe((result) => {
+      if (result && result.filter) {
+        console.log(result.filter);
+      }
+    });
   }
 }
