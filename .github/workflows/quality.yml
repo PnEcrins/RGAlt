@@ -23,8 +23,11 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
-                cache: 'pip'
-                cache-key: ${{ runner.os }}-pip-${{ hashFiles('./backend/requirements.txt', './backend/dev-requirements.txt') }}
+                  python-version-file: ./backend/.python-version
+                  cache: 'pip'
+                  cache-dependency-path: |
+                      ./backend/requirements.txt
+                      ./backend/dev-requirements.txt
 
             - name: Install flake8
               working-directory: ./backend
@@ -43,8 +46,11 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
-                cache: 'pip'
-                cache-key: ${{ runner.os }}-pip-${{ hashFiles('./backend/requirements.txt', './backend/dev-requirements.txt') }}
+                  python-version-file: ./backend/.python-version
+                  cache: 'pip'
+                  cache-dependency-path: |
+                      ./backend/requirements.txt
+                      ./backend/dev-requirements.txt
 
             - name: Install isort
               working-directory: ./backend
@@ -63,8 +69,11 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
-                cache: 'pip'
-                cache-key: ${{ runner.os }}-pip-${{ hashFiles('./backend/requirements.txt', './backend/dev-requirements.txt') }}
+                  python-version-file: ./backend/.python-version
+                  cache: 'pip'
+                  cache-dependency-path: |
+                      ./backend/requirements.txt
+                      ./backend/dev-requirements.txt
 
             - name: Install black
               working-directory: ./backend
