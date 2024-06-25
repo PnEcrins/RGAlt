@@ -2,6 +2,9 @@
   "name": "regard-d-altitude",
   "version": "0.0.0",
   "scripts": {
+    "type:check": "tsc --noEmit",
+    "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
