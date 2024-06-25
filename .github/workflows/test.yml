@@ -37,6 +37,18 @@ jobs:
               run: |
                 pip install -r requirements.txt -r dev-requirements.txt
 
+            - name: Run django unit tests
+              working-directory: ./backend
+              run: |
+                coverage run ./manage.py test --parallel
+                coverage xml
+
+            - uses: codecov/codecov-action@v4
+              working-directory: ./backend
+              with:
+                files: ./coverage.xml
+                flags: python-unittests
+
     js-build:
         name: JS tests
         runs-on: ubuntu-latest
