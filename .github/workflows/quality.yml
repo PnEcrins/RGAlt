@@ -90,7 +90,7 @@ jobs:
             - name: Install node dependencies
               working-directory: ./front-end
               run: |
-                npm ci
+                npm ci --no-audit
 
             - name: Type check
               working-directory: ./front-end
@@ -111,7 +111,7 @@ jobs:
             - name: Install node dependencies
               working-directory: ./front-end
               run: |
-                npm ci
+                npm ci --no-audit
 
             - name: Type check
               working-directory: ./front-end
