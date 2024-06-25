@@ -40,11 +40,11 @@ jobs:
             - name: Run django unit tests
               working-directory: ./backend
               run: |
-                coverage run ./manage.py test --parallel
-                coverage xml
+                  coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+                  coverage combine
+                  coverage xml -o coverage.xml
 
             - uses: codecov/codecov-action@v4
-              working-directory:
               with:
                 files: ./backend/coverage.xml
                 flags: python-unittests
