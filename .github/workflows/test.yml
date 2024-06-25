@@ -44,9 +44,9 @@ jobs:
                 coverage xml
 
             - uses: codecov/codecov-action@v4
-              working-directory: ./backend
+              working-directory:
               with:
-                files: ./coverage.xml
+                files: ./backend/coverage.xml
                 flags: python-unittests
 
     js-build:
