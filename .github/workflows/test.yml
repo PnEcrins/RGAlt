@@ -1,0 +1,124 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - main
+      - next
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+    DEBIAN_FRONTEND: noninteractive
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ${{ github.repository }}
+    CI: false
+
+jobs:
+    python-unittests:
+        name: Python Unit tests
+        runs-on: ubuntu-latest
+        env:
+            POSTGRES_DB: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_HOST: 127.0.0.1
+
+        services:
+            postgres:
+                image: postgis/postgis:16-3.4
+                env:
+                    POSTGRES_DB: postgres
+                    POSTGRES_PASSWORD: postgres
+                    POSTGRES_USER: postgres
+                ports:
+                    - 5432:5432
+                # Set health checks to wait until postgres has started
+                options: >-
+                    --health-cmd pg_isready
+
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version-file: ./backend/.python-version
+                  cache: 'pip'
+                  cache-dependency-path: |
+                      ./backend/requirements.txt
+                      ./backend/dev-requirements.txt
+
+            - name: Install system libraries
+              working-directory: ./backend
+              run: |
+                sudo apt-get -qq update
+                sudo apt-get -qq install -y libpq-dev gdal-bin gettext
+
+            - name: Install dependencies
+              working-directory: ./backend
+              run: |
+                pip install -r requirements.txt -r dev-requirements.txt
+
+            - name: Run django unit tests
+              working-directory: ./backend
+              run: |
+                  coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+                  coverage combine
+                  coverage xml -o coverage.xml
+
+            - uses: codecov/codecov-action@v4
+              with:
+                files: ./backend/coverage.xml
+                flags: python-unittests
+                token: ${{ secrets.CODECOV_TOKEN }}
+
+    js-build:
+        name: JS tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: ./front-end/.nvmrc
+                  cache: 'npm'
+                  cache-dependency-path: ./front-end/.nvmrc
+
+            - name: Install node dependencies
+              working-directory: ./front-end
+              run: |
+                npm ci --no-audit
+
+            - name: npm build
+              working-directory: ./front-end
+              run: |
+                npm run build
+
+    docker-build:
+        name: Docker build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Docker meta
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Build and push
+              uses: docker/build-push-action@v6
+              with:
+                  context: .
+                  file: .docker/Dockerfile
+                  push: false
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  target: prod
+
