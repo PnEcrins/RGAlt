@@ -33,43 +33,49 @@ jobs:
                       ./backend/dev-requirements.txt
 
     js-build:
-        - uses: actions/checkout@v4
-        - uses: actions/setup-node@v4
-          with:
-              node-version-file: ./front-end/.nvmrc
-              cache: 'npm'
-              cache-dependency-path: ./front-end/.nvmrc
+        name: JS tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: ./front-end/.nvmrc
+                  cache: 'npm'
+                  cache-dependency-path: ./front-end/.nvmrc
 
-        - name: Install node dependencies
-          working-directory: ./front-end
-          run: |
-            npm ci --no-audit
+            - name: Install node dependencies
+              working-directory: ./front-end
+              run: |
+                npm ci --no-audit
 
-        - name: Type check
-          working-directory: ./front-end
-          run: |
-            npm run format:check
+            - name: Type check
+              working-directory: ./front-end
+              run: |
+                npm run format:check
 
     docker-build:
-        - name: Checkout
-          uses: actions/checkout@v4
+        name: Docker build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
 
-        - name: Docker meta
-          id: meta
-          uses: docker/metadata-action@v5
-          with:
-            images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            - name: Docker meta
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
 
-        - name: Build and push
-          uses: docker/build-push-action@v6
-          with:
-              context: .
-              file: .docker/Dockerfile
-              push: false
-              tags: ${{ steps.meta.outputs.tags }}
-              labels: ${{ steps.meta.outputs.labels }}
-              target: prod
+            - name: Build and push
+              uses: docker/build-push-action@v6
+              with:
+                  context: .
+                  file: .docker/Dockerfile
+                  push: false
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  target: prod
 
