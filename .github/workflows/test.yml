@@ -21,16 +21,16 @@ env:
     POSTGRES_PASSWORD: postgres
     POSTGRES_USER: postgres
 
-services:
-    postgres:
-        image: postgis/postgis:16-3.4
-        ports:
-            - 5432:5432
-        # Set health checks to wait until postgres has started
-        options: >-
-            --health-cmd pg_isready
-
 jobs:
+    services:
+        postgres:
+            image: postgis/postgis:16-3.4
+            ports:
+                - 5432:5432
+            # Set health checks to wait until postgres has started
+            options: >-
+                --health-cmd pg_isready
+
     python-unittests:
         name: Python Unit tests
         runs-on: ubuntu-latest
