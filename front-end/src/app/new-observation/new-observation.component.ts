@@ -135,8 +135,6 @@ export class NewObservationComponent {
           }
         }
       });
-
-    this.initMap();
   }
   constructor() {
     afterNextRender(async () => {
@@ -147,7 +145,6 @@ export class NewObservationComponent {
   async initMap() {
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
-    const { Icon, icon } = await import('leaflet');
 
     this.map = this.L.map('map', { zoom: 4, center: [47, 2] });
 
@@ -177,8 +174,8 @@ export class NewObservationComponent {
       lng: round(center.lng, 6),
     };
     this.marker = this.L.marker(center, {
-      icon: icon({
-        ...Icon.Default.prototype.options,
+      icon: this.L.icon({
+        ...this.L.Icon.Default.prototype.options,
         iconUrl: 'assets/marker-icon.png',
         iconRetinaUrl: 'assets/marker-icon-2x.png',
         shadowUrl: 'assets/marker-shadow.png',

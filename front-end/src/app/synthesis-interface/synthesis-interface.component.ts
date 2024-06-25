@@ -32,8 +32,6 @@ export class SynthesisInterfaceComponent {
     });
   }
 
-  ngOnInit() {}
-
   async initMap() {
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
