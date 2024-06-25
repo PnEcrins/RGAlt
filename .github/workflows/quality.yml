@@ -101,7 +101,7 @@ jobs:
               run: |
                 npm ci --no-audit
 
-            - name: Type check
+            - name: Prettier check
               working-directory: ./front-end
               run: |
                 npm run format:check
