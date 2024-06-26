@@ -115,7 +115,6 @@ USER ubuntu
 COPY --chown=ubuntu:ubuntu front-end/ /app/front-end
 COPY --chown=ubuntu:ubuntu --from=build /app/front-end/node_modules /app/front-end/node_modules
 
-
 ENTRYPOINT [""]
 
 CMD ["npx", "ng", "serve", "--host", "0.0.0.0"]
