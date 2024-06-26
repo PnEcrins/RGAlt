@@ -1,10 +1,4 @@
-import {
-  Component,
-  NgZone,
-  afterNextRender,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, NgZone, afterNextRender, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -15,6 +9,7 @@ import { FilterDialog } from './dialogs/filter-dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
+import moment from 'moment';
 
 import evenementsRemarquables from './evenements_remarquables.json';
 
@@ -35,11 +30,17 @@ import evenementsRemarquables from './evenements_remarquables.json';
 })
 export class SynthesisInterfaceComponent {
   readonly dialog = inject(MatDialog);
+  filter: {
+    observationTypes: any[];
+    observationDates: { start: any; end: any };
+  } = { observationTypes: [], observationDates: { start: null, end: null } };
 
   L: any;
   map: any;
   observationsFeatureCollection = evenementsRemarquables;
   currentObservationsFeatureCollection = evenementsRemarquables;
+  observationsFeatureCollectionFiltered = evenementsRemarquables;
+
   observationsLayer: any;
   observationsClusterGroup: any;
   router = inject(Router);
@@ -160,11 +161,78 @@ export class SynthesisInterfaceComponent {
       maxWidth: '50vw',
       height: '100%',
       maxHeight: '50vh',
+      data: this.filter,
     });
 
     deleteDialogRef.afterClosed().subscribe((result) => {
-      if (result && result.filter) {
-        console.log(result.filter);
+      if (
+        result &&
+        result.filter &&
+        (result.filter.observationTypes ||
+          (result.filter.observationDates.start &&
+            result.filter.observationDates.end))
+      ) {
+        let observationFeatures = null;
+
+        if (
+          Boolean(result.filter.observationTypes) &&
+          result.filter.observationTypes.length > 0
+        ) {
+          this.filter.observationTypes = result.filter.observationTypes;
+          observationFeatures =
+            this.observationsFeatureCollection.features.filter((feature) =>
+              result.filter.observationTypes
+                .map((observationType: any) => observationType.id)
+                .includes(feature.properties.id_event_type),
+            );
+        }
+        if (
+          Boolean(
+            result.filter.observationDates &&
+              result.filter.observationDates.start &&
+              result.filter.observationDates.end,
+          )
+        ) {
+          this.filter.observationTypes = result.filter.observationTypes;
+          if (observationFeatures) {
+            observationFeatures = observationFeatures.filter(
+              (observationFeature) =>
+                moment(observationFeature.properties.date_create).isBetween(
+                  result.filter.observationDates.start,
+                  result.filter.observationDates.end,
+                  null,
+                  '[]',
+                ),
+            );
+          } else {
+            observationFeatures =
+              this.observationsFeatureCollection.features.filter(
+                (observationFeature) =>
+                  moment(observationFeature.properties.date_create).isBetween(
+                    result.filter.observationDates.start,
+                    result.filter.observationDates.end,
+                    null,
+                    '[]',
+                  ),
+              );
+          }
+        }
+        this.observationsFeatureCollectionFiltered = {
+          ...this.observationsFeatureCollection,
+          features: observationFeatures || [],
+        };
+      } else {
+        this.filter = {
+          observationTypes: [],
+          observationDates: { start: null, end: null },
+        };
+        this.observationsFeatureCollectionFiltered =
+          this.observationsFeatureCollection;
+      }
+
+      if (result && !result.cancel) {
+        this.updateMap();
+        this.fitToCurrentObservations();
       }
     });
   }
@@ -186,22 +254,24 @@ export class SynthesisInterfaceComponent {
   }
 
   fitToCurrentObservations() {
-    this.bounds = this.L.default.latLngBounds(
-      this.currentObservationsFeatureCollection.features.map((feature) => [
-        feature.geometry.coordinates[1],
-        feature.geometry.coordinates[0],
-      ]),
-    );
+    if (this.observationsFeatureCollectionFiltered.features.length > 0) {
+      this.bounds = this.L.default.latLngBounds(
+        this.observationsFeatureCollectionFiltered.features.map((feature) => [
+          feature.geometry.coordinates[1],
+          feature.geometry.coordinates[0],
+        ]),
+      );
 
-    this.bounds && this.map.fitBounds(this.bounds);
+      this.bounds && this.map.fitBounds(this.bounds);
+    }
   }
 
   handleObservationsWithinBounds() {
     this.ngZone.run(() => {
       this.currentObservationsFeatureCollection = {
         ...this.currentObservationsFeatureCollection,
-        features: this.observationsFeatureCollection.features.filter(
-          (feature) =>
+        features: this.observationsFeatureCollectionFiltered.features.filter(
+          (feature: any) =>
             this.map
               .getBounds()
               .contains(
@@ -223,5 +293,12 @@ export class SynthesisInterfaceComponent {
       ],
       19,
     );
+  }
+
+  updateMap() {
+    this.observationsLayer.clearLayers();
+    this.observationsLayer.addData(this.observationsFeatureCollectionFiltered);
+    this.observationsClusterGroup.clearLayers();
+    this.observationsClusterGroup.addLayer(this.observationsLayer);
   }
 }
