@@ -32,6 +32,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get -qq install -y nodejs
 
 COPY .docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY .docker/update.sh /usr/local/bin/rga-update
 
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
 
@@ -97,7 +98,7 @@ RUN npm ci --no-audit --only=production
 
 COPY --chown=ubuntu:ubuntu --from=build /app/venv /app/venv
 COPY --chown=ubuntu:ubuntu --from=build /app/front-end/dist /app/front-end/dist
-COPY --chown=ubuntu:ubuntu backend/project/ /app/backend
+COPY --chown=ubuntu:ubuntu backend/project/ /app/backend/project
 COPY --chown=ubuntu:ubuntu backend/manage.py /app/backend/manage.py
 
 WORKDIR /app/backend
