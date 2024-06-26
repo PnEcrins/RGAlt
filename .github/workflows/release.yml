@@ -9,6 +9,7 @@ on:
       - master
       - main
       - next
+      - add_release_process
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
