@@ -59,7 +59,7 @@ jobs:
         if: steps.cache-front.outputs.cache-hit != 'true'
         working-directory: ./front-end
         run: |
-          npm ci --no-audit --only production
+          npm ci --no-audit
 
       - name: Build front
         if: steps.cache-front.outputs.cache-hit != 'true'
