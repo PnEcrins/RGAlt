@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
+  MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -15,9 +16,9 @@ import {
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import observationsTypes from './types.json';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @Component({
   selector: 'filter-dialog',
@@ -39,18 +40,40 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
   styleUrl: './filter-dialog.scss',
 })
 export class FilterDialog {
+  data = inject<{
+    observationTypes: any[];
+    observationDates: { start: any; end: any };
+  }>(MAT_DIALOG_DATA);
   dialogRef = inject(MatDialogRef<FilterDialog>);
-  observationTypesForm = new FormControl('');
+  observationsTypesForm = new FormControl(this.data.observationTypes);
   observationTypes: any = observationsTypes;
   readonly observationsDates = new FormGroup({
-    start: new FormControl(null),
-    end: new FormControl(null),
+    start: new FormControl(this.data.observationDates.start),
+    end: new FormControl(this.data.observationDates.end),
   });
 
   filterCancel() {
-    this.dialogRef.close();
+    this.dialogRef.close({ cancel: true });
   }
+
   filterConfirm() {
-    this.dialogRef.close({ filter: true });
+    if (
+      this.observationsDates.value.start &&
+      !this.observationsDates.value.end
+    ) {
+      this.observationsDates.setErrors({ emptyEnd: true });
+    } else if (
+      this.observationsDates.value.end &&
+      !this.observationsDates.value.start
+    ) {
+      this.observationsDates.setErrors({ emptyStart: true });
+    } else {
+      this.dialogRef.close({
+        filter: {
+          observationTypes: this.observationsTypesForm.value,
+          observationDates: this.observationsDates.value,
+        },
+      });
+    }
   }
 }
