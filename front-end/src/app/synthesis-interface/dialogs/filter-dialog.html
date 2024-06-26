@@ -3,7 +3,7 @@
   <div>
     <mat-form-field>
       <mat-label>Types d'observation</mat-label>
-      <mat-select [formControl]="observationTypesForm" multiple>
+      <mat-select [formControl]="observationsTypesForm" multiple>
         @for (observationType of observationTypes; track observationType.id) {
         <mat-option [value]="observationType"
           >{{observationType.name}}</mat-option
@@ -32,6 +32,11 @@
       ></mat-datepicker-toggle>
       <mat-date-range-picker #observationsDatesPicker></mat-date-range-picker>
     </mat-form-field>
+    @if ( observationsDates.hasError("emptyStart") ) {
+    <mat-error>La date de début est obligatoire.</mat-error>
+    } @if ( observationsDates.hasError("emptyEnd") ) {
+    <mat-error>La date de fin est obligatoire.</mat-error>
+    }
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
