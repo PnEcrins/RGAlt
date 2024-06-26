@@ -1,0 +1,57 @@
+services:
+    memcached:
+        image: memcached:latest
+
+    postgres:
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        image: postgis/postgis:16-3.4
+        ports:
+            - "127.0.0.1:5432:5432"
+        env_file:
+            - ./db.env
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+    back:
+        image: prod
+
+        depends_on:
+            postgres:
+                condition: service_healthy
+            memcached:
+                condition: service_started
+
+        env_file:
+            - ./app.env
+            - ./db.env
+
+        volumes:
+            - ./conf:/app/backend/conf
+
+        user: ${UID}:${GID}
+
+    front:
+        image: prod
+
+        depends_on:
+            - back
+
+        working_dir: /app/front-end/
+        command: ["npm", "run", "serve:ssr:regard-d-altitude"]
+
+    nginx:
+        image: nginx:latest
+        ports:
+            - "8080:80"
+        depends_on:
+            - back
+            - front
+        volumes:
+            - ./public:/var/www/
+            - ./conf/nginx.conf:/etc/nginx/conf.d/default.conf
+volumes:
+    postgres_data:

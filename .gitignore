@@ -290,3 +290,6 @@ Thumbs.db
 /front-end/node_modules/
 /front-end/.angular/cache/
 /backend/public/
+!/install/db.env
+/install/app.env
+/install/db.env
