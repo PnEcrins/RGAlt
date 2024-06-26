@@ -1,13 +1,13 @@
 ARG NODE_MAJOR_VERSION=20
 
-FROM ubuntu:noble as base
+FROM ubuntu:noble AS base
 
 ARG NODE_MAJOR_VERSION
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV DEBIAN_FRONTEND noninteractive
-ENV TZ UTC
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
 
 RUN mkdir -p /app/backend app/front-end/dist && chown -R ubuntu:ubuntu /app
 WORKDIR /app
@@ -35,9 +35,9 @@ COPY .docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
 
-FROM base as build
+FROM base AS build
 
-ENV NODE_ENV development
+ENV NODE_ENV=development
 ARG NODE_MAJOR_VERSION
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -55,8 +55,7 @@ COPY --chown=ubuntu:ubuntu front-end/ /app/front-end
 
 WORKDIR /app/front-end
 
-RUN npm ci
-RUN npm run build
+RUN npm ci --no-audit
 
 WORKDIR /app
 
@@ -66,7 +65,7 @@ COPY backend/requirements.txt /app/requirements.txt
 RUN --mount=type=cache,target=/home/ubuntu/.cache/pip,sharing=locked  \
     /app/venv/bin/pip install -r /app/requirements.txt
 
-FROM build as dev
+FROM build AS dev
 
 COPY backend/dev-requirements.txt /app/dev-requirements.txt
 RUN --mount=type=cache,target=/home/ubuntu/.cache/pip,sharing=locked,uid=1,gid=1  \
@@ -76,9 +75,9 @@ WORKDIR /app/backend
 
 CMD ["/app/venv/bin/python", "manage.py", "runserver", "0.0.0.0:8000"]
 
-FROM base as prod
+FROM base AS prod
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 WORKDIR /app/backend
 
@@ -94,7 +93,7 @@ COPY --chown=ubuntu:ubuntu front-end/package.json /app/front-end/package.json
 
 WORKDIR /app/front-end
 
-RUN npm ci
+RUN npm ci --no-audit --only=production
 
 COPY --chown=ubuntu:ubuntu --from=build /app/venv /app/venv
 COPY --chown=ubuntu:ubuntu --from=build /app/front-end/dist /app/front-end/dist
@@ -107,7 +106,7 @@ RUN /app/venv/bin/django-admin compilemessages
 
 CMD ["/app/venv/bin/gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8000"]
 
-FROM base as front-dev
+FROM base AS front-dev
 
 WORKDIR /app/front-end
 
