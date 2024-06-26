@@ -9,3 +9,4 @@ sorl-thumbnail
 pymemcache
 sentry-sdk
 pmtiles
+gunicorn

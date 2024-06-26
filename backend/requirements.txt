@@ -29,12 +29,16 @@ djangorestframework-gis==1.0
     # via -r requirements.in
 drf-spectacular==0.27.2
     # via -r requirements.in
+gunicorn==22.0.0
+    # via -r requirements.in
 inflection==0.5.1
     # via drf-spectacular
 jsonschema==4.22.0
     # via drf-spectacular
 jsonschema-specifications==2023.12.1
     # via jsonschema
+packaging==24.1
+    # via gunicorn
 pillow==10.3.0
     # via -r requirements.in
 pmtiles==3.3.0
