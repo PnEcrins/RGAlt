@@ -53,12 +53,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "django.contrib.gis",
+    "rest_framework_simplejwt",
     "rest_framework",
     "rest_framework_gis",
     "drf_spectacular",
     "django_filters",
     "sorl.thumbnail",
     "project.accounts",
+    "project.api",
     "project.events",
 ]
 
@@ -170,6 +172,10 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "100/day", "user": "1000/day"},
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # "rest_framework.authentication.SessionAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
 }
 
 API_SWAGGER_SETTINGS = {
@@ -194,4 +200,8 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
         "LOCATION": "memcached:11211",
     }
+}
+
+SIMPLE_JWT = {
+    "UPDATE_LAST_LOGIN": True,
 }

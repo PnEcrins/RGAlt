@@ -14,10 +14,13 @@ class UserAdmin(BaseUserAdmin):
         "first_name",
         "last_name",
         "is_active",
-        "is_staff",
         "is_superuser",
         "date_joined",
         "last_login",
+    )
+    list_filter = (
+        "is_superuser",
+        "is_active",
     )
     search_fields = ("email", "first_name", "last_name")
     ordering = ("email",)
@@ -37,7 +40,6 @@ class UserAdmin(BaseUserAdmin):
             {
                 "fields": (
                     "is_active",
-                    "is_staff",
                     "is_superuser",
                     "groups",
                     "user_permissions",

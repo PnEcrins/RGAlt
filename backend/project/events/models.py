@@ -58,7 +58,7 @@ class Event(TimeStampMixin):
     )
     comments = models.TextField()
     event_date = models.DateField(default=timezone_today, db_index=True)
-    source = models.ForeignKey(Source, on_delete=models.PROTECT)
+    source = models.ForeignKey(Source, on_delete=models.SET_NULL, blank=True, null=True)
     event_subtype = models.ForeignKey(EventSubType, on_delete=models.PROTECT)
     location = models.PointField(srid=4326, verbose_name=_("Location"))
 
