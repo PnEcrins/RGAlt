@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { NewObservationComponent } from './new-observation/new-observation.component';
-import { SynthesisInterfaceComponent } from './synthesis-interface/synthesis-interface.component';
-import { MyOfflineDataComponent } from './my-offline-data/my-offline-data.component';
-import { MyObservationsComponent } from './my-observations/my-observations.component';
-import { MyAccountComponent } from './my-account/my-account.component';
-import { LoginComponent } from './login/login.component';
-import { CreateAccountComponent } from './create-account/create-account.component';
-import { ForgetPasswordComponent } from './forget-password/forget-password.component';
-import { ChangePasswordComponent } from './change-password/change-password.component';
+import { HomeComponent } from './pages/home/home.component';
+import { NewObservationComponent } from './pages/new-observation/new-observation.component';
+import { SynthesisInterfaceComponent } from './pages/synthesis-interface/synthesis-interface.component';
+import { MyOfflineDataComponent } from './pages/my-offline-data/my-offline-data.component';
+import { MyObservationsComponent } from './pages/my-observations/my-observations.component';
+import { MyAccountComponent } from './pages/my-account/my-account.component';
+import { LoginComponent } from './pages/login/login.component';
+import { CreateAccountComponent } from './pages/create-account/create-account.component';
+import { ForgetPasswordComponent } from './pages/forget-password/forget-password.component';
+import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 import { authGuard } from './guards/auth.guard';
-import { ObservationDetailComponent } from './observation-detail/observation-detail.component';
+import { ObservationDetailComponent } from './pages/observation-detail/observation-detail.component';
 
 export const routes: Routes = [
   {

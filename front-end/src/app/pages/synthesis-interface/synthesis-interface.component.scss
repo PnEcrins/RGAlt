@@ -1,4 +1,4 @@
-$panel-height: 50vh;
+$panel-height: 100vh;
 
 .tune-button-container {
   width: 100%;
@@ -27,7 +27,7 @@ $panel-height: 50vh;
 }
 
 .expansion-panel-open {
-  height: $panel-height;
+  height: calc($panel-height - 56px);
   mat-list {
     overflow: scroll;
     max-height: calc($panel-height - var(--mat-toolbar-standard-height) - 16px);

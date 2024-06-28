@@ -44,7 +44,7 @@ body {
   cursor: default !important;
 }
 
-.observation-departure-popup {
+.observation-popup {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -52,8 +52,12 @@ body {
     color: var(--mat-app-text-color);
     font-weight: 700;
     font-size: 16px;
-    line-height: 24px;
-    padding: 12px;
+    padding: 2px 0px;
+  }
+  .observation-date {
+    color: var(--mat-app-text-color);
+    font-weight: 400;
+    font-size: 12px;
   }
   .observation-button {
     cursor: pointer;
@@ -81,6 +85,10 @@ body {
     overflow: visible;
     vertical-align: middle;
     background: rgba(0, 0, 0, 0);
+  }
+  img {
+    max-height: 200px;
+    object-fit: contain;
   }
 }
 

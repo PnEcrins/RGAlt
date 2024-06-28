@@ -1,4 +1,10 @@
-import { Component, NgZone, afterNextRender, inject } from '@angular/core';
+import {
+  Component,
+  NgZone,
+  ViewChild,
+  afterNextRender,
+  inject,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -6,12 +12,15 @@ import { Router, RouterLink } from '@angular/router';
 import slugify from 'slugify';
 import { MatDialog } from '@angular/material/dialog';
 import { FilterDialog } from './dialogs/filter-dialog';
-import { MatExpansionModule } from '@angular/material/expansion';
+import {
+  MatExpansionModule,
+  MatExpansionPanel,
+} from '@angular/material/expansion';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
 
-import evenementsRemarquables from './evenements_remarquables.json';
+import evenementsRemarquables from '../../../data/evenements_remarquables.json';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -29,6 +38,7 @@ import evenementsRemarquables from './evenements_remarquables.json';
   styleUrl: './synthesis-interface.component.scss',
 })
 export class SynthesisInterfaceComponent {
+  @ViewChild('expansionPanel') private expansionPanel!: MatExpansionPanel;
   readonly dialog = inject(MatDialog);
   filter: {
     observationTypes: any[];
@@ -37,11 +47,11 @@ export class SynthesisInterfaceComponent {
 
   L: any;
   map: any;
-  observationsFeatureCollection = evenementsRemarquables;
-  currentObservationsFeatureCollection = evenementsRemarquables;
-  observationsFeatureCollectionFiltered = evenementsRemarquables;
+  observationsFeatureCollection: any = evenementsRemarquables;
+  currentObservationsFeatureCollection: any = evenementsRemarquables;
+  observationsFeatureCollectionFiltered: any = evenementsRemarquables;
 
-  observationsLayer: any;
+  observationsLayer: L.GeoJSON<any> | null = null;
   observationsClusterGroup: any;
   router = inject(Router);
 
@@ -96,38 +106,8 @@ export class SynthesisInterfaceComponent {
             autoPanOnFocus: false,
           } as any),
         onEachFeature: (geoJsonPoint: any, layer: any) => {
-          layer.once('click', async () => {
-            const imgSrc = geoJsonPoint.properties.picture_path;
-            const observationDeparturePopup =
-              this.L.default.DomUtil.create('div');
-            observationDeparturePopup.className = 'observation-departure-popup';
-            if (Boolean(imgSrc)) {
-              const observationImg = this.L.default.DomUtil.create('img');
-              observationImg.src = imgSrc;
-              observationDeparturePopup.appendChild(observationImg);
-            }
-            const observationName = this.L.default.DomUtil.create('div');
-            observationName.innerHTML = geoJsonPoint.properties.name_event;
-            observationName.className = 'observation-name';
-            observationDeparturePopup.appendChild(observationName);
-
-            const observationButton = this.L.default.DomUtil.create('button');
-            observationButton.innerHTML = 'Afficher le détail';
-            observationButton.className = 'observation-button';
-            observationButton.onclick = () => {
-              const slug = slugify(
-                `${geoJsonPoint.properties.id_event}-${geoJsonPoint.properties.name_event}`,
-              );
-              this.router.navigate(['/detail-d-une-observation', slug]);
-            };
-            observationDeparturePopup.appendChild(observationButton);
-            layer
-              .bindPopup(observationDeparturePopup, {
-                interactive: true,
-                autoPan: false,
-                closeButton: false,
-              } as any)
-              .openPopup();
+          layer.once('click', () => {
+            this.handleObservationPopup(geoJsonPoint, layer);
           });
         },
       },
@@ -155,6 +135,55 @@ export class SynthesisInterfaceComponent {
     this.map.on('moveend', this.handleObservationsWithinBoundsBind);
   }
 
+  handleObservationPopup(geoJsonPoint: any, layer?: any) {
+    const imgSrc = geoJsonPoint.properties.picture_path;
+    const observationPopup = this.L.default.DomUtil.create('div');
+    observationPopup.className = 'observation-popup';
+    if (Boolean(imgSrc)) {
+      const observationImg = this.L.default.DomUtil.create('img');
+      observationImg.src = imgSrc;
+      observationPopup.appendChild(observationImg);
+    }
+    const observationName = this.L.default.DomUtil.create('div');
+    observationName.innerHTML = geoJsonPoint.properties.name_event;
+    observationName.className = 'observation-name';
+    observationPopup.appendChild(observationName);
+
+    const observationDate = this.L.default.DomUtil.create('div');
+    observationDate.innerHTML = geoJsonPoint.properties.date_event;
+    observationDate.className = 'observation-date';
+    observationPopup.appendChild(observationDate);
+
+    const observationButton = this.L.default.DomUtil.create('button');
+    observationButton.innerHTML = 'Afficher le détail';
+    observationButton.className = 'observation-button';
+    observationButton.onclick = () => {
+      const slug = slugify(
+        `${geoJsonPoint.properties.id_event}-${geoJsonPoint.properties.name_event}`,
+      );
+      this.router.navigate(['/detail-d-une-observation', slug]);
+    };
+    observationPopup.appendChild(observationButton);
+    if (layer) {
+      layer
+        .bindPopup(observationPopup, {
+          interactive: true,
+          autoPan: false,
+          closeButton: false,
+        } as any)
+        .openPopup();
+    } else {
+      this.map?.openPopup(
+        observationPopup,
+        this.L.default.latLng(
+          geoJsonPoint.geometry.coordinates[1],
+          geoJsonPoint.geometry.coordinates[0],
+        ),
+        { interactive: true, autoPan: false, closeButton: false },
+      );
+    }
+  }
+
   openFilterDialog() {
     const deleteDialogRef = this.dialog.open(FilterDialog, {
       width: '100%',
@@ -180,7 +209,7 @@ export class SynthesisInterfaceComponent {
         ) {
           this.filter.observationTypes = result.filter.observationTypes;
           observationFeatures =
-            this.observationsFeatureCollection.features.filter((feature) =>
+            this.observationsFeatureCollection.features.filter((feature: any) =>
               result.filter.observationTypes
                 .map((observationType: any) => observationType.id)
                 .includes(feature.properties.id_event_type),
@@ -196,8 +225,8 @@ export class SynthesisInterfaceComponent {
           this.filter.observationTypes = result.filter.observationTypes;
           if (observationFeatures) {
             observationFeatures = observationFeatures.filter(
-              (observationFeature) =>
-                moment(observationFeature.properties.date_create).isBetween(
+              (observationFeature: any) =>
+                moment(observationFeature.properties.date_event).isBetween(
                   result.filter.observationDates.start,
                   result.filter.observationDates.end,
                   null,
@@ -207,8 +236,8 @@ export class SynthesisInterfaceComponent {
           } else {
             observationFeatures =
               this.observationsFeatureCollection.features.filter(
-                (observationFeature) =>
-                  moment(observationFeature.properties.date_create).isBetween(
+                (observationFeature: any) =>
+                  moment(observationFeature.properties.date_event).isBetween(
                     result.filter.observationDates.start,
                     result.filter.observationDates.end,
                     null,
@@ -229,10 +258,10 @@ export class SynthesisInterfaceComponent {
         this.observationsFeatureCollectionFiltered =
           this.observationsFeatureCollection;
       }
-
       if (result && !result.cancel) {
         this.updateMap();
         this.fitToCurrentObservations();
+        this.map.fire('moveend');
       }
     });
   }
@@ -245,21 +274,15 @@ export class SynthesisInterfaceComponent {
     this.expansionPanelIsOpen = false;
   }
 
-  expansionPanelAfterCollapse() {
-    this.map.invalidateSize();
-  }
-
-  expansionPanelAfterExpand() {
-    this.map.invalidateSize();
-  }
-
   fitToCurrentObservations() {
     if (this.observationsFeatureCollectionFiltered.features.length > 0) {
       this.bounds = this.L.default.latLngBounds(
-        this.observationsFeatureCollectionFiltered.features.map((feature) => [
-          feature.geometry.coordinates[1],
-          feature.geometry.coordinates[0],
-        ]),
+        this.observationsFeatureCollectionFiltered.features.map(
+          (feature: any) => [
+            feature.geometry.coordinates[1],
+            feature.geometry.coordinates[0],
+          ],
+        ),
       );
 
       this.bounds && this.map.fitBounds(this.bounds);
@@ -293,11 +316,12 @@ export class SynthesisInterfaceComponent {
       ],
       19,
     );
+    this.handleObservationPopup(observation);
+    this.expansionPanel.close();
   }
 
   updateMap() {
-    this.observationsLayer.clearLayers();
-    this.observationsLayer.addData(this.observationsFeatureCollectionFiltered);
+    this.observationsLayer!.addData(this.observationsFeatureCollectionFiltered);
     this.observationsClusterGroup.clearLayers();
     this.observationsClusterGroup.addLayer(this.observationsLayer);
   }

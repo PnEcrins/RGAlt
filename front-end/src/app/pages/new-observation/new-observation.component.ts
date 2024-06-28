@@ -31,7 +31,7 @@ import * as _moment from 'moment';
 import { default as _rollupMoment } from 'moment';
 import { round } from '@turf/helpers';
 
-import observations from './observations.json';
+import observations from '../../../data/observations.json';
 
 const moment = _rollupMoment || _moment;
 
