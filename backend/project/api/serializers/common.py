@@ -1,8 +1,9 @@
+from project.api.serializers.observations import ObservationTypeSerializer
 from rest_framework import serializers
-
-from project.api.serializers.events import EventTypeSerializer
 
 
 class SettingsSerializer(serializers.Serializer):
-    event_types = EventTypeSerializer(many=True, read_only=True)
-    event_url = serializers.HyperlinkedIdentityField(view_name="api:events-list")
+    observation_types = ObservationTypeSerializer(many=True, read_only=True)
+    observation_public_url = serializers.HyperlinkedIdentityField(
+        view_name="api:observations-list"
+    )

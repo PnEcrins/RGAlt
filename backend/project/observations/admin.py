@@ -1,13 +1,18 @@
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.utils.safestring import mark_safe
+from project.observations.models import (
+    Observation,
+    ObservationSubType,
+    ObservationType,
+    Media,
+    Source,
+)
 from sorl.thumbnail import get_thumbnail
-
-from project.events.models import Event, EventSubType, EventType, Media, Source
 
 
 class SubTypeInline(admin.TabularInline):
-    model = EventSubType
+    model = ObservationSubType
     extra = 0
     fields = ("label", "description", "pictogram", "picto_preview")
     readonly_fields = ("picto_preview",)
@@ -52,8 +57,8 @@ class MediaInline(admin.TabularInline):
         return "-"
 
 
-@admin.register(EventType)
-class EventTypeAdmin(admin.ModelAdmin):
+@admin.register(ObservationType)
+class ObservationTypeAdmin(admin.ModelAdmin):
     list_display = ("label", "description", "picto_preview")
     search_fields = ("label", "description")
     ordering = ("label",)
@@ -68,11 +73,11 @@ class EventTypeAdmin(admin.ModelAdmin):
         )
 
 
-@admin.register(EventSubType)
-class EventSubTypeAdmin(admin.ModelAdmin):
-    list_display = ("label", "event_type", "description", "picto_preview")
+@admin.register(ObservationSubType)
+class ObservationSubTypeAdmin(admin.ModelAdmin):
+    list_display = ("label", "observation_type", "description", "picto_preview")
     search_fields = ("label", "description")
-    list_filter = ("event_type",)
+    list_filter = ("observation_type",)
     ordering = ("label",)
 
     def picto_preview(self, obj):
@@ -84,13 +89,13 @@ class EventSubTypeAdmin(admin.ModelAdmin):
         )
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("event_type")
+        return super().get_queryset(request).select_related("observation_type")
 
 
-@admin.register(Event)
-class EventAdmin(GISModelAdmin):
-    list_display = ("event_subtype", "event_date", "observer")
-    list_filter = ("event_subtype", "event_date")
+@admin.register(Observation)
+class ObservationAdmin(GISModelAdmin):
+    list_display = ("observation_subtype", "event_date", "observer")
+    list_filter = ("observation_subtype", "event_date")
     ordering = ("-event_date",)
     date_hierarchy = "event_date"
     readonly_fields = ("uuid",)
@@ -100,7 +105,9 @@ class EventAdmin(GISModelAdmin):
         return (
             super()
             .get_queryset(request)
-            .select_related("event_subtype__event_type", "source", "observer")
+            .select_related(
+                "observation_subtype__observation_type", "source", "observer"
+            )
         )
 
 

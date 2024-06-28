@@ -15,9 +15,11 @@ app_name = "api"
 
 router = DefaultRouter()
 
-router.register(r"events", api.EventViewSet, basename="events")
+router.register(r"observations", api.ObservationViewSet, basename="observations")
 router.register(
-    r"accounts/me/events", api.AccountEventViewset, basename="account-events"
+    r"accounts/me/observations",
+    api.AccountObservationViewset,
+    basename="account-observations",
 )
 
 urlpatterns = [

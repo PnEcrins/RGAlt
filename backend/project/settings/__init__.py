@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     "sorl.thumbnail",
     "project.accounts",
     "project.api",
-    "project.events",
+    "project.observations",
 ]
 
 MIDDLEWARE = [
