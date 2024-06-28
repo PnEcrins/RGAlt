@@ -1,0 +1,20 @@
+<div class="photo-container">
+  <img [src]="observationData.properties.picture_path" />
+</div>
+<div class="name-container mat-title-large">
+  {{ observationData.properties.name_event }}
+</div>
+<div class="type-name-container mat-body-large">
+  {{ observationType.name }}
+</div>
+<div class="date-container mat-body-medium">
+  <span class="mat-title-medium">Date : </span
+  ><span>{{ observationData.properties.date_event }}</span>
+</div>
+<div class="observers-container mat-body-medium">
+  <span class="mat-title-medium">Observateur : </span
+  ><span>{{ observationData.properties.observers }}</span>
+</div>
+<div class="description-container mat-body-medium">
+  {{ observationData.properties.description }}
+</div>

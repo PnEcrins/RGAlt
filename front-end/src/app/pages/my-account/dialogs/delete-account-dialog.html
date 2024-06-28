@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Supprimer mon compte</h2>
+<mat-dialog-content>
+  Êtes-vous sûr de vouloir supprimer votre compte ?
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="deleteAccountCancel()">Annuler</button>
+  <button mat-button (click)="deleteAccountConfirm()" cdkFocusInitial>
+    Confirmer
+  </button>
+</mat-dialog-actions>

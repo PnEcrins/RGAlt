@@ -13,10 +13,9 @@
   <mat-expansion-panel
     (opened)="expansionPanelOpen()"
     (closed)="expansionPanelClose()"
-    (afterCollapse)="expansionPanelAfterCollapse()"
-    (afterExpand)="expansionPanelAfterExpand()"
     class="expansion-panel"
     [class.expansion-panel-open]="expansionPanelIsOpen"
+    #expansionPanel
   >
     <mat-expansion-panel-header>
       <mat-panel-title>

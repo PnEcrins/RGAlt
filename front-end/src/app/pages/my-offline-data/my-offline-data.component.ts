@@ -9,9 +9,9 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { DownloadDialog } from './dialogs/download-dialog';
-
-import areas from './areas.json';
 import { DeleteDialog } from './dialogs/delete-dialog';
+
+import areas from '../../../data/areas.json';
 
 @Component({
   selector: 'app-my-offline-data',
