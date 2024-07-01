@@ -1,11 +1,29 @@
-section {
+.new-observation-container,
+.synthesis-interface-container {
   display: flex;
   width: 100%;
-  justify-content: center;
+  height: 200px;
+  align-items: center;
+  background-size: cover;
   button {
     width: 240px;
+    border-radius: 0%;
   }
 }
-section:not(:last-child) {
-  margin-bottom: 16px;
+
+.new-observation-container {
+  justify-content: end;
+  background-image: url("/061245.jpg");
+}
+.synthesis-interface-container {
+  justify-content: start;
+  background-image: url("/carte.jpg");
+}
+
+.explanatory-sentence-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  color: var(--mat-fab-foreground-color);
 }

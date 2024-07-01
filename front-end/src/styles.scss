@@ -1,4 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+@use "@angular/material" as mat;
+@use "./../m3-theme.scss";
+
+@include mat.core();
+@include mat.typography-hierarchy(m3-theme.$light-theme);
+
+:root {
+  @include mat.all-component-themes(m3-theme.$light-theme);
+}
 
 html,
 body {
@@ -103,4 +111,23 @@ body {
   background-color: var(--mdc-fab-container-color);
   color: var(--mat-fab-foreground-color);
   box-shadow: var(--mdc-extended-fab-container-elevation-shadow);
+}
+
+mat-nav-list {
+  .mat-mdc-list-item {
+    border-radius: 0% !important;
+  }
+  .mat-badge-after .mat-badge-content {
+    bottom: calc((100% + 8px) / 2);
+    left: calc(100% - 16px);
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }

@@ -43,7 +43,6 @@ export const routes: Routes = [
       backButton: true,
       accountButton: false,
     },
-    canActivate: [authGuard],
   },
   {
     path: 'interface-de-synthese',
@@ -92,6 +91,7 @@ export const routes: Routes = [
       backButton: true,
       accountButton: false,
     },
+    canActivate: [authGuard],
   },
   {
     path: 'mon-compte',
