@@ -1,7 +1,7 @@
 from django.test import TestCase
 
+from project.accounts.tests.factories import UserFactory
 from project.api.serializers.accounts import AccountSerializer
-from project.api.tests.factories import UserFactory
 
 
 class AccountSerializerTestCase(TestCase):

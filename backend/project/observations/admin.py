@@ -1,14 +1,15 @@
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.utils.safestring import mark_safe
+from sorl.thumbnail import get_thumbnail
+
 from project.observations.models import (
+    Media,
     Observation,
     ObservationSubType,
     ObservationType,
-    Media,
     Source,
 )
-from sorl.thumbnail import get_thumbnail
 
 
 class SubTypeInline(admin.TabularInline):

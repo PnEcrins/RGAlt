@@ -6,10 +6,10 @@ from rest_framework_gis import serializers as gis_serializers
 from sorl.thumbnail import get_thumbnail
 
 from project.observations.models import (
-    ObservationSubType,
-    ObservationType,
     Media,
     Observation,
+    ObservationSubType,
+    ObservationType,
 )
 
 

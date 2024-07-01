@@ -1,10 +1,4 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from project.api.serializers.observations import (
-    ObservationDetailSerializer,
-    ObservationListSerializer,
-    ObservationTypeSerializer,
-)
-from project.observations.models import Observation, ObservationType
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView
@@ -21,6 +15,12 @@ from project.accounts.models import User
 from project.api.filters import ObservationFilterSet
 from project.api.serializers.accounts import AccountSerializer
 from project.api.serializers.common import SettingsSerializer
+from project.api.serializers.observations import (
+    ObservationDetailSerializer,
+    ObservationListSerializer,
+    ObservationTypeSerializer,
+)
+from project.observations.models import Observation, ObservationType
 
 
 class SettingsApiView(GenericAPIView):

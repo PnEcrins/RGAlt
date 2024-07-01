@@ -59,9 +59,9 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "django_filters",
     "sorl.thumbnail",
-    "project.accounts",
     "project.api",
     "project.observations",
+    "project.accounts",
 ]
 
 MIDDLEWARE = [
@@ -205,3 +205,5 @@ CACHES = {
 SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": True,
 }
+
+DEBUG_TOOLBAR_CONFIG = {"IS_RUNNING_TESTS": False}

@@ -1,5 +1,6 @@
-from project.api.serializers.observations import ObservationTypeSerializer
 from rest_framework import serializers
+
+from project.api.serializers.observations import ObservationTypeSerializer
 
 
 class SettingsSerializer(serializers.Serializer):
