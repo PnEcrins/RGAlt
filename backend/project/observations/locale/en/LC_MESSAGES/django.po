@@ -26,19 +26,19 @@ msgid "Sources"
 msgstr ""
 
 #: project/events/models.py:30
-msgid "Event type"
+msgid "Observation type"
 msgstr ""
 
 #: project/events/models.py:31
-msgid "Event types"
+msgid "Observation types"
 msgstr ""
 
 #: project/events/models.py:47
-msgid "Event sub-type"
+msgid "Observation sub-type"
 msgstr ""
 
 #: project/events/models.py:48
-msgid "Event sub-types"
+msgid "Observation sub-types"
 msgstr ""
 
 #: project/events/models.py:60
@@ -46,11 +46,11 @@ msgid "Location"
 msgstr ""
 
 #: project/events/models.py:66 project/events/models.py:83
-msgid "Event"
+msgid "Observation"
 msgstr ""
 
 #: project/events/models.py:67
-msgid "Events"
+msgid "Observations"
 msgstr ""
 
 #: project/events/models.py:73

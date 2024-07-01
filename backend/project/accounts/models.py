@@ -19,11 +19,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(
         _("date joined"), default=timezone.now, db_default=Now()
     )
-    is_staff = models.BooleanField(
-        _("staff status"),
-        default=False,
-        help_text=_("Designates whether the user can log into this admin site."),
-    )
     is_active = models.BooleanField(
         _("active"),
         default=True,
@@ -36,6 +31,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
+
+    @property
+    def is_staff(self):
+        return self.is_superuser
 
     class Meta:
         verbose_name = _("user")
