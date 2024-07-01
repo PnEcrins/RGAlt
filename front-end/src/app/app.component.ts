@@ -14,6 +14,8 @@ import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { Location } from '@angular/common';
 import { AuthService } from './services/auth.service';
 import { Platform } from '@angular/cdk/platform';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +29,8 @@ import { Platform } from '@angular/cdk/platform';
     MatButtonModule,
     MatSidenavModule,
     MatListModule,
+    MatBadgeModule,
+    MatDividerModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -43,6 +47,8 @@ export class AppComponent {
 
   @ViewChild('sidenav') private sidenav!: MatSidenav;
 
+  observationsPending = '2';
+
   sideNavItems = [
     {
       id: 1,
@@ -50,6 +56,7 @@ export class AppComponent {
       routerLink: 'se-connecter',
       authenficated: false,
       click: () => null,
+      observationsPending: null,
     },
     {
       id: 2,
@@ -57,6 +64,7 @@ export class AppComponent {
       routerLink: 'mon-compte',
       authenficated: true,
       click: () => null,
+      observationsPending: null,
     },
     {
       id: 3,
@@ -64,6 +72,7 @@ export class AppComponent {
       routerLink: 'mes-observations',
       authenficated: true,
       click: () => null,
+      observationsPending: this.observationsPending,
     },
     {
       id: 4,
@@ -71,6 +80,7 @@ export class AppComponent {
       routerLink: 'mes-donnees-hors-ligne',
       authenficated: true,
       click: () => null,
+      observationsPending: null,
     },
     {
       id: 5,
@@ -81,6 +91,7 @@ export class AppComponent {
         this.authService.logout();
         this.sidenav.close();
       },
+      observationsPending: null,
     },
   ];
 

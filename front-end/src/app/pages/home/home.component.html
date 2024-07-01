@@ -1,14 +1,19 @@
-<section>
+<section class="new-observation-container">
   <button
     *ngIf="authService.isAuth | async"
     routerLink="/nouvelle-observation"
-    mat-raised-button
+    mat-fab
+    extended
+    color="primary"
   >
     Saisir une observation
   </button>
 </section>
-<section>
-  <button routerLink="/interface-de-synthese" mat-raised-button>
+<section class="explanatory-sentence-container">
+  <div class="mat-body-large">Un collectif pour voir changer la montagne</div>
+</section>
+<section class="synthesis-interface-container">
+  <button routerLink="/interface-de-synthese" mat-fab extended color="primary">
     Consulter la base de données
   </button>
 </section>
