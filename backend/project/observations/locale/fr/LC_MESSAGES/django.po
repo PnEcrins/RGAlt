@@ -24,26 +24,26 @@ msgstr "Source"
 msgid "Sources"
 msgstr "Sources"
 
-msgid "Event type"
-msgstr "Type d'évènement"
+msgid "Observation type"
+msgstr "Type d'observation"
 
-msgid "Event types"
-msgstr "Types d'évènement"
+msgid "Observation types"
+msgstr "Types d'observation"
 
-msgid "Event sub-type"
-msgstr "Sous-type d'évènement"
+msgid "Observation sub-type"
+msgstr "Sous-type d'observation"
 
-msgid "Event sub-types"
-msgstr "Sous-types d'évènement"
+msgid "Observation sub-types"
+msgstr "Sous-types d'observation"
 
 msgid "Location"
 msgstr "Emplacement"
 
-msgid "Event"
-msgstr "Évènement"
+msgid "Observation"
+msgstr "Observation"
 
-msgid "Events"
-msgstr "Évènements"
+msgid "Observations"
+msgstr "Observations"
 
 msgid "Image"
 msgstr "Image"

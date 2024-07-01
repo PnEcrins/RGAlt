@@ -8,5 +8,6 @@ pillow
 sorl-thumbnail
 pymemcache
 sentry-sdk
-pmtiles
 gunicorn
+drf-dynamic-fields
+djangorestframework-simplejwt
