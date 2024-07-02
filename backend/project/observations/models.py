@@ -68,6 +68,10 @@ class Observation(TimeStampMixin):
     )
     location = models.PointField(srid=4326, verbose_name=_("Location"))
 
+    @property
+    def first_photo(self):
+        return self.medias.first()
+
     def __str__(self):
         return str(self.uuid)
 

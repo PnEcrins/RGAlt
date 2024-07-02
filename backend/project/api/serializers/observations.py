@@ -38,12 +38,12 @@ class ThumbnailSerializer(serializers.Serializer):
     large = serializers.SerializerMethodField()
 
     def get_thumbnail_by_size(
-        self, obj, height=100, width=100, format="JPG", quality=70
+        self, obj, height=100, width=100, format="JPEG", quality=70
     ):
         if obj.media_type == Media.MediaType.IMAGE:
             return self.context["request"].build_absolute_uri(
                 get_thumbnail(
-                    obj.media_file, f"{height}x{width}", format=format, quality=quality
+                    obj.media_file, f"{width}x{height}", format=format, quality=quality
                 ).url
             )
         return None
@@ -69,12 +69,11 @@ class MediaSerializer(serializers.ModelSerializer):
         fields = ("id", "uuid", "legend", "media_file", "media_type", "thumbnails")
 
 
-class ObservationListSerializer(
-    DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerializer
-):
+class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerializer):
     source = serializers.SlugRelatedField("label", read_only=True)
-    subtype = serializers.SlugRelatedField("label", read_only=True)
-    # event_type = serializers.SlugRelatedField("event_subtype.event_type.label", read_only=True)
+    subtype = serializers.SlugRelatedField(
+        "label", source="observation_subtype", read_only=True
+    )
 
     class Meta:
         model = Observation
@@ -86,14 +85,19 @@ class ObservationListSerializer(
             "event_date",
             "source",
             "subtype",
-            "observation_subtype",
-            "location",
         )
         write_only_fields = ("observation_subtype__id",)
 
 
-class ObservationDetailSerializer(ObservationListSerializer):
+class ObservationListSerializer(ObservationMixin):
+    first_photo = MediaSerializer(read_only=True)
+
+    class Meta(ObservationMixin.Meta):
+        fields = ObservationMixin.Meta.fields + ("first_photo",)
+
+
+class ObservationDetailSerializer(ObservationMixin):
     medias = MediaSerializer(many=True, read_only=True)
 
-    class Meta(ObservationListSerializer.Meta):
-        fields = ObservationListSerializer.Meta.fields + ("medias",)
+    class Meta(ObservationMixin.Meta):
+        fields = ObservationMixin.Meta.fields + ("medias",)
