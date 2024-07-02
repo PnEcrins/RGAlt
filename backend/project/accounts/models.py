@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.contrib.postgres.functions import RandomUUID
 from django.db import models
 from django.db.models.functions import Now
 from django.utils import timezone
@@ -9,6 +10,9 @@ from project.accounts.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    uuid = models.UUIDField(
+        editable=False, unique=True, db_index=True, db_default=RandomUUID()
+    )
     email = models.EmailField(
         _("email address"),
         unique=True,

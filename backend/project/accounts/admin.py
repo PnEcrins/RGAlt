@@ -13,6 +13,7 @@ class UserAdmin(BaseUserAdmin):
         "email",
         "first_name",
         "last_name",
+        "uuid",
         "is_active",
         "is_superuser",
         "date_joined",
@@ -22,7 +23,7 @@ class UserAdmin(BaseUserAdmin):
         "is_superuser",
         "is_active",
     )
-    search_fields = ("email", "first_name", "last_name")
+    search_fields = ("email", "first_name", "last_name", "uuid")
     ordering = ("email",)
     fieldsets = (
         (None, {"fields": ("email", "password")}),
@@ -48,6 +49,7 @@ class UserAdmin(BaseUserAdmin):
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
+    readonly_fields = ("date_joined", "last_login", "uuid")
 
 
 admin.site.register(User, UserAdmin)
