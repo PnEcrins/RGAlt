@@ -19,6 +19,7 @@ class AccountSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             "id",
+            "uuid",
             "email",
             "is_superuser",
             "last_name",
