@@ -2,10 +2,15 @@
   <button *ngIf="backButton" (click)="handleBackButton()" mat-icon-button>
     <mat-icon>arrow_back</mat-icon>
   </button>
+  <a *ngIf="!backButton" routerLink="/" class="logo-container">
+    <img src="favicon.ico" />
+  </a>
   <span>{{ title }}</span>
   <span class="toolbar-spacer"></span>
   <button *ngIf="accountButton" mat-icon-button (click)="sidenav.toggle()">
-    <mat-icon>account_circle</mat-icon>
+    <mat-icon aria-hidden="false" [matBadge]="observationsPending"
+      >account_circle</mat-icon
+    >
   </button>
 </mat-toolbar>
 
@@ -20,7 +25,8 @@
     <mat-nav-list>
       @for (
         currentSideNavItem of currentSideNavItems;
-        track currentSideNavItem.id
+        track currentSideNavItem.id;
+        let last = $last
       ) {
         <a
           mat-list-item
@@ -28,8 +34,12 @@
           (click)="
             !currentSideNavItem.routerLink ? currentSideNavItem.click() : null
           "
-          >{{ currentSideNavItem.text }}</a
         >
+          <div [matBadge]="currentSideNavItem.observationsPending">
+            {{ currentSideNavItem.text }}
+          </div>
+        </a>
+        <mat-divider *ngIf="!last"></mat-divider>
       }
     </mat-nav-list>
   </mat-sidenav>
