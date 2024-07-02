@@ -40,8 +40,10 @@ class SettingsApiView(GenericAPIView):
 
 
 class ObservationViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Observation.objects.all().select_related(
-        "source", "observation_subtype__observation_type"
+    queryset = (
+        Observation.objects.all()
+        .select_related("source", "observation_subtype__observation_type")
+        .prefetch_related("medias")
     )
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ObservationFilterSet
@@ -79,7 +81,11 @@ class AccountObservationViewset(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.observations.all()
+        return (
+            self.request.user.observations.all()
+            .select_related("source", "observation_subtype__observation_type")
+            .prefetch_related("medias")
+        )
 
     def get_serializer_class(self):
         if self.action == "list":
