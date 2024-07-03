@@ -4,6 +4,7 @@ from django.contrib.gis.db import models
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
 
+from project.utils.db.fields import SVGFileField
 from project.utils.db.mixins import TimeStampMixin
 
 
@@ -23,9 +24,7 @@ class Source(TimeStampMixin):
 class ObservationType(TimeStampMixin):
     label = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
-    pictogram = models.ImageField(
-        upload_to="observation_types", verbose_name=_("Pictogram")
-    )
+    pictogram = SVGFileField(upload_to="observation_types", verbose_name=_("Pictogram"))
 
     def __str__(self):
         return self.label
@@ -42,9 +41,7 @@ class ObservationSubType(TimeStampMixin):
     observation_type = models.ForeignKey(
         ObservationType, on_delete=models.PROTECT, related_name="sub_types"
     )
-    pictogram = models.ImageField(
-        upload_to="observation_types", verbose_name=_("Pictogram")
-    )
+    pictogram = SVGFileField(upload_to="observation_types", verbose_name=_("Pictogram"))
 
     def __str__(self):
         return f"{self.label} ({self.observation_type})"

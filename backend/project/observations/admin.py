@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 from sorl.thumbnail import get_thumbnail
 
 from project.observations.models import (
@@ -18,6 +19,7 @@ class SubTypeInline(admin.TabularInline):
     fields = ("label", "description", "pictogram", "picto_preview")
     readonly_fields = ("picto_preview",)
 
+    @admin.display(description=_("Preview"))
     def picto_preview(self, obj):
         # ex. the name of column is "image"
         if obj.pictogram:
@@ -64,7 +66,33 @@ class ObservationTypeAdmin(admin.ModelAdmin):
     search_fields = ("label", "description")
     ordering = ("label",)
     inlines = [SubTypeInline]
+    readonly_fields = ("picto_preview",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    (
+                        "label",
+                        "description",
+                    ),
+                )
+            },
+        ),
+        (
+            _("Pictogram"),
+            {
+                "fields": (
+                    (
+                        "picto_preview",
+                        "pictogram",
+                    ),
+                )
+            },
+        ),
+    )
 
+    @admin.display(description=_("Preview"))
     def picto_preview(self, obj):
         # ex. the name of column is "image"
         return mark_safe(
@@ -81,10 +109,11 @@ class ObservationSubTypeAdmin(admin.ModelAdmin):
     list_filter = ("observation_type",)
     ordering = ("label",)
 
+    @admin.display(description=_("Preview"))
     def picto_preview(self, obj):
         # ex. the name of column is "image"
         return mark_safe(
-            '<img src="{0}" width="150" height="150" style="object-fit:contain" />'.format(
+            '<img src="{0}" width="150" height="150" style="object-fit:contain" alt="picto"/>'.format(
                 obj.pictogram.url
             )
         )
