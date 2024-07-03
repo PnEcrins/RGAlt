@@ -1,6 +1,8 @@
 # Standard install
 
 - Unzip last release
+- Copy .env.dist to .env
+- Fill your VERSION and port mappings for containers
 - Copy app.env.dist to app.env
 - Fill your timezone and your server name (domain used in your browser)
 - Copy db.env.dist to db.env
