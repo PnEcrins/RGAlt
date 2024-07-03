@@ -17,7 +17,7 @@ services:
             - postgres_data:/var/lib/postgresql/data
 
     back:
-        image: prod
+        image: ghcr.io/pnecrins/rgalt:${VERSION}
 
         depends_on:
             postgres:
@@ -36,7 +36,7 @@ services:
         user: ${UID}:${GID}
 
     front:
-        image: prod
+        image: ghcr.io/pnecrins/rgalt:${VERSION}
 
         depends_on:
             - back
@@ -47,7 +47,7 @@ services:
     nginx:
         image: nginx:latest
         ports:
-            - "8080:80"
+            - "${NGINX_PORT:-8080}:80"
         depends_on:
             - back
             - front
