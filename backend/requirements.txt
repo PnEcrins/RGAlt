@@ -16,10 +16,13 @@ django==5.0.6
     # via
     #   -r requirements.in
     #   django-filter
+    #   django-treebeard
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
 django-filter==24.2
+    # via -r requirements.in
+django-treebeard==4.7.1
     # via -r requirements.in
 djangorestframework==3.15.2
     # via

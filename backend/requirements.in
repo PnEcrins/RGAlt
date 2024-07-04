@@ -11,3 +11,4 @@ sentry-sdk
 gunicorn
 drf-dynamic-fields
 djangorestframework-simplejwt
+django-treebeard
