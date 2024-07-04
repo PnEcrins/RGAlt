@@ -5,31 +5,25 @@ from rest_framework import serializers
 from rest_framework_gis import serializers as gis_serializers
 from sorl.thumbnail import get_thumbnail
 
-from project.observations.models import (
-    Media,
-    Observation,
-    ObservationSubType,
-    ObservationType,
-)
+from project.observations.models import Area, Media, Observation, ObservationCategory
 
 
-class ObservationSubTypeSerializer(serializers.ModelSerializer):
+class ObservationCategorySerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = ObservationSubType
+        model = ObservationCategory
         fields = (
             "id",
             "label",
             "description",
             "pictogram",
+            "children",
         )
 
-
-class ObservationTypeSerializer(serializers.ModelSerializer):
-    sub_types = ObservationSubTypeSerializer(many=True)
-
-    class Meta:
-        model = ObservationType
-        fields = ("id", "label", "description", "pictogram", "sub_types")
+    def get_fields(self):
+        fields = super().get_fields()
+        fields["children"] = ObservationCategorySerializer(many=True)
+        return fields
 
 
 class ThumbnailSerializer(serializers.Serializer):
@@ -71,9 +65,6 @@ class MediaSerializer(serializers.ModelSerializer):
 
 class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerializer):
     source = serializers.SlugRelatedField("label", read_only=True)
-    subtype = serializers.SlugRelatedField(
-        "label", source="observation_subtype", read_only=True
-    )
 
     class Meta:
         model = Observation
@@ -84,16 +75,16 @@ class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerial
             "comments",
             "event_date",
             "source",
-            "subtype",
+            "category",
         )
-        write_only_fields = ("observation_subtype__id",)
+        write_only_fields = ("category__id",)
 
 
 class ObservationListSerializer(ObservationMixin):
-    first_photo = MediaSerializer(read_only=True)
+    main_picture = MediaSerializer(read_only=True)
 
     class Meta(ObservationMixin.Meta):
-        fields = ObservationMixin.Meta.fields + ("first_photo",)
+        fields = ObservationMixin.Meta.fields + ("main_picture",)
 
 
 class ObservationDetailSerializer(ObservationMixin):
@@ -101,3 +92,14 @@ class ObservationDetailSerializer(ObservationMixin):
 
     class Meta(ObservationMixin.Meta):
         fields = ObservationMixin.Meta.fields + ("medias",)
+
+
+class AreaSerializer(serializers.ModelSerializer):
+    bbox = serializers.SerializerMethodField()
+
+    def get_bbox(self, obj):
+        return [obj.north_west.coords, obj.south_east.coords]
+
+    class Meta:
+        model = Area
+        fields = ("id", "name", "bbox")

@@ -8,41 +8,39 @@ from rest_framework.mixins import (
     UpdateModelMixin,
 )
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
 from rest_framework.viewsets import GenericViewSet
 
 from project.accounts.models import User
 from project.api.filters import ObservationFilterSet
 from project.api.serializers.accounts import AccountSerializer
-from project.api.serializers.common import SettingsSerializer
+from project.api.serializers.common import EndpointsSerializer, SettingsSerializer
 from project.api.serializers.observations import (
     ObservationDetailSerializer,
     ObservationListSerializer,
-    ObservationTypeSerializer,
 )
-from project.observations.models import Observation, ObservationType
+from project.observations.models import Area, Observation, ObservationCategory
 
 
 class SettingsApiView(GenericAPIView):
     serializer_class = SettingsSerializer
 
     def get(self, request):
-        data = {}
-        observation_types = ObservationType.objects.prefetch_related("sub_types").all()
-        observation_types_serialized = ObservationTypeSerializer(
-            observation_types, many=True, context={"request": request}
+        serializer = self.get_serializer(
+            {
+                "areas": Area.objects.all(),
+                "endpoints": EndpointsSerializer(
+                    context=self.get_serializer_context()
+                ).data,
+                "categories": ObservationCategory.objects.filter(depth=1),
+            }
         )
-        data["observation_types"] = observation_types_serialized.data
-        data["observation_public_url"] = reverse(
-            "api:observations-list", request=request
-        )
-        return Response(data)
+        return Response(serializer.data)
 
 
 class ObservationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (
         Observation.objects.all()
-        .select_related("source", "observation_subtype__observation_type")
+        .select_related("source", "category")
         .prefetch_related("medias")
     )
     filter_backends = (DjangoFilterBackend,)
@@ -62,12 +60,16 @@ class AccountViewSet(
 ):
     queryset = User.objects.all()
     serializer_class = AccountSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
 
-    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny])
+    def get_permissions(self):
+        if self.action == "signup":
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
+
+    @action(detail=False, methods=["post"])
     def signup(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -83,7 +85,7 @@ class AccountObservationViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         return (
             self.request.user.observations.all()
-            .select_related("source", "observation_subtype__observation_type")
+            .select_related("source", "category")
             .prefetch_related("medias")
         )
 
