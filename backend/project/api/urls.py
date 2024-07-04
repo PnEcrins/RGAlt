@@ -59,7 +59,7 @@ urlpatterns = [
                 "post": "signup",
             }
         ),
-        name="me",
+        name="signup",
     ),
     path("api/", include(router.urls)),
 ]

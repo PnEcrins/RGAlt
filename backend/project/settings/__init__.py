@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "django_filters",
     "sorl.thumbnail",
+    "treebeard",
     "project.api",
     "project.observations",
     "project.accounts",

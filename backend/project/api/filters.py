@@ -15,4 +15,4 @@ class ObservationFilterSet(FilterSet):
 
     class Meta:
         model = Observation
-        fields = ["event_date", "observation_subtype", "fields"]
+        fields = ["event_date", "category", "fields"]
