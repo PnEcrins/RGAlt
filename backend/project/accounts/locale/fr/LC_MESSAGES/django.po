@@ -48,12 +48,6 @@ msgstr ""
 msgid "date joined"
 msgstr ""
 
-msgid "staff status"
-msgstr ""
-
-msgid "Designates whether the user can log into this admin site."
-msgstr ""
-
 msgid "active"
 msgstr ""
 
