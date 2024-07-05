@@ -26,3 +26,9 @@ export type ObservationType = {
   tooltip: string;
   observationTypes: ObservationTypes;
 };
+
+export type Areas = Area[];
+
+export type Area = {
+  id: number;
+};

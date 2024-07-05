@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { afterNextRender, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
@@ -12,6 +12,7 @@ import { DownloadDialog } from './dialogs/download-dialog';
 import { DeleteDialog } from './dialogs/delete-dialog';
 
 import areas from '../../../data/areas.json';
+import { OfflineService } from '../../services/offline.service';
 
 @Component({
   selector: 'app-my-offline-data',
@@ -29,8 +30,9 @@ import areas from '../../../data/areas.json';
 })
 export class MyOfflineDataComponent {
   readonly dialog = inject(MatDialog);
+  offlineService = inject(OfflineService);
 
-  areas = areas;
+  areas: any[] = [];
 
   columns: number = 2;
   breakpoints = {
@@ -71,6 +73,20 @@ export class MyOfflineDataComponent {
           }
         }
       });
+
+    this.initAreas();
+  }
+
+  async initAreas() {
+    for (let index = 0; index < areas.length; index++) {
+      const area = areas[index];
+      this.areas.push({
+        ...area,
+        offline: Boolean(
+          await this.offlineService.getDataInStore('offline-areas', area.id),
+        ),
+      });
+    }
   }
 
   areaClick(area: any) {
@@ -87,8 +103,32 @@ export class MyOfflineDataComponent {
       data: { name: area.name },
     });
 
-    downloadDialogRef.afterClosed().subscribe((result) => {
+    downloadDialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.downloaded) {
+        const { tileLayerOffline } = await import('leaflet.offline');
+        const L = await import('leaflet');
+        const url =
+          'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
+        const attribution = "<a target='_blank' href='https://ign.fr/'>IGN</a>";
+        const minZoom = 0;
+        const maxZoom = 9;
+
+        const bounds = L.default.latLngBounds([
+          { lat: 45.933960441921585, lng: 7.053222656250001 },
+          { lat: 44.47299117260252, lng: 5.921630859375001 },
+        ]);
+        const offlineLayer = tileLayerOffline(url, { attribution });
+        await this.offlineService.writeOrUpdateTilesInStore(
+          offlineLayer,
+          bounds,
+          minZoom,
+          maxZoom,
+        );
+
+        await this.offlineService.writeOrUpdateDataInStore('offline-areas', [
+          { id: area.id },
+        ]);
+
         area.offline = !area.offline;
       }
     });
@@ -100,8 +140,28 @@ export class MyOfflineDataComponent {
       data: { name: area.name },
     });
 
-    deleteDialogRef.afterClosed().subscribe((result) => {
+    deleteDialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.deleted) {
+        const { tileLayerOffline } = await import('leaflet.offline');
+        const L = await import('leaflet');
+        const url =
+          'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
+        const attribution = "<a target='_blank' href='https://ign.fr/'>IGN</a>";
+        const minZoom = 0;
+        const maxZoom = 9;
+
+        const bounds = L.default.latLngBounds([
+          { lat: 45.933960441921585, lng: 7.053222656250001 },
+          { lat: 44.47299117260252, lng: 5.921630859375001 },
+        ]);
+        const offlineLayer = tileLayerOffline(url, { attribution });
+        await this.offlineService.removeTilesInStore(
+          offlineLayer,
+          bounds,
+          minZoom,
+          maxZoom,
+        );
+        await this.offlineService.deleteDataInStore('offline-areas', [area.id]);
         area.offline = !area.offline;
       }
     });

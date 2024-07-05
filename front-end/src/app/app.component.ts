@@ -66,14 +66,6 @@ export class AppComponent {
     },
     {
       id: 2,
-      text: 'Interface de synthèse',
-      routerLink: 'interface-de-synthese',
-      authenficated: false,
-      click: () => null,
-      observationsPending: false,
-    },
-    {
-      id: 3,
       text: 'Mon compte',
       routerLink: 'mon-compte',
       authenficated: true,
@@ -81,10 +73,18 @@ export class AppComponent {
       observationsPending: false,
     },
     {
-      id: 4,
+      id: 3,
       text: 'Saisir une nouvelle observation',
       routerLink: 'nouvelle-observation',
       authenficated: true,
+      click: () => null,
+      observationsPending: false,
+    },
+    {
+      id: 4,
+      text: 'Interface de synthèse',
+      routerLink: 'interface-de-synthese',
+      authenficated: null,
       click: () => null,
       observationsPending: false,
     },
@@ -124,7 +124,9 @@ export class AppComponent {
 
   handleAuthentification(value: any) {
     this.currentSideNavItems = this.sideNavItems.filter(
-      (sideNavItem) => sideNavItem.authenficated === value,
+      (sideNavItem) =>
+        sideNavItem.authenficated === value ||
+        sideNavItem.authenficated === null,
     );
   }
 
