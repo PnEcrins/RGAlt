@@ -13,6 +13,7 @@ import { DeleteDialog } from './dialogs/delete-dialog';
 
 import areas from '../../../data/areas.json';
 import { OfflineService } from '../../services/offline.service';
+import { LoaderDialog } from './dialogs/loader-dialog';
 
 @Component({
   selector: 'app-my-offline-data',
@@ -105,6 +106,10 @@ export class MyOfflineDataComponent {
 
     downloadDialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.downloaded) {
+        const loaderDialogRef = this.dialog.open(LoaderDialog, {
+          width: '250px',
+          data: { title: 'Téléchargement en cours' },
+        });
         const { tileLayerOffline } = await import('leaflet.offline');
         const L = await import('leaflet');
         const url =
@@ -130,6 +135,7 @@ export class MyOfflineDataComponent {
         ]);
 
         area.offline = !area.offline;
+        loaderDialogRef.close();
       }
     });
   }
@@ -142,6 +148,10 @@ export class MyOfflineDataComponent {
 
     deleteDialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.deleted) {
+        const loaderDialogRef = this.dialog.open(LoaderDialog, {
+          width: '250px',
+          data: { title: 'Suppression en  cours' },
+        });
         const { tileLayerOffline } = await import('leaflet.offline');
         const L = await import('leaflet');
         const url =
@@ -163,6 +173,7 @@ export class MyOfflineDataComponent {
         );
         await this.offlineService.deleteDataInStore('offline-areas', [area.id]);
         area.offline = !area.offline;
+        loaderDialogRef.close();
       }
     });
   }
