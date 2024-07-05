@@ -21,6 +21,7 @@ import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
 
 import evenementsRemarquables from '../../../data/evenements_remarquables.json';
+import { Observations } from '../../types/types';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -47,7 +48,8 @@ export class SynthesisInterfaceComponent {
 
   L: any;
   map: any;
-  observationsFeatureCollection: any = evenementsRemarquables;
+  observationsFeatureCollection: { features: Observations } =
+    evenementsRemarquables as any;
   currentObservationsFeatureCollection: any = evenementsRemarquables;
   observationsFeatureCollectionFiltered: any = evenementsRemarquables;
 
@@ -197,7 +199,8 @@ export class SynthesisInterfaceComponent {
       if (
         result &&
         result.filter &&
-        (result.filter.observationTypes ||
+        ((result.filter.observationTypes &&
+          result.filter.observationTypes.length > 0) ||
           (result.filter.observationDates.start &&
             result.filter.observationDates.end))
       ) {
@@ -261,7 +264,6 @@ export class SynthesisInterfaceComponent {
       if (result && !result.cancel) {
         this.updateMap();
         this.fitToCurrentObservations();
-        this.map.fire('moveend');
       }
     });
   }
@@ -321,6 +323,7 @@ export class SynthesisInterfaceComponent {
   }
 
   updateMap() {
+    this.observationsLayer!.clearLayers();
     this.observationsLayer!.addData(this.observationsFeatureCollectionFiltered);
     this.observationsClusterGroup.clearLayers();
     this.observationsClusterGroup.addLayer(this.observationsLayer);

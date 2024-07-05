@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 
 import evenementsRemarquables from '../../../data/evenements_remarquables.json';
 import observationTypes from '../../../data/types.json';
+import { Observation, ObservationType } from '../../types/types';
 
 @Component({
   selector: 'app-observation-detail',
@@ -12,17 +13,17 @@ import observationTypes from '../../../data/types.json';
 })
 export class ObservationDetailComponent {
   @Input() observation!: string;
-  observationData: any;
-  observationType: any;
+  observationData!: { properties: Observation };
+  observationType!: ObservationType;
 
   ngOnInit() {
     const observationId = Number(this.observation.split('-')[0]);
-    this.observationData = evenementsRemarquables.features.find(
-      (feature) => feature.properties.id_event === observationId,
+    this.observationData = (evenementsRemarquables.features as any).find(
+      (feature: any) => feature.properties.id_event === observationId,
     );
     this.observationType = observationTypes.find(
       (observationType) =>
-        observationType.id === this.observationData.properties.id_event_type,
-    );
+        observationType.id === this.observationData!.properties.id_event_type,
+    )!;
   }
 }

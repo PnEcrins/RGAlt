@@ -1,50 +1,86 @@
 [
   {
     "id": 1,
-    "name": "Avalanche"
+    "name": "Avalanche",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 2,
-    "name": "Chablis"
+    "name": "Chablis",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 3,
-    "name": "Chute de blocs"
+    "name": "Chute de blocs",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 4,
-    "name": "Crue torrentielle"
+    "name": "Crue torrentielle",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 5,
-    "name": "Incendie"
+    "name": "Incendie",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 6,
-    "name": "Inondation"
+    "name": "Inondation",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 7,
-    "name": "Lave torrentielle"
+    "name": "Lave torrentielle",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 8,
-    "name": "Ravinement"
+    "name": "Ravinement",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 9,
-    "name": "Volis"
+    "name": "Volis",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 10,
-    "name": "Apparition d'un nouveau lac"
+    "name": "Apparition d'un nouveau lac",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 11,
-    "name": "Glissement de terrain"
+    "name": "Glissement de terrain",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   },
   {
     "id": 12,
-    "name": "Phénomène glaciaire"
+    "name": "Phénomène glaciaire",
+    "icon": "question_mark",
+    "tooltip": "tooltip",
+    "observationTypes": []
   }
 ]

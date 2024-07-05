@@ -1,0 +1,68 @@
+<div
+  *ngIf="myOfflineObservations.length > 0"
+  class="offline-observations-container"
+>
+  <div class="mat-title-medium">Mes observations à envoyer</div>
+  <div class="send-observations-container">
+    <button mat-flat-button color="primary" (click)="sendObservations()">
+      Envoyer toutes mes observations
+    </button>
+  </div>
+  <mat-list class="mat-expansion-panel-body-visible">
+    @for (observation of myOfflineObservations; track observation.id_event) {
+      <mat-list-item>
+        <span matListItemTitle>{{
+          observation.name_event && observation.name_event !== ""
+            ? observation.name_event
+            : getEventType(observation.id_event_type)!.name
+        }}</span>
+        <span matListItemLine>{{
+          observation.date_event | date: "dd/MM/yyyy"
+        }}</span>
+        <span matListItemMeta>
+          <button
+            mat-icon-button
+            class="mt-16"
+            (click)="sendObservation(observation)"
+          >
+            <mat-icon>send</mat-icon>
+          </button>
+        </span>
+      </mat-list-item>
+    }
+  </mat-list>
+</div>
+
+<div *ngIf="myObservations.length > 0" class="observations-container">
+  <div class="mat-title-medium">Mes observations</div>
+  <mat-list class="mat-expansion-panel-body-visible">
+    @for (observation of myObservations; track observation.id_event) {
+      <mat-list-item>
+        <span matListItemTitle>{{ observation.name_event }}</span>
+        <span matListItemLine>{{
+          observation.date_event | date: "dd/MM/yyyy"
+        }}</span>
+        <span matListItemMeta>
+          <button
+            mat-icon-button
+            class="mt-16"
+            [routerLink]="[
+              '/detail-d-une-observation',
+              slugify(
+                observation.id_event
+                  .toString()
+                  .concat(
+                    observation.name_event
+                      ? '-'.concat(observation.name_event)
+                      : ''
+                  )
+              ),
+            ]"
+          >
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </span>
+      </mat-list-item>
+    }
+  </mat-list>
+</div>
