@@ -1,19 +1,23 @@
 <mat-toolbar>
-  <button *ngIf="backButton" (click)="handleBackButton()" mat-icon-button>
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <a *ngIf="!backButton" routerLink="/" class="logo-container">
+  <a routerLink="/" class="logo-container">
     <img src="favicon.ico" />
   </a>
-  <span>{{ title }}</span>
+  <span>Regard d'altitude</span>
   <span class="toolbar-spacer"></span>
-  <button *ngIf="accountButton" mat-icon-button (click)="sidenav.toggle()">
-    <mat-icon aria-hidden="false" [matBadge]="observationsPending"
+  <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon
+      aria-hidden="false"
+      [matBadge]="this.offlineService.observationsPending | async"
       >account_circle</mat-icon
     >
   </button>
 </mat-toolbar>
-
+<mat-toolbar *ngIf="backButton">
+  <button (click)="handleBackButton()" mat-icon-button>
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>{{ title }}</span>
+</mat-toolbar>
 <mat-sidenav-container [style.marginTop.px]="0">
   <mat-sidenav
     #sidenav
@@ -35,7 +39,13 @@
             !currentSideNavItem.routerLink ? currentSideNavItem.click() : null
           "
         >
-          <div [matBadge]="currentSideNavItem.observationsPending">
+          <div
+            [matBadge]="
+              currentSideNavItem.observationsPending
+                ? (this.offlineService.observationsPending | async)
+                : null
+            "
+          >
             {{ currentSideNavItem.text }}
           </div>
         </a>

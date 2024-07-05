@@ -31,7 +31,14 @@ import * as _moment from 'moment';
 import { default as _rollupMoment } from 'moment';
 import { round } from '@turf/helpers';
 
-import observations from '../../../data/observations.json';
+import observations from '../../../data/types.json';
+import {
+  Observation,
+  ObservationType,
+  ObservationTypes,
+} from '../../types/types';
+import { OfflineService } from '../../services/offline.service';
+import { v4 as uuidv4 } from 'uuid';
 
 const moment = _rollupMoment || _moment;
 
@@ -59,8 +66,8 @@ const moment = _rollupMoment || _moment;
   styleUrl: './new-observation.component.scss',
 })
 export class NewObservationComponent {
-  observations = observations;
-  observationParent: any = null;
+  observationsTypes: ObservationTypes = observations;
+  observationTypeParent: ObservationType | null = null;
   columns: number = 2;
   breakpoints = {
     xl: 4,
@@ -78,9 +85,9 @@ export class NewObservationComponent {
   @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
 
   typeForm: FormGroup<{
-    type: FormControl<{ id: number; name: string; icon: string } | null>;
+    type: FormControl<{ id: number; name: ''; icon: string } | null>;
   }> = new FormGroup({
-    type: new FormControl<{ id: number; name: string; icon: string } | null>(
+    type: new FormControl<{ id: number; name: ''; icon: string } | null>(
       null,
       Validators.required,
     ),
@@ -99,16 +106,19 @@ export class NewObservationComponent {
   });
 
   moreDataForm: FormGroup<{
-    date: FormControl<Date | null>;
+    date: FormControl<any | null>;
+    name: FormControl<string | null>;
     comment: FormControl<string | null>;
   }> = new FormGroup({
     date: new FormControl<any | null>(moment(), Validators.required),
+    name: new FormControl<string | null>(''),
     comment: new FormControl<string | null>(''),
   });
 
   breakpointObserver = inject(BreakpointObserver);
   platform = inject(Platform);
   router = inject(Router);
+  offlineService = inject(OfflineService);
 
   ngOnInit() {
     this.mobile = this.platform.ANDROID || this.platform.IOS;
@@ -184,12 +194,12 @@ export class NewObservationComponent {
   }
 
   observationClick(value: any) {
-    if (value.observations.length === 0) {
+    if (value.observationTypes.length === 0) {
       this.typeForm.setValue({ type: value });
     } else {
       this.typeForm.setValue({ type: null });
-      this.observationParent = value;
-      this.observations = value.observations;
+      this.observationTypeParent = value;
+      this.observationsTypes = value.observationTypes;
     }
   }
 
@@ -210,12 +220,32 @@ export class NewObservationComponent {
   }
 
   backToPreviousObservations() {
-    this.observationParent = null;
+    this.observationTypeParent = null;
     this.typeForm.setValue({ type: null });
-    this.observations = observations;
+    this.observationsTypes = observations;
   }
 
   saveAsDraft() {
+    const newObservation: Observation = {
+      id_event: uuidv4(),
+      name_event: this.moreDataForm.value.name!,
+      date_event: this.moreDataForm.value.date!.toDate().toString(),
+      observers: 'Observateur',
+      description: this.moreDataForm.value.comment!,
+      direct_observation: true,
+      id_event_type: this.typeForm.value.type!.id,
+      author: 'Auteur',
+      date_create: moment().toDate().toString(),
+      picture_legend: 'Légende de la photo',
+      picture_author: 'Auteur de la photo',
+      picture_date: moment().toDate().toString(),
+      picture_licence: 'Licence de la photo',
+      picture_path: 'Chemin de la photo',
+    };
+    this.offlineService.writeOrUpdateDataInStore('observations', [
+      newObservation,
+    ]);
+    this.offlineService.handleObservationsPending();
     this.router.navigate(['/']);
   }
 

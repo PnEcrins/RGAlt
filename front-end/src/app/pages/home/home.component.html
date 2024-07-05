@@ -1,6 +1,6 @@
 <section class="new-observation-container">
   <button
-    *ngIf="authService.isAuth | async"
+    [disabled]="!(authService.isAuth | async)"
     routerLink="/nouvelle-observation"
     mat-fab
     extended
