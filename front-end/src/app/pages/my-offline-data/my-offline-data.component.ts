@@ -109,6 +109,7 @@ export class MyOfflineDataComponent {
         const loaderDialogRef = this.dialog.open(LoaderDialog, {
           width: '250px',
           data: { title: 'Téléchargement en cours' },
+          disableClose: true,
         });
         const { tileLayerOffline } = await import('leaflet.offline');
         const L = await import('leaflet');
