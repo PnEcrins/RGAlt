@@ -208,3 +208,10 @@ SIMPLE_JWT = {
 }
 
 DEBUG_TOOLBAR_CONFIG = {"IS_RUNNING_TESTS": False}
+
+# try load custom.py in conf folder
+custom_settings_file = CONF_DIR / "custom.py"
+if os.path.exists(custom_settings_file):
+    with open(custom_settings_file, "r") as f:
+        print("Read custom configuration from {}".format(custom_settings_file))
+        exec(f.read())
