@@ -51,6 +51,7 @@ class ObservationCategoryAdmin(TreeAdmin):
     list_display = ("label", "description", "picto_preview")
     search_fields = ("label", "description")
     ordering = ("label",)
+    readonly_fields = ("picto_preview",)
 
     @admin.display(description=_("Preview"))
     def picto_preview(self, obj):
