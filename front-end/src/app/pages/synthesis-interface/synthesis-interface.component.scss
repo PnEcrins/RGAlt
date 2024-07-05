@@ -5,12 +5,12 @@ $panel-height: 100vh;
   display: flex;
   justify-content: center;
   position: absolute;
-  bottom: calc(16px + 48px);
+  bottom: calc(16px + 48px + 56px);
   z-index: 400;
 }
 
 #map {
-  height: calc(100% - 48px);
+  height: calc(100% - 48px - 56px);
   width: 100%;
 }
 
@@ -27,7 +27,7 @@ $panel-height: 100vh;
 }
 
 .expansion-panel-open {
-  height: calc($panel-height - 56px);
+  height: calc($panel-height - 56px - 56px);
   mat-list {
     overflow: scroll;
     max-height: calc($panel-height - var(--mat-toolbar-standard-height) - 16px);
