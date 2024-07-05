@@ -17,54 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+msgid "API"
+msgstr "API"
 
-msgid "Preview"
-msgstr "Prévisualisation"
+msgid "Django site admin"
+msgstr "Site d'administration"
 
-msgid "Source"
-msgstr "Source"
-
-msgid "Sources"
-msgstr "Sources"
-
-msgid "Pictogram"
-msgstr "Pictogramme"
-
-msgid "Category"
-msgstr "Catégorie"
-
-msgid "Categories"
-msgstr "Catégories"
-
-msgid "Image"
-msgstr "Image"
-
-msgid "Video"
-msgstr "Vidéo"
-
-msgid "Name"
-msgstr "Nom"
-
-msgid "Location"
-msgstr "Emplacement"
-
-msgid "Observation"
-msgstr "Observation"
-
-msgid "Observations"
-msgstr "Observations"
-
-msgid "Media"
-msgstr "Media"
-
-msgid "Medias"
-msgstr "Medias"
-
-msgid "Geometry"
-msgstr "Géométrie"
-
-msgid "Area"
-msgstr "Zone"
-
-msgid "Areas"
-msgstr "Zones"
+msgid "Django administration"
+msgstr "Administration"
