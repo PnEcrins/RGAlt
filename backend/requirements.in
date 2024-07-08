@@ -12,3 +12,4 @@ gunicorn
 drf-dynamic-fields
 djangorestframework-simplejwt
 django-treebeard
+django-storages[s3]
