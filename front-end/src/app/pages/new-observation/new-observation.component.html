@@ -14,7 +14,7 @@
           Retour
         </button>
       </div>
-      <div class="mat-title-large mt-16">{{ observationTypeParent.name }}</div>
+      <div class="mat-title-large mt-16">{{ observationTypeParent.label }}</div>
     </div>
     <form [formGroup]="typeForm">
       <mat-grid-list #grid [cols]="columns" rowHeight="120px" gutterSize="20px">
@@ -26,7 +26,7 @@
             <div class="observation-type-tooltip-container">
               <button
                 mat-icon-button
-                matTooltip="{{ observationsType.tooltip }}"
+                matTooltip="{{ observationsType.description }}"
                 class="observation-type-tooltip"
                 #tooltip="matTooltip"
                 (click)="tooltip.show()"
@@ -46,9 +46,9 @@
               }"
             >
               <mat-icon class="observation-type-icon">
-                {{ observationsType.icon }}
+                {{ observationsType.pictogram }}
               </mat-icon>
-              <mat-card-footer> {{ observationsType.name }}</mat-card-footer>
+              <mat-card-footer> {{ observationsType.label }}</mat-card-footer>
             </mat-card>
           </mat-grid-tile>
         }
@@ -153,9 +153,9 @@
       Type d'observation
       <div>
         <span *ngIf="observationTypeParent"
-          >{{ observationTypeParent.name }} -
+          >{{ observationTypeParent.label }} -
         </span>
-        {{ typeForm.value.type.name }}
+        {{ typeForm.value.type.label }}
       </div>
     </div>
     <div *ngIf="photoForm.value.photo" class="mt-16 photo-container">

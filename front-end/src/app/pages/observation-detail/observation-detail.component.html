@@ -1,20 +1,30 @@
 <div class="photo-container">
-  <img [src]="observationData.properties.picture_path" />
+  <img
+    *ngIf="
+      observationData.properties.medias &&
+      observationData.properties.medias.length > 0
+    "
+    [src]="observationData.properties.medias[0].thumbnails.large"
+  />
 </div>
 <div class="name-container mat-title-large">
-  {{ observationData.properties.name_event }}
+  {{
+    observationData.properties.name && observationData.properties.name !== ""
+      ? observationData.properties.name
+      : observationType.label
+  }}
 </div>
 <div class="type-name-container mat-body-large">
-  {{ observationType.name }}
+  {{ observationType.label }}
 </div>
 <div class="date-container mat-body-medium">
   <span class="mat-title-medium">Date : </span
-  ><span>{{ observationData.properties.date_event }}</span>
+  ><span>{{ observationData.properties.event_date }}</span>
 </div>
-<div class="observers-container mat-body-medium">
-  <span class="mat-title-medium">Observateur : </span
-  ><span>{{ observationData.properties.observers }}</span>
+<div class="source-container mat-body-medium">
+  <span class="mat-title-medium">Source : </span
+  ><span>{{ observationData.properties.source }}</span>
 </div>
-<div class="description-container mat-body-medium">
-  {{ observationData.properties.description }}
+<div class="comments-container mat-body-medium">
+  {{ observationData.properties.comments }}
 </div>

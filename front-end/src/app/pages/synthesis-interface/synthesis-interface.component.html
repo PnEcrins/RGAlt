@@ -25,7 +25,7 @@
     <mat-list class="mat-expansion-panel-body-visible">
       @for (
         observation of currentObservationsFeatureCollection.features;
-        track observation.properties.id_event
+        track observation.properties.uuid
       ) {
         <mat-list-item>
           <span matListItemIcon
@@ -37,9 +37,13 @@
             </button></span
           >
 
-          <span matListItemTitle>{{ observation.properties.name_event }}</span>
+          <span matListItemTitle>{{
+            observation.properties.name && observation.properties.name !== ""
+              ? observation.properties.name
+              : getEventType(observation.properties.category)!.label
+          }}</span>
           <span matListItemLine>{{
-            observation.properties.date_event | date: "dd/MM/yyyy"
+            observation.properties.event_date | date: "dd/MM/yyyy"
           }}</span>
           <span matListItemMeta>
             <button
@@ -48,11 +52,11 @@
               [routerLink]="[
                 '/detail-d-une-observation',
                 slugify(
-                  observation.properties.id_event
+                  observation.properties.uuid
                     .toString()
                     .concat(
-                      observation.properties.name_event
-                        ? '-'.concat(observation.properties.name_event)
+                      observation.properties.name
+                        ? '-'.concat(observation.properties.name)
                         : ''
                     )
                 ),

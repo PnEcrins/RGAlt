@@ -31,7 +31,7 @@ import * as _moment from 'moment';
 import { default as _rollupMoment } from 'moment';
 import { round } from '@turf/helpers';
 
-import observations from '../../../data/types.json';
+import observationTypes from '../../../data/types.json';
 import {
   Observation,
   ObservationType,
@@ -66,7 +66,7 @@ const moment = _rollupMoment || _moment;
   styleUrl: './new-observation.component.scss',
 })
 export class NewObservationComponent {
-  observationsTypes: ObservationTypes = observations;
+  observationsTypes: ObservationTypes = observationTypes;
   observationTypeParent: ObservationType | null = null;
   columns: number = 2;
   breakpoints = {
@@ -85,12 +85,9 @@ export class NewObservationComponent {
   @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
 
   typeForm: FormGroup<{
-    type: FormControl<{ id: number; name: ''; icon: string } | null>;
+    type: FormControl<ObservationType | null>;
   }> = new FormGroup({
-    type: new FormControl<{ id: number; name: ''; icon: string } | null>(
-      null,
-      Validators.required,
-    ),
+    type: new FormControl<ObservationType | null>(null, Validators.required),
   });
 
   photoForm: FormGroup<{
@@ -193,13 +190,13 @@ export class NewObservationComponent {
     }).addTo(this.map);
   }
 
-  observationClick(value: any) {
-    if (value.observationTypes.length === 0) {
+  observationClick(value: ObservationType) {
+    if (value.children.length === 0) {
       this.typeForm.setValue({ type: value });
     } else {
       this.typeForm.setValue({ type: null });
       this.observationTypeParent = value;
-      this.observationsTypes = value.observationTypes;
+      this.observationsTypes = value.children;
     }
   }
 
@@ -222,25 +219,17 @@ export class NewObservationComponent {
   backToPreviousObservations() {
     this.observationTypeParent = null;
     this.typeForm.setValue({ type: null });
-    this.observationsTypes = observations;
+    this.observationsTypes = observationTypes;
   }
 
   saveAsDraft() {
     const newObservation: Observation = {
-      id_event: uuidv4(),
-      name_event: this.moreDataForm.value.name!,
-      date_event: this.moreDataForm.value.date!.toDate().toString(),
-      observers: 'Observateur',
-      description: this.moreDataForm.value.comment!,
-      direct_observation: true,
-      id_event_type: this.typeForm.value.type!.id,
-      author: 'Auteur',
-      date_create: moment().toDate().toString(),
-      picture_legend: 'Légende de la photo',
-      picture_author: 'Auteur de la photo',
-      picture_date: moment().toDate().toString(),
-      picture_licence: 'Licence de la photo',
-      picture_path: 'Chemin de la photo',
+      uuid: uuidv4(),
+      name: this.moreDataForm.value.name!,
+      event_date: this.moreDataForm.value.date!.toDate().toString(),
+      comments: this.moreDataForm.value.comment!,
+      category: this.typeForm.value.type!.id,
+      source: 'Source',
     };
     this.offlineService.writeOrUpdateDataInStore('observations', [
       newObservation,
@@ -251,5 +240,15 @@ export class NewObservationComponent {
 
   sendObservation() {
     this.router.navigate(['/']);
+  }
+
+  getEventType(eventTypeId: number) {
+    const eventTypes = [
+      ...observationTypes.map((type) => type),
+      ...observationTypes.map((type) => type.children).flat(),
+    ];
+    return eventTypes.find(
+      (observationType) => observationType.id === eventTypeId,
+    );
   }
 }

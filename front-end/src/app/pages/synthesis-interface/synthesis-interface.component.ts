@@ -19,9 +19,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
+import { Observations } from '../../types/types';
 
 import evenementsRemarquables from '../../../data/evenements_remarquables.json';
-import { Observations } from '../../types/types';
+import observationTypes from '../../../data/types.json';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -76,11 +77,12 @@ export class SynthesisInterfaceComponent {
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
     await import('leaflet.markercluster');
+    const tileLayerOffline = await import('leaflet.offline');
 
     this.map = this.L.default.map('map', { zoom: 4, center: [47, 2] });
 
     this.L.default
-      .tileLayer(
+      .tileLayerOffline(
         'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
         {
           attribution: "<a target='_blank' href='https://ign.fr/'>IGN</a>",
@@ -138,7 +140,7 @@ export class SynthesisInterfaceComponent {
   }
 
   handleObservationPopup(geoJsonPoint: any, layer?: any) {
-    const imgSrc = geoJsonPoint.properties.picture_path;
+    const imgSrc = geoJsonPoint.properties.main_picture?.thumbnails.small;
     const observationPopup = this.L.default.DomUtil.create('div');
     observationPopup.className = 'observation-popup';
     if (Boolean(imgSrc)) {
@@ -147,12 +149,15 @@ export class SynthesisInterfaceComponent {
       observationPopup.appendChild(observationImg);
     }
     const observationName = this.L.default.DomUtil.create('div');
-    observationName.innerHTML = geoJsonPoint.properties.name_event;
+    observationName.innerHTML =
+      geoJsonPoint.properties.name && geoJsonPoint.properties.name !== ''
+        ? geoJsonPoint.properties.name
+        : this.getEventType(geoJsonPoint.properties.category)!.label;
     observationName.className = 'observation-name';
     observationPopup.appendChild(observationName);
 
     const observationDate = this.L.default.DomUtil.create('div');
-    observationDate.innerHTML = geoJsonPoint.properties.date_event;
+    observationDate.innerHTML = geoJsonPoint.properties.event_date;
     observationDate.className = 'observation-date';
     observationPopup.appendChild(observationDate);
 
@@ -161,7 +166,7 @@ export class SynthesisInterfaceComponent {
     observationButton.className = 'observation-button';
     observationButton.onclick = () => {
       const slug = slugify(
-        `${geoJsonPoint.properties.id_event}-${geoJsonPoint.properties.name_event}`,
+        `${geoJsonPoint.properties.uuid}-${geoJsonPoint.properties.name}`,
       );
       this.router.navigate(['/detail-d-une-observation', slug]);
     };
@@ -327,5 +332,15 @@ export class SynthesisInterfaceComponent {
     this.observationsLayer!.addData(this.observationsFeatureCollectionFiltered);
     this.observationsClusterGroup.clearLayers();
     this.observationsClusterGroup.addLayer(this.observationsLayer);
+  }
+
+  getEventType(eventTypeId: number) {
+    const eventTypes = [
+      ...observationTypes.map((type) => type),
+      ...observationTypes.map((type) => type.children).flat(),
+    ];
+    return eventTypes.find(
+      (observationType) => observationType.id === eventTypeId,
+    );
   }
 }
