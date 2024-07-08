@@ -56,8 +56,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework",
     "rest_framework_gis",
-    "drf_spectacular",
     "django_filters",
+    "drf_spectacular",
     "sorl.thumbnail",
     "treebeard",
     "project.api",
@@ -166,7 +166,7 @@ LOCALE_PATHS = [
 ]
 
 REST_FRAMEWORK = {
-    # YOUR SETTINGS
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
