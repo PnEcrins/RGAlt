@@ -7,6 +7,7 @@
 - Fill your timezone and your server name (domain used in your browser)
 - Copy db.env.dist to db.env
 - Fill your database name, user and password
+- Edit conf/custom.py to enable and configure S3 file backend (use app.env to set environment variables)
 - Init instance
 
     ```bash

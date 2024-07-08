@@ -78,13 +78,16 @@ pyproject-hooks==1.1.0
     #   build
     #   pip-tools
 python-dateutil==2.9.0.post0
-    # via faker
+    # via
+    #   -c requirements.txt
+    #   faker
 pyxdg==0.28
     # via bpython
 requests==2.32.3
     # via bpython
 six==1.16.0
     # via
+    #   -c requirements.txt
     #   blessed
     #   python-dateutil
 sqlparse==0.5.0
