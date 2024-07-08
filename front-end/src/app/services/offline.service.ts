@@ -10,7 +10,7 @@ type ObjectStore = { name: ObjectStoresName; keyPath: KeyPath };
 
 type ObjectStoresName = 'observations' | 'offline-areas';
 
-type KeyPath = 'id_event' | 'id';
+type KeyPath = 'uuid' | 'id';
 
 type ObjectStoresType<T> = T extends 'observations'
   ? Observation
@@ -55,7 +55,7 @@ export class OfflineService {
         switch (oldVersion) {
           case 0: {
             const objectStoresNames: ObjectStores = [
-              { name: 'observations', keyPath: 'id_event' },
+              { name: 'observations', keyPath: 'uuid' },
               { name: 'offline-areas', keyPath: 'id' },
             ];
 

@@ -2,31 +2,37 @@
   {
     "id": 1,
     "name": "Zone A",
-    "tooltip": "tooltip"
+    "description": "tooltip",
+    "bbox": ""
   },
   {
     "id": 2,
     "name": "Zone B",
-    "tooltip": "tooltip"
+    "tooltip": "tooltip",
+    "bbox": ""
   },
   {
     "id": 3,
     "name": "Zone C",
-    "tooltip": "tooltip"
+    "tooltip": "tooltip",
+    "bbox": ""
   },
   {
     "id": 4,
     "name": "Zone D",
-    "tooltip": "tooltip"
+    "tooltip": "tooltip",
+    "bbox": ""
   },
   {
     "id": 5,
     "name": "Zone E",
-    "tooltip": "tooltip"
+    "tooltip": "tooltip",
+    "bbox": ""
   },
   {
     "id": 6,
     "name": "Zone F",
-    "tooltip": "tooltip"
+    "tooltip": "tooltip",
+    "bbox": ""
   }
 ]

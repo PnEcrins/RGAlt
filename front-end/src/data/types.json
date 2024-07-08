@@ -1,86 +1,94 @@
 [
   {
     "id": 1,
-    "name": "Avalanche",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Avalanche",
+    "description": "description",
+    "pictogram": "question_mark",
+    "children": [
+      {
+        "id": 13,
+        "label": "Chablis",
+        "pictogram": "question_mark",
+        "description": "description",
+        "children": []
+      }
+    ]
   },
   {
     "id": 2,
-    "name": "Chablis",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Chablis",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 3,
-    "name": "Chute de blocs",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Chute de blocs",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 4,
-    "name": "Crue torrentielle",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Crue torrentielle",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 5,
-    "name": "Incendie",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Incendie",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 6,
-    "name": "Inondation",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Inondation",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 7,
-    "name": "Lave torrentielle",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Lave torrentielle",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 8,
-    "name": "Ravinement",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Ravinement",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 9,
-    "name": "Volis",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Volis",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 10,
-    "name": "Apparition d'un nouveau lac",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Apparition d'un nouveau lac",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 11,
-    "name": "Glissement de terrain",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Glissement de terrain",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   },
   {
     "id": 12,
-    "name": "Phénomène glaciaire",
-    "icon": "question_mark",
-    "tooltip": "tooltip",
-    "observationTypes": []
+    "label": "Phénomène glaciaire",
+    "pictogram": "question_mark",
+    "description": "description",
+    "children": []
   }
 ]

@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
@@ -132,7 +132,7 @@ export class MyOfflineDataComponent {
         );
 
         await this.offlineService.writeOrUpdateDataInStore('offline-areas', [
-          { id: area.id },
+          area,
         ]);
 
         area.offline = !area.offline;

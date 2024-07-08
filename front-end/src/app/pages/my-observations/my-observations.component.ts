@@ -44,16 +44,18 @@ export class MyObservationsComponent {
   }
 
   async sendObservation(observation: Observation, refreshObservations = true) {
-    this.offlineService.deleteDataInStore('observations', [
-      observation.id_event,
-    ]);
+    this.offlineService.deleteDataInStore('observations', [observation.uuid]);
     if (refreshObservations) {
       await this.refreshObservations();
     }
   }
 
   getEventType(eventTypeId: number) {
-    return observationTypes.find(
+    const eventTypes = [
+      ...observationTypes.map((type) => type),
+      ...observationTypes.map((type) => type.children).flat(),
+    ];
+    return eventTypes.find(
       (observationType) => observationType.id === eventTypeId,
     );
   }

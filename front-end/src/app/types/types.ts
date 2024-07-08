@@ -1,34 +1,58 @@
 export type Observations = Observation[];
 
 export type Observation = {
-  id_event: string;
-  name_event: string;
-  date_event: string;
-  observers: string;
-  description: string;
-  direct_observation: boolean;
-  id_event_type: number;
-  author: string;
-  date_create: string;
-  picture_legend: string;
-  picture_author: string;
-  picture_date: string;
-  picture_licence: string;
-  picture_path: string;
+  uuid: string;
+  name: string;
+  comments: string;
+  event_date: string;
+  source: string;
+  category: number;
+  main_picture?: Picture;
+  medias?: Picture[];
+};
+
+export type Picture = {
+  id: number;
+  uuid: string;
+  legend: string;
+  media_file: string;
+  media_type: string;
+  thumbnails: {
+    small: string;
+    medium: string;
+    large: string;
+  };
 };
 
 export type ObservationTypes = ObservationType[];
 
 export type ObservationType = {
   id: number;
-  name: string;
-  icon: string;
-  tooltip: string;
-  observationTypes: ObservationTypes;
+  label: string;
+  description: string;
+  pictogram: string;
+  children: ObservationTypes;
 };
 
 export type Areas = Area[];
 
 export type Area = {
   id: number;
+  name: string;
+  description: string;
+  bbox: number[][];
+};
+
+export type settings = {
+  categories: ObservationTypes;
+  areas: Areas;
+};
+
+export type User = {
+  id: number;
+  uuid: string;
+  email: string;
+  is_superuser: boolean;
+  last_name: string;
+  first_name: string;
 };
