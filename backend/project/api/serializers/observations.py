@@ -78,6 +78,7 @@ class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerial
         fields = (
             "id",
             "uuid",
+            "name",
             "comments",
             "event_date",
             "source",
