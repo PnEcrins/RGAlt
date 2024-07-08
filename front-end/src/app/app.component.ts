@@ -1,5 +1,11 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, PLATFORM_ID, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  PLATFORM_ID,
+  ViewChild,
+  afterNextRender,
+  inject,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -16,6 +22,7 @@ import { AuthService } from './services/auth.service';
 import { Platform } from '@angular/cdk/platform';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
+import { OfflineService } from './services/offline.service';
 
 @Component({
   selector: 'app-root',
@@ -44,10 +51,9 @@ export class AppComponent {
   router = inject(Router);
   location = inject(Location);
   authService = inject(AuthService);
+  offlineService = inject(OfflineService);
 
   @ViewChild('sidenav') private sidenav!: MatSidenav;
-
-  observationsPending = '2';
 
   sideNavItems = [
     {
@@ -56,7 +62,7 @@ export class AppComponent {
       routerLink: 'se-connecter',
       authenficated: false,
       click: () => null,
-      observationsPending: null,
+      observationsPending: false,
     },
     {
       id: 2,
@@ -64,26 +70,42 @@ export class AppComponent {
       routerLink: 'mon-compte',
       authenficated: true,
       click: () => null,
-      observationsPending: null,
+      observationsPending: false,
     },
     {
       id: 3,
+      text: 'Saisir une nouvelle observation',
+      routerLink: 'nouvelle-observation',
+      authenficated: true,
+      click: () => null,
+      observationsPending: false,
+    },
+    {
+      id: 4,
+      text: 'Interface de synthèse',
+      routerLink: 'interface-de-synthese',
+      authenficated: null,
+      click: () => null,
+      observationsPending: false,
+    },
+    {
+      id: 5,
       text: 'Mes observations',
       routerLink: 'mes-observations',
       authenficated: true,
       click: () => null,
-      observationsPending: this.observationsPending,
+      observationsPending: true,
     },
     {
-      id: 4,
+      id: 6,
       text: 'Mes données hors ligne',
       routerLink: 'mes-donnees-hors-ligne',
       authenficated: true,
       click: () => null,
-      observationsPending: null,
+      observationsPending: false,
     },
     {
-      id: 5,
+      id: 7,
       text: 'Me déconnecter',
       routerLink: null,
       authenficated: true,
@@ -91,7 +113,7 @@ export class AppComponent {
         this.authService.logout();
         this.sidenav.close();
       },
-      observationsPending: null,
+      observationsPending: false,
     },
   ];
 
@@ -102,7 +124,9 @@ export class AppComponent {
 
   handleAuthentification(value: any) {
     this.currentSideNavItems = this.sideNavItems.filter(
-      (sideNavItem) => sideNavItem.authenficated === value,
+      (sideNavItem) =>
+        sideNavItem.authenficated === value ||
+        sideNavItem.authenficated === null,
     );
   }
 
@@ -113,6 +137,9 @@ export class AppComponent {
     if (this.isPlatformBrowser) {
       this.authService.checkAuth();
     }
+    afterNextRender(() => {
+      this.offlineService.handleObservationsPending();
+    });
   }
 
   ngOnInit() {

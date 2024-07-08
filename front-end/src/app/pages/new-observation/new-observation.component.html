@@ -3,7 +3,7 @@
     <ng-template matStepLabel
       >Quel type de phénomène observez-vous ?</ng-template
     >
-    <div *ngIf="observationParent">
+    <div *ngIf="observationTypeParent">
       <div>
         <button
           mat-flat-button
@@ -14,16 +14,19 @@
           Retour
         </button>
       </div>
-      <div class="mat-title-large mt-16">{{ observationParent.name }}</div>
+      <div class="mat-title-large mt-16">{{ observationTypeParent.label }}</div>
     </div>
     <form [formGroup]="typeForm">
       <mat-grid-list #grid [cols]="columns" rowHeight="120px" gutterSize="20px">
-        @for (observation of observations; track observation.id) {
+        @for (
+          observationsType of observationsTypes;
+          track observationsType.id
+        ) {
           <mat-grid-tile>
             <div class="observation-type-tooltip-container">
               <button
                 mat-icon-button
-                matTooltip="{{ observation.tooltip }}"
+                matTooltip="{{ observationsType.description }}"
                 class="observation-type-tooltip"
                 #tooltip="matTooltip"
                 (click)="tooltip.show()"
@@ -32,20 +35,20 @@
               </button>
             </div>
             <mat-card
-              (click)="observationClick(observation)"
+              (click)="observationClick(observationsType)"
               [ngStyle]="{
                 border:
                   this.typeForm.value &&
                   this.typeForm.value.type &&
-                  this.typeForm.value.type.id === observation.id
+                  this.typeForm.value.type.id === observationsType.id
                     ? '4px solid var(--mat-full-pseudo-checkbox-selected-icon-color)'
                     : 'unset',
               }"
             >
               <mat-icon class="observation-type-icon">
-                {{ observation.icon }}
+                {{ observationsType.pictogram }}
               </mat-icon>
-              <mat-card-footer> {{ observation.name }}</mat-card-footer>
+              <mat-card-footer> {{ observationsType.label }}</mat-card-footer>
             </mat-card>
           </mat-grid-tile>
         }
@@ -125,6 +128,12 @@
         </mat-form-field>
       </div>
       <div>
+        <mat-form-field class="name-form-field">
+          <mat-label>Nom de l'observation</mat-label>
+          <textarea matInput formControlName="name"></textarea>
+        </mat-form-field>
+      </div>
+      <div>
         <mat-form-field class="comment-form-field">
           <mat-label>Commentaire libre</mat-label>
           <textarea matInput formControlName="comment"></textarea>
@@ -143,8 +152,10 @@
     <div *ngIf="typeForm.value.type">
       Type d'observation
       <div>
-        <span *ngIf="observationParent">{{ observationParent.name }} - </span>
-        {{ typeForm.value.type.name }}
+        <span *ngIf="observationTypeParent"
+          >{{ observationTypeParent.label }} -
+        </span>
+        {{ typeForm.value.type.label }}
       </div>
     </div>
     <div *ngIf="photoForm.value.photo" class="mt-16 photo-container">
@@ -166,6 +177,9 @@
       <div *ngIf="moreDataForm.value.date">
         Date de l'observation :
         {{ moreDataForm.value.date | date: "dd/MM/yyyy" }}
+      </div>
+      <div *ngIf="moreDataForm.value.name">
+        Nom de l'observation : {{ moreDataForm.value.name }}
       </div>
       <div *ngIf="moreDataForm.value.comment">
         Commentaire libre : {{ moreDataForm.value.comment }}

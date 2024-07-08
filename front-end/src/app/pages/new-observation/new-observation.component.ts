@@ -31,7 +31,14 @@ import * as _moment from 'moment';
 import { default as _rollupMoment } from 'moment';
 import { round } from '@turf/helpers';
 
-import observations from '../../../data/observations.json';
+import observationTypes from '../../../data/types.json';
+import {
+  Observation,
+  ObservationType,
+  ObservationTypes,
+} from '../../types/types';
+import { OfflineService } from '../../services/offline.service';
+import { v4 as uuidv4 } from 'uuid';
 
 const moment = _rollupMoment || _moment;
 
@@ -59,8 +66,8 @@ const moment = _rollupMoment || _moment;
   styleUrl: './new-observation.component.scss',
 })
 export class NewObservationComponent {
-  observations = observations;
-  observationParent: any = null;
+  observationsTypes: ObservationTypes = observationTypes;
+  observationTypeParent: ObservationType | null = null;
   columns: number = 2;
   breakpoints = {
     xl: 4,
@@ -78,12 +85,9 @@ export class NewObservationComponent {
   @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
 
   typeForm: FormGroup<{
-    type: FormControl<{ id: number; name: string; icon: string } | null>;
+    type: FormControl<ObservationType | null>;
   }> = new FormGroup({
-    type: new FormControl<{ id: number; name: string; icon: string } | null>(
-      null,
-      Validators.required,
-    ),
+    type: new FormControl<ObservationType | null>(null, Validators.required),
   });
 
   photoForm: FormGroup<{
@@ -99,16 +103,19 @@ export class NewObservationComponent {
   });
 
   moreDataForm: FormGroup<{
-    date: FormControl<Date | null>;
+    date: FormControl<any | null>;
+    name: FormControl<string | null>;
     comment: FormControl<string | null>;
   }> = new FormGroup({
     date: new FormControl<any | null>(moment(), Validators.required),
+    name: new FormControl<string | null>(''),
     comment: new FormControl<string | null>(''),
   });
 
   breakpointObserver = inject(BreakpointObserver);
   platform = inject(Platform);
   router = inject(Router);
+  offlineService = inject(OfflineService);
 
   ngOnInit() {
     this.mobile = this.platform.ANDROID || this.platform.IOS;
@@ -183,13 +190,13 @@ export class NewObservationComponent {
     }).addTo(this.map);
   }
 
-  observationClick(value: any) {
-    if (value.observations.length === 0) {
+  observationClick(value: ObservationType) {
+    if (value.children.length === 0) {
       this.typeForm.setValue({ type: value });
     } else {
       this.typeForm.setValue({ type: null });
-      this.observationParent = value;
-      this.observations = value.observations;
+      this.observationTypeParent = value;
+      this.observationsTypes = value.children;
     }
   }
 
@@ -210,16 +217,38 @@ export class NewObservationComponent {
   }
 
   backToPreviousObservations() {
-    this.observationParent = null;
+    this.observationTypeParent = null;
     this.typeForm.setValue({ type: null });
-    this.observations = observations;
+    this.observationsTypes = observationTypes;
   }
 
   saveAsDraft() {
+    const newObservation: Observation = {
+      uuid: uuidv4(),
+      name: this.moreDataForm.value.name!,
+      event_date: this.moreDataForm.value.date!.toDate().toString(),
+      comments: this.moreDataForm.value.comment!,
+      category: this.typeForm.value.type!.id,
+      source: 'Source',
+    };
+    this.offlineService.writeOrUpdateDataInStore('observations', [
+      newObservation,
+    ]);
+    this.offlineService.handleObservationsPending();
     this.router.navigate(['/']);
   }
 
   sendObservation() {
     this.router.navigate(['/']);
+  }
+
+  getEventType(eventTypeId: number) {
+    const eventTypes = [
+      ...observationTypes.map((type) => type),
+      ...observationTypes.map((type) => type.children).flat(),
+    ];
+    return eventTypes.find(
+      (observationType) => observationType.id === eventTypeId,
+    );
   }
 }

@@ -12,6 +12,8 @@ import { DownloadDialog } from './dialogs/download-dialog';
 import { DeleteDialog } from './dialogs/delete-dialog';
 
 import areas from '../../../data/areas.json';
+import { OfflineService } from '../../services/offline.service';
+import { LoaderDialog } from './dialogs/loader-dialog';
 
 @Component({
   selector: 'app-my-offline-data',
@@ -29,8 +31,9 @@ import areas from '../../../data/areas.json';
 })
 export class MyOfflineDataComponent {
   readonly dialog = inject(MatDialog);
+  offlineService = inject(OfflineService);
 
-  areas = areas;
+  areas: any[] = [];
 
   columns: number = 2;
   breakpoints = {
@@ -71,6 +74,20 @@ export class MyOfflineDataComponent {
           }
         }
       });
+
+    this.initAreas();
+  }
+
+  async initAreas() {
+    for (let index = 0; index < areas.length; index++) {
+      const area = areas[index];
+      this.areas.push({
+        ...area,
+        offline: Boolean(
+          await this.offlineService.getDataInStore('offline-areas', area.id),
+        ),
+      });
+    }
   }
 
   areaClick(area: any) {
@@ -87,9 +104,39 @@ export class MyOfflineDataComponent {
       data: { name: area.name },
     });
 
-    downloadDialogRef.afterClosed().subscribe((result) => {
+    downloadDialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.downloaded) {
+        const loaderDialogRef = this.dialog.open(LoaderDialog, {
+          width: '250px',
+          data: { title: 'Téléchargement en cours' },
+          disableClose: true,
+        });
+        const { tileLayerOffline } = await import('leaflet.offline');
+        const L = await import('leaflet');
+        const url =
+          'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
+        const attribution = "<a target='_blank' href='https://ign.fr/'>IGN</a>";
+        const minZoom = 0;
+        const maxZoom = 9;
+
+        const bounds = L.default.latLngBounds([
+          { lat: area.bbox[0][0], lng: area.bbox[0][1] },
+          { lat: area.bbox[1][0], lng: area.bbox[1][1] },
+        ]);
+        const offlineLayer = tileLayerOffline(url, { attribution });
+        await this.offlineService.writeOrUpdateTilesInStore(
+          offlineLayer,
+          bounds,
+          minZoom,
+          maxZoom,
+        );
+
+        await this.offlineService.writeOrUpdateDataInStore('offline-areas', [
+          area,
+        ]);
+
         area.offline = !area.offline;
+        loaderDialogRef.close();
       }
     });
   }
@@ -100,9 +147,34 @@ export class MyOfflineDataComponent {
       data: { name: area.name },
     });
 
-    deleteDialogRef.afterClosed().subscribe((result) => {
+    deleteDialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.deleted) {
+        const loaderDialogRef = this.dialog.open(LoaderDialog, {
+          width: '250px',
+          data: { title: 'Suppression en  cours' },
+        });
+        const { tileLayerOffline } = await import('leaflet.offline');
+        const L = await import('leaflet');
+        const url =
+          'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
+        const attribution = "<a target='_blank' href='https://ign.fr/'>IGN</a>";
+        const minZoom = 0;
+        const maxZoom = 9;
+
+        const bounds = L.default.latLngBounds([
+          { lat: area.bbox[0][0], lng: area.bbox[0][1] },
+          { lat: area.bbox[1][0], lng: area.bbox[1][1] },
+        ]);
+        const offlineLayer = tileLayerOffline(url, { attribution });
+        await this.offlineService.removeTilesInStore(
+          offlineLayer,
+          bounds,
+          minZoom,
+          maxZoom,
+        );
+        await this.offlineService.deleteDataInStore('offline-areas', [area.id]);
         area.offline = !area.offline;
+        loaderDialogRef.close();
       }
     });
   }
