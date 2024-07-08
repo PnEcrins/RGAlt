@@ -120,8 +120,8 @@ export class MyOfflineDataComponent {
         const maxZoom = 9;
 
         const bounds = L.default.latLngBounds([
-          { lat: 45.933960441921585, lng: 7.053222656250001 },
-          { lat: 44.47299117260252, lng: 5.921630859375001 },
+          { lat: area.bbox[0][0], lng: area.bbox[0][1] },
+          { lat: area.bbox[1][0], lng: area.bbox[1][1] },
         ]);
         const offlineLayer = tileLayerOffline(url, { attribution });
         await this.offlineService.writeOrUpdateTilesInStore(
@@ -162,8 +162,8 @@ export class MyOfflineDataComponent {
         const maxZoom = 9;
 
         const bounds = L.default.latLngBounds([
-          { lat: 45.933960441921585, lng: 7.053222656250001 },
-          { lat: 44.47299117260252, lng: 5.921630859375001 },
+          { lat: area.bbox[0][0], lng: area.bbox[0][1] },
+          { lat: area.bbox[1][0], lng: area.bbox[1][1] },
         ]);
         const offlineLayer = tileLayerOffline(url, { attribution });
         await this.offlineService.removeTilesInStore(
