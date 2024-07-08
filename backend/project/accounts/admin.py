@@ -42,14 +42,21 @@ class UserAdmin(BaseUserAdmin):
                 "fields": (
                     "is_active",
                     "is_superuser",
-                    "groups",
-                    "user_permissions",
                 ),
             },
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
     readonly_fields = ("date_joined", "last_login", "uuid")
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("email", "password1", "password2"),
+            },
+        ),
+    )
 
 
 admin.site.register(User, UserAdmin)
