@@ -5,7 +5,13 @@ from rest_framework import serializers
 from rest_framework_gis import serializers as gis_serializers
 from sorl.thumbnail import get_thumbnail
 
-from project.observations.models import Area, Media, Observation, ObservationCategory
+from project.observations.models import (
+    Area,
+    Media,
+    MediaType,
+    Observation,
+    ObservationCategory,
+)
 
 
 class ObservationCategorySerializer(serializers.ModelSerializer):
@@ -34,7 +40,7 @@ class ThumbnailSerializer(serializers.Serializer):
     def get_thumbnail_by_size(
         self, obj, height=100, width=100, format="JPEG", quality=70
     ):
-        if obj.media_type == Media.MediaType.IMAGE:
+        if obj.media_type == MediaType.IMAGE:
             return self.context["request"].build_absolute_uri(
                 get_thumbnail(
                     obj.media_file, f"{width}x{height}", format=format, quality=quality
@@ -102,4 +108,4 @@ class AreaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Area
-        fields = ("id", "name", "bbox")
+        fields = ("id", "name", "description", "bbox")
