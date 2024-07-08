@@ -73,6 +73,7 @@ class SettingsSerializerTestCase(TestCase):
                 {
                     "id": area.id,
                     "name": area.name,
+                    "description": area.description,
                     "bbox": [
                         (area.geom.extent[0], area.geom.extent[3]),
                         (area.geom.extent[2], area.geom.extent[1]),
