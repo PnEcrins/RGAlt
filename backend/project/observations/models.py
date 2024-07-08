@@ -61,7 +61,7 @@ class Observation(TimeStampMixin):
     observer = models.ForeignKey(
         "accounts.User", on_delete=models.SET_NULL, null=True, blank=True
     )
-    comments = models.TextField()
+    comments = models.TextField(blank=True, default="")
     event_date = models.DateField(default=timezone_today, db_index=True)
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, blank=True, null=True)
     category = models.ForeignKey(ObservationCategory, on_delete=models.PROTECT)
