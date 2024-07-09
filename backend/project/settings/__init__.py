@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "sorl.thumbnail",
     "treebeard",
+    "corsheaders",
     "project.api",
     "project.observations",
     "project.accounts",
@@ -68,6 +69,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.middleware.locale.LocaleMiddleware",
