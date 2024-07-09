@@ -5,7 +5,9 @@
 #    pip-compile --strip-extras
 #
 asgiref==3.8.1
-    # via django
+    # via
+    #   django
+    #   django-cors-headers
 attrs==23.2.0
     # via
     #   jsonschema
@@ -21,12 +23,15 @@ certifi==2024.6.2
 django==5.0.6
     # via
     #   -r requirements.in
+    #   django-cors-headers
     #   django-filter
     #   django-storages
     #   django-treebeard
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
+django-cors-headers==4.4.0
+    # via -r requirements.in
 django-filter==24.2
     # via -r requirements.in
 django-storages==1.14.3
