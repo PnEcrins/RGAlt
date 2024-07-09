@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from project.api import views as api
-from project.api.views import AccountViewSet
+from project.api.views import AccountViewSet, SignUpView
 
 app_name = "api"
 
@@ -54,11 +54,7 @@ urlpatterns = [
     ),
     path(
         "api/accounts/sign-up/",
-        AccountViewSet.as_view(
-            {
-                "post": "signup",
-            }
-        ),
+        SignUpView.as_view(),
         name="signup",
     ),
     path("api/", include(router.urls)),
