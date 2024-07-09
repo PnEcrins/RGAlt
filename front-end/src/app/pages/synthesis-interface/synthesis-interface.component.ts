@@ -23,6 +23,7 @@ import { Observations } from '../../types/types';
 
 import evenementsRemarquables from '../../../data/evenements_remarquables.json';
 import observationTypes from '../../../data/types.json';
+import { ObservationsService } from '../../services/observations.service';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -57,6 +58,7 @@ export class SynthesisInterfaceComponent {
   observationsLayer: L.GeoJSON<any> | null = null;
   observationsClusterGroup: any;
   router = inject(Router);
+  observationsService = inject(ObservationsService);
 
   expansionPanelIsOpen = false;
   bounds: any;
@@ -74,21 +76,27 @@ export class SynthesisInterfaceComponent {
   }
 
   async initMap() {
+    this.observationsService.getObservations().subscribe({
+      next: (success) => {
+        console.log('success', success);
+      },
+      error: (error) => {
+        console.log('error', error);
+      },
+    });
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
     await import('leaflet.markercluster');
-    const tileLayerOffline = await import('leaflet.offline');
+    const { tileLayerOffline } = await import('leaflet.offline');
 
     this.map = this.L.default.map('map', { zoom: 4, center: [47, 2] });
 
-    this.L.default
-      .tileLayerOffline(
-        'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-        {
-          attribution: "<a target='_blank' href='https://ign.fr/'>IGN</a>",
-        },
-      )
-      .addTo(this.map);
+    tileLayerOffline(
+      'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+      {
+        attribution: "<a target='_blank' href='https://ign.fr/'>IGN</a>",
+      },
+    ).addTo(this.map);
 
     this.L.default.control
       .locate({ setView: 'once', showPopup: false })
