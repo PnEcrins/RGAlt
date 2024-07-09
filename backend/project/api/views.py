@@ -1,6 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
-from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import (
     DestroyModelMixin,
@@ -60,17 +59,17 @@ class AccountViewSet(
 ):
     queryset = User.objects.all()
     serializer_class = AccountSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
 
-    def get_permissions(self):
-        if self.action == "signup":
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
 
-    @action(detail=False, methods=["post"])
-    def signup(self, request, *args, **kwargs):
+class SignUpView(GenericAPIView):
+    serializer_class = AccountSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
