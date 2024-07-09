@@ -18,11 +18,12 @@ import {
 import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { Location } from '@angular/common';
-import { AuthService } from './services/auth.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Platform } from '@angular/cdk/platform';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 import { OfflineService } from './services/offline.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +39,7 @@ import { OfflineService } from './services/offline.service';
     MatListModule,
     MatBadgeModule,
     MatDividerModule,
+    MatSnackBarModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -52,6 +54,7 @@ export class AppComponent {
   location = inject(Location);
   authService = inject(AuthService);
   offlineService = inject(OfflineService);
+  snackBar = inject(MatSnackBar);
 
   @ViewChild('sidenav') private sidenav!: MatSidenav;
 
@@ -112,6 +115,8 @@ export class AppComponent {
       click: () => {
         this.authService.logout();
         this.sidenav.close();
+        this.snackBar.open('Vous êtes déconnecté', '', { duration: 2000 });
+        this.router.navigate(['..']);
       },
       observationsPending: false,
     },
@@ -144,6 +149,11 @@ export class AppComponent {
 
   ngOnInit() {
     this.authService.isAuth.subscribe((value) => {
+      if (value) {
+        this.authService.getAccount().subscribe((account) => {
+          console.log(account);
+        });
+      }
       this.handleAuthentification(value);
     });
     this.router.events.subscribe((event) => {

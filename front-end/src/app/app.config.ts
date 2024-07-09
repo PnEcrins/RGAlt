@@ -10,9 +10,17 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
+import { httpInterceptorProviders } from './interceptors/http.interceptor';
 
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -31,7 +39,8 @@ export const appConfig: ApplicationConfig = {
         monthYearA11yLabel: 'MMMM YYYY',
       },
     }),
-    provideHttpClient(withFetch()),
+    httpInterceptorProviders,
+    provideHttpClient(withInterceptorsFromDi(), withFetch()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
