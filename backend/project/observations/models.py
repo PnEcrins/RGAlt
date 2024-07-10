@@ -63,6 +63,7 @@ class Observation(TimeStampMixin):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        related_name="observations",
         verbose_name=_("Observer"),
     )
     comments = models.TextField(blank=True, default="", verbose_name=_("Comments"))
