@@ -109,4 +109,4 @@ class AreaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Area
-        fields = ("id", "name", "description", "bbox")
+        fields = ("id", "name", "description", "bbox", "min_zoom", "max_zoom")
