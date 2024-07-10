@@ -86,6 +86,15 @@ class Observation(TimeStampMixin):
     def main_picture(self):
         return self.medias.filter(media_type=MediaType.IMAGE).first()
 
+    @property
+    def public_name(self):
+        """Return category label if name is empty."""
+        return self.name or self.category.label
+
+    @public_name.setter
+    def public_name(self, value):
+        self.name = value
+
     def __str__(self):
         return str(self.uuid)
 

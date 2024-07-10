@@ -72,6 +72,25 @@ class ObservationAdmin(GISModelAdmin):
     date_hierarchy = "event_date"
     readonly_fields = ("uuid",)
     inlines = [MediaInline]
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("category", "name"),
+                    ("event_date", "observer"),
+                    "comments",
+                    "location",
+                )
+            },
+        ),
+        (
+            _("Other"),
+            {
+                "fields": (("source", "uuid"),),
+            },
+        ),
+    )
 
     def get_queryset(self, request):
         return (
