@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
@@ -70,19 +71,25 @@ class MediaSerializer(serializers.ModelSerializer):
 
 
 class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerializer):
-    source = serializers.SlugRelatedField("label", read_only=True)
+    source = serializers.SerializerMethodField()
+    name = serializers.CharField(source="public_name")
+    observer = serializers.SlugRelatedField("nickname", read_only=True)
+
+    def get_source(self, obj):
+        return obj.source.name if obj.source else _("Regard d'altitude")
 
     class Meta:
         model = Observation
         geo_field = "location"
+        id_field = "uuid"
         fields = (
-            "id",
             "uuid",
             "name",
             "comments",
             "event_date",
             "source",
             "category",
+            "observer",
         )
         write_only_fields = ("category__id",)
 

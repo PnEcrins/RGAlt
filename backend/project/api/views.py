@@ -39,11 +39,12 @@ class SettingsApiView(GenericAPIView):
 class ObservationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (
         Observation.objects.all()
-        .select_related("source", "category")
+        .select_related("source", "category", "observer")
         .prefetch_related("medias")
     )
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ObservationFilterSet
+    lookup_field = "uuid"
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -80,11 +81,13 @@ class AccountObservationViewset(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ObservationFilterSet
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "uuid"
+    lookup_url_kwarg = "uuid"
 
     def get_queryset(self):
         return (
             self.request.user.observations.all()
-            .select_related("source", "category")
+            .select_related("source", "category", "observer")
             .prefetch_related("medias")
         )
 
@@ -94,4 +97,4 @@ class AccountObservationViewset(viewsets.ModelViewSet):
         return ObservationDetailSerializer
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(observer=self.request.user)
