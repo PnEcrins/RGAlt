@@ -103,9 +103,9 @@ COPY --chown=ubuntu:ubuntu backend/manage.py /app/backend/manage.py
 
 WORKDIR /app/backend
 
-RUN /app/venv/bin/django-admin compilemessages
+RUN SECRET_KEY=temp /app/venv/bin/python ./manage.py compilemessages
 
-CMD ["/app/venv/bin/gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8000"]
 
 FROM base AS front-dev
 
