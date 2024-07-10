@@ -10,8 +10,8 @@ from project.utils.db.mixins import TimeStampMixin
 
 
 class Source(TimeStampMixin):
-    label = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
+    label = models.CharField(max_length=100, unique=True, verbose_name=_("Label"))
+    description = models.TextField(blank=True, verbose_name=_("Description"))
 
     def __str__(self):
         return self.label
@@ -23,8 +23,8 @@ class Source(TimeStampMixin):
 
 
 class ObservationCategory(TimeStampMixin, MP_Node):
-    label = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
+    label = models.CharField(max_length=100, unique=True, verbose_name=_("Label"))
+    description = models.TextField(blank=True, verbose_name=_("Description"))
     pictogram = SVGFileField(
         upload_to="observation_categories", verbose_name=_("Pictogram"), blank=True
     )
@@ -59,12 +59,26 @@ class Observation(TimeStampMixin):
         max_length=250, verbose_name=_("Name"), blank=True, null=False, default=""
     )
     observer = models.ForeignKey(
-        "accounts.User", on_delete=models.SET_NULL, null=True, blank=True
+        "accounts.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_("Observer"),
     )
-    comments = models.TextField(blank=True, default="")
-    event_date = models.DateField(default=timezone_today, db_index=True)
-    source = models.ForeignKey(Source, on_delete=models.SET_NULL, blank=True, null=True)
-    category = models.ForeignKey(ObservationCategory, on_delete=models.PROTECT)
+    comments = models.TextField(blank=True, default="", verbose_name=_("Comments"))
+    event_date = models.DateField(
+        default=timezone_today, db_index=True, verbose_name=_("Event date")
+    )
+    source = models.ForeignKey(
+        Source,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_("Source"),
+    )
+    category = models.ForeignKey(
+        ObservationCategory, on_delete=models.PROTECT, verbose_name=_("Category")
+    )
     location = models.PointField(srid=4326, verbose_name=_("Location"))
 
     @property
@@ -81,14 +95,20 @@ class Observation(TimeStampMixin):
 
 
 class Media(TimeStampMixin):
-    media_file = models.FileField(upload_to="media")
+    media_file = models.FileField(upload_to="media", verbose_name=_("File"))
     uuid = models.UUIDField(
         editable=False, unique=True, db_index=True, db_default=RandomUUID()
     )
     media_type = models.CharField(
-        max_length=10, choices=MediaType.choices, default=MediaType.IMAGE, db_index=True
+        max_length=10,
+        choices=MediaType.choices,
+        default=MediaType.IMAGE,
+        db_index=True,
+        verbose_name=_("Type"),
     )
-    legend = models.CharField(max_length=100, blank=True, default="")
+    legend = models.CharField(
+        max_length=100, blank=True, default="", verbose_name=_("Legend")
+    )
     observation = models.ForeignKey(
         Observation,
         on_delete=models.CASCADE,
@@ -103,10 +123,10 @@ class Media(TimeStampMixin):
 
 
 class Area(TimeStampMixin):
-    name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
-    min_zoom = models.PositiveSmallIntegerField(default=7)
-    max_zoom = models.PositiveSmallIntegerField(default=15)
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Name"))
+    description = models.TextField(blank=True, verbose_name=_("Description"))
+    min_zoom = models.PositiveSmallIntegerField(default=7, verbose_name=_("Min. zoom"))
+    max_zoom = models.PositiveSmallIntegerField(default=15, verbose_name=_("Max. zoom"))
     geom = models.PolygonField(srid=4326, verbose_name=_("Geometry"))
     north_west = models.GeneratedField(
         expression=Func(

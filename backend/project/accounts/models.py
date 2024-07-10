@@ -17,17 +17,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         editable=False, unique=True, db_index=True, db_default=RandomUUID()
     )
     email = models.EmailField(
-        _("email address"),
+        _("Email address"),
         unique=True,
         error_messages={"unique": _("A user with that email already exists.")},
     )
-    first_name = models.CharField(_("first name"), max_length=150)
-    last_name = models.CharField(_("last name"), max_length=150)
+    first_name = models.CharField(_("First name"), max_length=150)
+    last_name = models.CharField(_("Last name"), max_length=150)
     date_joined = models.DateTimeField(
-        _("date joined"), default=timezone.now, db_default=Now()
+        _("Date joined"), default=timezone.now, db_default=Now()
     )
     is_active = models.BooleanField(
-        _("active"),
+        _("Active"),
         default=True,
         help_text=_(
             "Designates whether this user should be treated as active. "
@@ -44,6 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ),
         output_field=models.CharField(max_length=150),
         db_persist=True,
+        verbose_name=_("Nickname"),
     )
     objects = UserManager()
 
@@ -55,6 +56,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.is_superuser
 
     class Meta:
-        verbose_name = _("user")
-        verbose_name_plural = _("users")
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
         ordering = ["-date_joined"]
