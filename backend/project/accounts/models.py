@@ -3,7 +3,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.functions import RandomUUID
 from django.db import models
 from django.db.models import Value
-from django.db.models.functions import Now, Lower, Upper, Left, Right, Length
+from django.db.models.functions import Left, Length, Lower, Now, Right, Upper
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
