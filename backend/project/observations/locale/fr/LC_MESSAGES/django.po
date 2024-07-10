@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 14:09+0000\n"
+"POT-Creation-Date: 2024-07-10 12:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,6 +20,12 @@ msgstr ""
 
 msgid "Preview"
 msgstr "Prévisualisation"
+
+msgid "Label"
+msgstr "Libellé"
+
+msgid "Description"
+msgstr "Description"
 
 msgid "Source"
 msgstr "Source"
@@ -45,6 +51,15 @@ msgstr "Vidéo"
 msgid "Name"
 msgstr "Nom"
 
+msgid "Observer"
+msgstr "Observateur"
+
+msgid "Comments"
+msgstr "Commentaires"
+
+msgid "Event date"
+msgstr "Date de l'évènement"
+
 msgid "Location"
 msgstr "Emplacement"
 
@@ -54,11 +69,26 @@ msgstr "Observation"
 msgid "Observations"
 msgstr "Observations"
 
+msgid "File"
+msgstr "Fichier"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Legend"
+msgstr "Légende"
+
 msgid "Media"
 msgstr "Media"
 
 msgid "Medias"
 msgstr "Medias"
+
+msgid "Min. zoom"
+msgstr "Zoom mini."
+
+msgid "Max. zoom"
+msgstr "Zoom max."
 
 msgid "Geometry"
 msgstr "Géométrie"
