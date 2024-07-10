@@ -11,9 +11,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { DownloadDialog } from './dialogs/download-dialog';
 import { DeleteDialog } from './dialogs/delete-dialog';
 
-import areas from '../../../data/areas.json';
 import { OfflineService } from '../../services/offline.service';
 import { LoaderDialog } from './dialogs/loader-dialog';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-my-offline-data',
@@ -32,6 +32,7 @@ import { LoaderDialog } from './dialogs/loader-dialog';
 export class MyOfflineDataComponent {
   readonly dialog = inject(MatDialog);
   offlineService = inject(OfflineService);
+  settingsService = inject(SettingsService);
 
   areas: any[] = [];
 
@@ -79,8 +80,12 @@ export class MyOfflineDataComponent {
   }
 
   async initAreas() {
-    for (let index = 0; index < areas.length; index++) {
-      const area = areas[index];
+    for (
+      let index = 0;
+      index < this.settingsService.settings.value!.areas.length;
+      index++
+    ) {
+      const area = this.settingsService.settings.value!.areas[index];
       this.areas.push({
         ...area,
         offline: Boolean(

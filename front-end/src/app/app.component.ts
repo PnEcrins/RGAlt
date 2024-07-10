@@ -24,6 +24,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 import { OfflineService } from './services/offline.service';
 import { AuthService } from './services/auth.service';
+import { SettingsService } from './services/settings.service';
 
 @Component({
   selector: 'app-root',
@@ -53,6 +54,8 @@ export class AppComponent {
   router = inject(Router);
   location = inject(Location);
   authService = inject(AuthService);
+  settingsService = inject(SettingsService);
+
   offlineService = inject(OfflineService);
   snackBar = inject(MatSnackBar);
 
@@ -101,8 +104,8 @@ export class AppComponent {
     },
     {
       id: 6,
-      text: 'Mes données hors ligne',
-      routerLink: 'mes-donnees-hors-ligne',
+      text: 'Fonds de carte hors ligne',
+      routerLink: 'fonds-de-carte-hors-ligne',
       authenficated: true,
       click: () => null,
       observationsPending: false,
@@ -143,19 +146,26 @@ export class AppComponent {
       this.authService.checkAuth();
     }
     afterNextRender(() => {
-      this.offlineService.handleObservationsPending();
+      if (this.authService.isAuth) {
+        this.offlineService.handleObservationsPending();
+      }
     });
   }
 
   ngOnInit() {
     this.authService.isAuth.subscribe((value) => {
       if (value) {
-        this.authService.getAccount().subscribe((account) => {
-          console.log(account);
+        this.authService.getAccount().subscribe((account: any) => {
+          this.authService.setUser(account);
         });
       }
       this.handleAuthentification(value);
     });
+
+    this.settingsService.getSettings().subscribe((settings: any) => {
+      this.settingsService.setSettings(settings);
+    });
+
     this.router.events.subscribe((event) => {
       if (event instanceof ActivationEnd) {
         if (this.sidenav.opened) {

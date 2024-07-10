@@ -1,5 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { Observation, Observations } from '../../types/types';
+import {
+  Observation,
+  Observations,
+  observationsFeatureCollection,
+} from '../../types/types';
 import { OfflineService } from '../../services/offline.service';
 import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
@@ -8,8 +12,8 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
-import evenementsRemarquables from '../../../data/evenements_remarquables.json';
-import observationTypes from '../../../data/types.json';
+import { ObservationsService } from '../../services/observations.service';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-my-observations',
@@ -26,16 +30,25 @@ import observationTypes from '../../../data/types.json';
 })
 export class MyObservationsComponent {
   myOfflineObservations: Observations = [];
-  myObservations: Observations = evenementsRemarquables.features
-    .slice(0, 10)
-    .map((feature) => feature.properties as any);
+  myObservations: observationsFeatureCollection | null = null;
 
   offlineService = inject(OfflineService);
+  observationsService = inject(ObservationsService);
+  settingsService = inject(SettingsService);
 
   slugify = slugify;
 
   async ngOnInit() {
     await this.getMyOfflineObservations();
+    this.observationsService.getMyObservations().subscribe({
+      next: (success: any) => {
+        console.log('success', success);
+        this.myObservations = success;
+      },
+      error: (error) => {
+        console.log('error', error);
+      },
+    });
   }
 
   async getMyOfflineObservations() {
@@ -52,8 +65,10 @@ export class MyObservationsComponent {
 
   getEventType(eventTypeId: number) {
     const eventTypes = [
-      ...observationTypes.map((type) => type),
-      ...observationTypes.map((type) => type.children).flat(),
+      ...this.settingsService.settings.value!.categories.map((type) => type),
+      ...this.settingsService.settings
+        .value!.categories.map((type) => type.children)
+        .flat(),
     ];
     return eventTypes.find(
       (observationType) => observationType.id === eventTypeId,

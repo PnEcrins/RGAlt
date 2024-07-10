@@ -39,6 +39,10 @@ const dbVersion = 1;
 export class OfflineService {
   observationsPending = new BehaviorSubject<number | null>(null);
 
+  resetObservationsPending() {
+    this.observationsPending.next(null);
+  }
+
   async handleObservationsPending() {
     const observationsPending = (await this.getAllDataInStore('observations'))
       .length;

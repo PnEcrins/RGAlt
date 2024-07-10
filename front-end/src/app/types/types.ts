@@ -1,3 +1,16 @@
+export type observationsFeatureCollection = {
+  type: 'FeatureCollection';
+  features: {
+    type: 'Feature';
+    id: string;
+    geometry: {
+      type: 'Point';
+      coordinates: number[];
+    };
+    properties: Observation;
+  }[];
+};
+
 export type Observations = Observation[];
 
 export type Observation = {
@@ -43,7 +56,7 @@ export type Area = {
   bbox: number[][];
 };
 
-export type settings = {
+export type Settings = {
   categories: ObservationTypes;
   areas: Areas;
 };

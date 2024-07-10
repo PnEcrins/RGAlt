@@ -19,11 +19,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
-import { Observations } from '../../types/types';
+import { observationsFeatureCollection } from '../../types/types';
 
-import evenementsRemarquables from '../../../data/evenements_remarquables.json';
-import observationTypes from '../../../data/types.json';
 import { ObservationsService } from '../../services/observations.service';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -50,15 +49,17 @@ export class SynthesisInterfaceComponent {
 
   L: any;
   map: any;
-  observationsFeatureCollection: { features: Observations } =
-    evenementsRemarquables as any;
-  currentObservationsFeatureCollection: any = evenementsRemarquables;
-  observationsFeatureCollectionFiltered: any = evenementsRemarquables;
+  observationsFeatureCollection: observationsFeatureCollection | null = null;
+  currentObservationsFeatureCollection: observationsFeatureCollection | null =
+    null;
+  observationsFeatureCollectionFiltered: observationsFeatureCollection | null =
+    null;
 
   observationsLayer: L.GeoJSON<any> | null = null;
   observationsClusterGroup: any;
   router = inject(Router);
   observationsService = inject(ObservationsService);
+  settingsService = inject(SettingsService);
 
   expansionPanelIsOpen = false;
   bounds: any;
@@ -76,14 +77,6 @@ export class SynthesisInterfaceComponent {
   }
 
   async initMap() {
-    this.observationsService.getObservations().subscribe({
-      next: (success) => {
-        console.log('success', success);
-      },
-      error: (error) => {
-        console.log('error', error);
-      },
-    });
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
     await import('leaflet.markercluster');
@@ -102,49 +95,62 @@ export class SynthesisInterfaceComponent {
       .locate({ setView: 'once', showPopup: false })
       .addTo(this.map);
 
-    this.observationsLayer = this.L.default.geoJSON(
-      this.observationsFeatureCollection,
-      {
-        pointToLayer: (geoJsonPoint: any, latlng: any) =>
-          this.L.default.marker(latlng, {
-            icon: this.L.default.divIcon({
-              html: `<div class="observation-marker-container">
-              <img src="favicon.ico"/>
-              </div>`,
-              className: 'observation-marker',
-              iconSize: 32,
-              iconAnchor: [18, 28],
-            } as any),
-            autoPanOnFocus: false,
-          } as any),
-        onEachFeature: (geoJsonPoint: any, layer: any) => {
-          layer.once('click', () => {
-            this.handleObservationPopup(geoJsonPoint, layer);
-          });
-        },
-      },
-    );
+    this.observationsService.getObservations().subscribe({
+      next: (success: any) => {
+        console.log('success', success);
+        this.ngZone.run(() => {
+          this.observationsFeatureCollection = success;
+          this.currentObservationsFeatureCollection = success;
+          this.observationsFeatureCollectionFiltered = success;
+        });
+        this.observationsLayer = this.L.default.geoJSON(
+          this.observationsFeatureCollection,
+          {
+            pointToLayer: (geoJsonPoint: any, latlng: any) =>
+              this.L.default.marker(latlng, {
+                icon: this.L.default.divIcon({
+                  html: `<div class="observation-marker-container">
+                    <img src="favicon.ico"/>
+                    </div>`,
+                  className: 'observation-marker',
+                  iconSize: 32,
+                  iconAnchor: [18, 28],
+                } as any),
+                autoPanOnFocus: false,
+              } as any),
+            onEachFeature: (geoJsonPoint: any, layer: any) => {
+              layer.once('click', () => {
+                this.handleObservationPopup(geoJsonPoint, layer);
+              });
+            },
+          },
+        );
 
-    this.observationsClusterGroup = this.L.default.markerClusterGroup({
-      showCoverageOnHover: false,
-      removeOutsideVisibleBounds: false,
-      iconCreateFunction: (cluster: any) => {
-        return this.L.default.divIcon({
-          html:
-            '<div class="observations-marker-cluster-group-icon">' +
-            cluster.getChildCount() +
-            '</div>',
-          className: '',
-          iconSize: 48,
-        } as any);
+        this.observationsClusterGroup = this.L.default.markerClusterGroup({
+          showCoverageOnHover: false,
+          removeOutsideVisibleBounds: false,
+          iconCreateFunction: (cluster: any) => {
+            return this.L.default.divIcon({
+              html:
+                '<div class="observations-marker-cluster-group-icon">' +
+                cluster.getChildCount() +
+                '</div>',
+              className: '',
+              iconSize: 48,
+            } as any);
+          },
+        });
+
+        this.observationsClusterGroup.addLayer(this.observationsLayer);
+        this.map.addLayer(this.observationsClusterGroup);
+
+        this.fitToCurrentObservations();
+        this.map.on('moveend', this.handleObservationsWithinBoundsBind);
+      },
+      error: (error) => {
+        console.log('error', error);
       },
     });
-
-    this.observationsClusterGroup.addLayer(this.observationsLayer);
-    this.map.addLayer(this.observationsClusterGroup);
-
-    this.fitToCurrentObservations();
-    this.map.on('moveend', this.handleObservationsWithinBoundsBind);
   }
 
   handleObservationPopup(geoJsonPoint: any, layer?: any) {
@@ -174,7 +180,7 @@ export class SynthesisInterfaceComponent {
     observationButton.className = 'observation-button';
     observationButton.onclick = () => {
       const slug = slugify(
-        `${geoJsonPoint.properties.uuid}-${geoJsonPoint.properties.name}`,
+        `${geoJsonPoint.id}-${geoJsonPoint.properties.name}`,
       );
       this.router.navigate(['/detail-d-une-observation', slug]);
     };
@@ -225,10 +231,11 @@ export class SynthesisInterfaceComponent {
         ) {
           this.filter.observationTypes = result.filter.observationTypes;
           observationFeatures =
-            this.observationsFeatureCollection.features.filter((feature: any) =>
-              result.filter.observationTypes
-                .map((observationType: any) => observationType.id)
-                .includes(feature.properties.id_event_type),
+            this.observationsFeatureCollection?.features.filter(
+              (feature: any) =>
+                result.filter.observationTypes
+                  .map((observationType: any) => observationType.id)
+                  .includes(feature.properties.id_event_type),
             );
         }
         if (
@@ -251,7 +258,7 @@ export class SynthesisInterfaceComponent {
             );
           } else {
             observationFeatures =
-              this.observationsFeatureCollection.features.filter(
+              this.observationsFeatureCollection?.features.filter(
                 (observationFeature: any) =>
                   moment(observationFeature.properties.date_event).isBetween(
                     result.filter.observationDates.start,
@@ -263,7 +270,7 @@ export class SynthesisInterfaceComponent {
           }
         }
         this.observationsFeatureCollectionFiltered = {
-          ...this.observationsFeatureCollection,
+          ...this.observationsFeatureCollection!,
           features: observationFeatures || [],
         };
       } else {
@@ -290,9 +297,9 @@ export class SynthesisInterfaceComponent {
   }
 
   fitToCurrentObservations() {
-    if (this.observationsFeatureCollectionFiltered.features.length > 0) {
+    if (this.observationsFeatureCollectionFiltered!.features.length > 0) {
       this.bounds = this.L.default.latLngBounds(
-        this.observationsFeatureCollectionFiltered.features.map(
+        this.observationsFeatureCollectionFiltered!.features.map(
           (feature: any) => [
             feature.geometry.coordinates[1],
             feature.geometry.coordinates[0],
@@ -307,8 +314,8 @@ export class SynthesisInterfaceComponent {
   handleObservationsWithinBounds() {
     this.ngZone.run(() => {
       this.currentObservationsFeatureCollection = {
-        ...this.currentObservationsFeatureCollection,
-        features: this.observationsFeatureCollectionFiltered.features.filter(
+        ...this.currentObservationsFeatureCollection!,
+        features: this.observationsFeatureCollectionFiltered!.features.filter(
           (feature: any) =>
             this.map
               .getBounds()
@@ -337,15 +344,19 @@ export class SynthesisInterfaceComponent {
 
   updateMap() {
     this.observationsLayer!.clearLayers();
-    this.observationsLayer!.addData(this.observationsFeatureCollectionFiltered);
+    this.observationsLayer!.addData(
+      this.observationsFeatureCollectionFiltered!,
+    );
     this.observationsClusterGroup.clearLayers();
     this.observationsClusterGroup.addLayer(this.observationsLayer);
   }
 
   getEventType(eventTypeId: number) {
     const eventTypes = [
-      ...observationTypes.map((type) => type),
-      ...observationTypes.map((type) => type.children).flat(),
+      ...this.settingsService.settings.value!.categories.map((type) => type),
+      ...this.settingsService.settings
+        .value!.categories.map((type) => type.children)
+        .flat(),
     ];
     return eventTypes.find(
       (observationType) => observationType.id === eventTypeId,

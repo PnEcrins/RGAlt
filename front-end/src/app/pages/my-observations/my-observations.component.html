@@ -33,18 +33,21 @@
   </mat-list>
 </div>
 
-<div *ngIf="myObservations.length > 0" class="observations-container">
+<div
+  *ngIf="myObservations && myObservations.features.length > 0"
+  class="observations-container"
+>
   <div class="mat-title-medium">Mes observations</div>
   <mat-list class="mat-expansion-panel-body-visible">
-    @for (observation of myObservations; track observation.uuid) {
+    @for (observation of myObservations.features; track observation.id) {
       <mat-list-item>
         <span matListItemTitle>{{
-          observation.name && observation.name !== ""
-            ? observation.name
-            : getEventType(observation.category)!.label
+          observation.properties.name && observation.properties.name !== ""
+            ? observation.properties.name
+            : getEventType(observation.properties.category)!.label
         }}</span>
         <span matListItemLine>{{
-          observation.event_date | date: "dd/MM/yyyy"
+          observation.properties.event_date | date: "dd/MM/yyyy"
         }}</span>
         <span matListItemMeta>
           <button
@@ -53,9 +56,11 @@
             [routerLink]="[
               '/detail-d-une-observation',
               slugify(
-                observation.uuid
-                  .toString()
-                  .concat(observation.name ? '-'.concat(observation.name) : '')
+                observation.id.concat(
+                  observation.properties.name
+                    ? '-'.concat(observation.properties.name)
+                    : ''
+                )
               ),
             ]"
           >

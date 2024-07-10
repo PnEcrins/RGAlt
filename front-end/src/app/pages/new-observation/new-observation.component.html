@@ -23,7 +23,10 @@
           track observationsType.id
         ) {
           <mat-grid-tile>
-            <div class="observation-type-tooltip-container">
+            <div
+              *ngIf="observationsType.description"
+              class="observation-type-tooltip-container"
+            >
               <button
                 mat-icon-button
                 matTooltip="{{ observationsType.description }}"
@@ -45,9 +48,11 @@
                     : 'unset',
               }"
             >
-              <mat-icon class="observation-type-icon">
-                {{ observationsType.pictogram }}
-              </mat-icon>
+              <img
+                *ngIf="observationsType.pictogram"
+                class="observation-type-icon"
+                src="{{ observationsType.pictogram }}"
+              />
               <mat-card-footer> {{ observationsType.label }}</mat-card-footer>
             </mat-card>
           </mat-grid-tile>
