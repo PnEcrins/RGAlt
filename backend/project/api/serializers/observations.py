@@ -101,8 +101,36 @@ class ObservationDetailSerializer(ObservationMixin):
         fields = ObservationMixin.Meta.fields + ("medias",)
 
 
+class AreaBBoxSerializer(serializers.ModelSerializer):
+    north_west = serializers.ListSerializer(
+        source="north_west.coords",
+        child=serializers.FloatField(),
+        max_length=2,
+        min_length=2,
+    )
+    south_east = serializers.ListSerializer(
+        source="south_east.coords",
+        child=serializers.FloatField(),
+        max_length=2,
+        min_length=2,
+    )
+
+    class Meta:
+        model = Area
+        fields = ("north_west", "south_east")
+
+
 class AreaSerializer(serializers.ModelSerializer):
-    bbox = serializers.SerializerMethodField()
+    bbox2 = AreaBBoxSerializer(source="*")
+    bbox = serializers.ListSerializer(
+        child=serializers.ListSerializer(
+            child=serializers.FloatField(),
+            max_length=2,
+            min_length=2,
+        ),
+        max_length=2,
+        min_length=2,
+    )
 
     def get_bbox(self, obj):
         return [obj.north_west.coords, obj.south_east.coords]
