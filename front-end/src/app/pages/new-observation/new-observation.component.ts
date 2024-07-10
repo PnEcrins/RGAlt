@@ -31,7 +31,6 @@ import * as _moment from 'moment';
 import { default as _rollupMoment } from 'moment';
 import { round } from '@turf/helpers';
 
-import observationTypes from '../../../data/types.json';
 import {
   Observation,
   ObservationType,
@@ -39,6 +38,7 @@ import {
 } from '../../types/types';
 import { OfflineService } from '../../services/offline.service';
 import { v4 as uuidv4 } from 'uuid';
+import { SettingsService } from '../../services/settings.service';
 
 const moment = _rollupMoment || _moment;
 
@@ -66,7 +66,6 @@ const moment = _rollupMoment || _moment;
   styleUrl: './new-observation.component.scss',
 })
 export class NewObservationComponent {
-  observationsTypes: ObservationTypes = observationTypes;
   observationTypeParent: ObservationType | null = null;
   columns: number = 2;
   breakpoints = {
@@ -116,6 +115,10 @@ export class NewObservationComponent {
   platform = inject(Platform);
   router = inject(Router);
   offlineService = inject(OfflineService);
+  settingsService = inject(SettingsService);
+
+  observationsTypes: ObservationTypes =
+    this.settingsService.settings.value!.categories;
 
   ngOnInit() {
     this.mobile = this.platform.ANDROID || this.platform.IOS;
@@ -219,7 +222,7 @@ export class NewObservationComponent {
   backToPreviousObservations() {
     this.observationTypeParent = null;
     this.typeForm.setValue({ type: null });
-    this.observationsTypes = observationTypes;
+    this.observationsTypes = this.settingsService.settings.value!.categories;
   }
 
   saveAsDraft() {
@@ -244,8 +247,10 @@ export class NewObservationComponent {
 
   getEventType(eventTypeId: number) {
     const eventTypes = [
-      ...observationTypes.map((type) => type),
-      ...observationTypes.map((type) => type.children).flat(),
+      ...this.settingsService.settings.value!.categories.map((type) => type),
+      ...this.settingsService.settings
+        .value!.categories.map((type) => type.children)
+        .flat(),
     ];
     return eventTypes.find(
       (observationType) => observationType.id === eventTypeId,

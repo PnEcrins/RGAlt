@@ -107,11 +107,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'mes-donnees-hors-ligne',
-    title: 'Mes données hors ligne',
+    path: 'fonds-de-carte-hors-ligne',
+    title: 'Fonds de carte hors ligne',
     component: MyOfflineDataComponent,
     data: {
-      title: 'Mes données hors ligne',
+      title: 'Fonds de carte hors ligne',
       backButton: true,
       accountButton: false,
     },

@@ -17,8 +17,8 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-
-import observationsTypes from '../../../../data/types.json';
+import { SettingsService } from '../../../services/settings.service';
+import { ObservationTypes } from '../../../types/types';
 
 @Component({
   selector: 'filter-dialog',
@@ -46,11 +46,15 @@ export class FilterDialog {
   }>(MAT_DIALOG_DATA);
   dialogRef = inject(MatDialogRef<FilterDialog>);
   observationsTypesForm = new FormControl(this.data.observationTypes);
-  observationTypes: any = observationsTypes;
   readonly observationsDates = new FormGroup({
     start: new FormControl(this.data.observationDates.start),
     end: new FormControl(this.data.observationDates.end),
   });
+
+  settingsService = inject(SettingsService);
+
+  observationsTypes: ObservationTypes =
+    this.settingsService.settings.value!.categories;
 
   filterCancel() {
     this.dialogRef.close({ cancel: true });

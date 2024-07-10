@@ -8,11 +8,13 @@ import { Router, RouterLink } from '@angular/router';
 import { DeleteAccountDialog } from './dialogs/delete-account-dialog';
 import { AuthService } from '../../services/auth.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-my-account',
   standalone: true,
   imports: [
+    CommonModule,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,

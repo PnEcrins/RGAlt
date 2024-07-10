@@ -1,9 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 
-import evenementsRemarquables from '../../../data/evenements_remarquables.json';
-import observationTypes from '../../../data/types.json';
 import { Observation, ObservationType } from '../../types/types';
 import { CommonModule } from '@angular/common';
+import { ObservationsService } from '../../services/observations.service';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-observation-detail',
@@ -17,20 +17,31 @@ export class ObservationDetailComponent {
   observationData!: { properties: Observation };
   observationType!: ObservationType;
 
+  observationsService = inject(ObservationsService);
+  settingsService = inject(SettingsService);
+
   ngOnInit() {
-    const observationId = Number(this.observation.split('-')[0]);
-    this.observationData = (evenementsRemarquables.features as any).find(
-      (feature: any) => feature.properties.uuid === observationId,
-    );
-    this.observationType = this.getEventType(
-      this.observationData!.properties.category,
-    )!;
+    const observationId = this.observation.slice(0, 36);
+    this.observationsService.getObservation(observationId).subscribe({
+      next: (success: any) => {
+        console.log('success', success);
+        this.observationData = success;
+        this.observationType = this.getEventType(
+          this.observationData!.properties.category,
+        )!;
+      },
+      error: (error) => {
+        console.log('error', error);
+      },
+    });
   }
 
   getEventType(eventTypeId: number) {
     const eventTypes = [
-      ...observationTypes.map((type) => type),
-      ...observationTypes.map((type) => type.children).flat(),
+      ...this.settingsService.settings.value!.categories.map((type) => type),
+      ...this.settingsService.settings
+        .value!.categories.map((type) => type.children)
+        .flat(),
     ];
     return eventTypes.find(
       (observationType) => observationType.id === eventTypeId,

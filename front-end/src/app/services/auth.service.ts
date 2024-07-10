@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { User } from '../types/types';
+import { OfflineService } from './offline.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -13,7 +15,10 @@ const httpOptions = {
 })
 export class AuthService {
   httpClient = inject(HttpClient);
+  offlineService = inject(OfflineService);
+
   isAuth = new BehaviorSubject<boolean>(false);
+  user = new BehaviorSubject<User | null>(null);
 
   checkAuth() {
     this.isAuth.next(localStorage.getItem('access_token') !== null);
@@ -35,6 +40,7 @@ export class AuthService {
   }
 
   logout() {
+    this.offlineService.resetObservationsPending();
     this.removeToken();
     this.removeRefreshToken();
     this.checkAuth();
@@ -60,15 +66,21 @@ export class AuthService {
     );
   }
 
-  changePassword() {}
+  changePassword(password: string) {
+    return this.httpClient.patch(
+      `${environment.apiUrl}/api/accounts/me/`,
+      { password },
+      httpOptions,
+    );
+  }
 
   resetPassword() {}
 
-  refreshToken(token: string) {
+  refreshToken(refreshRoken: string) {
     return this.httpClient.post(
       `${environment.apiUrl}/api/token/refresh/`,
       {
-        refreshToken: token,
+        refresh: refreshRoken,
       },
       httpOptions,
     );
@@ -96,5 +108,9 @@ export class AuthService {
 
   removeRefreshToken() {
     localStorage.removeItem('refresh_token');
+  }
+
+  setUser(user: User) {
+    this.user.next(user);
   }
 }
