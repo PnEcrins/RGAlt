@@ -13,6 +13,7 @@ class UserAdmin(BaseUserAdmin):
         "email",
         "first_name",
         "last_name",
+        "nickname",
         "uuid",
         "is_active",
         "is_superuser",
@@ -29,12 +30,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {"fields": ("email", "password")}),
         (
             _("Personal info"),
-            {
-                "fields": (
-                    "first_name",
-                    "last_name",
-                )
-            },
+            {"fields": ("first_name", "last_name", "nickname")},
         ),
         (
             _("Permissions"),
@@ -47,7 +43,7 @@ class UserAdmin(BaseUserAdmin):
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
-    readonly_fields = ("date_joined", "last_login", "uuid")
+    readonly_fields = ("date_joined", "last_login", "uuid", "nickname")
     add_fieldsets = (
         (
             None,

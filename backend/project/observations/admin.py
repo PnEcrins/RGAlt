@@ -66,7 +66,7 @@ class ObservationCategoryAdmin(TreeAdmin):
 
 @admin.register(Observation)
 class ObservationAdmin(GISModelAdmin):
-    list_display = ("category", "event_date", "observer")
+    list_display = ("uuid", "name", "category", "event_date", "observer")
     list_filter = ("category", "event_date")
     ordering = ("-event_date",)
     date_hierarchy = "event_date"
