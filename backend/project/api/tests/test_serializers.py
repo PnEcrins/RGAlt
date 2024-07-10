@@ -14,7 +14,13 @@ class AccountSerializerTestCase(TestCase):
         self.assertTrue(user.check_password("password"))
 
         serializer = AccountSerializer(
-            instance=user, data={"email": user.email, "password": "new_password"}
+            instance=user,
+            data={
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "password": "new_password",
+            },
         )
         self.assertTrue(serializer.is_valid(), serializer.errors)
 
@@ -74,6 +80,8 @@ class SettingsSerializerTestCase(TestCase):
                     "id": area.id,
                     "name": area.name,
                     "description": area.description,
+                    "max_zoom": 15,
+                    "min_zoom": 7,
                     "bbox": [
                         (area.geom.extent[0], area.geom.extent[3]),
                         (area.geom.extent[2], area.geom.extent[1]),
