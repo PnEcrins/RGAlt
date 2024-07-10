@@ -2,8 +2,9 @@
 
 import django.db.models.expressions
 import django.db.models.functions.text
-import project.utils.db.functions
 from django.db import migrations, models
+
+import project.utils.db.functions
 
 
 class Migration(migrations.Migration):
