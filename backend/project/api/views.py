@@ -51,7 +51,7 @@ class ObservationViewsSetMixin:
     def get_serializer_class(self):
         if self.action == "list":
             return ObservationListSerializer
-        elif self.action in ("add_media", "patch_media"):
+        elif self.action in ("add_media", "update_media"):
             return MediaSerializer
         return ObservationDetailSerializer
 
