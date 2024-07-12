@@ -16,11 +16,11 @@ from project.api.filters import ObservationFilterSet
 from project.api.serializers.accounts import AccountSerializer
 from project.api.serializers.common import EndpointsSerializer, SettingsSerializer
 from project.api.serializers.observations import (
+    MediaSerializer,
     ObservationDetailSerializer,
     ObservationListSerializer,
-    MediaSerializer,
 )
-from project.observations.models import Area, Observation, ObservationCategory, Media
+from project.observations.models import Area, Media, Observation, ObservationCategory
 
 
 class SettingsApiView(GenericAPIView):
@@ -102,10 +102,10 @@ class AccountObservationViewset(ObservationViewsSetMixin, viewsets.ModelViewSet)
         detail=True,
         methods=["post"],
         serializer_class=MediaSerializer,
-        url_name="pictures",
-        url_path="pictures",
+        url_name="medias",
+        url_path="medias",
     )
-    def add_picture(self, request, *args, **kwargs):
+    def add_media(self, request, *args, **kwargs):
         observation = self.get_object()
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -115,12 +115,24 @@ class AccountObservationViewset(ObservationViewsSetMixin, viewsets.ModelViewSet)
     @action(
         detail=True,
         methods=["delete"],
-        serializer_class=MediaSerializer,
-        url_path=r"pictures/(?P<uuid_media>[^/.]+)",
+        url_path=r"medias/(?P<uuid_media>[^/.]+)",
     )
-    def delete_picture(self, request, uuid_media, *args, **kwargs):
+    def delete_media(self, request, uuid_media, *args, **kwargs):
         observation = self.get_object()
         media = get_object_or_404(Media, uuid=uuid_media, observation=observation)
-        media.media_file.delete()
         media.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=True,
+        methods=["patch"],
+        serializer_class=MediaSerializer,
+        url_path=r"medias/(?P<uuid_media>[^/.]+)",
+    )
+    def patch_media(self, request, uuid_media, *args, **kwargs):
+        observation = self.get_object()
+        media = get_object_or_404(Media, uuid=uuid_media, observation=observation)
+        serializer = self.get_serializer(media, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
