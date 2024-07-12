@@ -116,25 +116,17 @@ class AccountObservationViewset(ObservationViewsSetMixin, viewsets.ModelViewSet)
 
     @action(
         detail=True,
-        methods=["delete"],
+        methods=["delete", "patch"],
         url_path=r"medias/(?P<uuid_media>[^/.]+)",
     )
-    def delete_media(self, request, uuid_media, *args, **kwargs):
+    def update_media(self, request, uuid_media, *args, **kwargs):
         observation = self.get_object()
         media = get_object_or_404(Media, uuid=uuid_media, observation=observation)
-        media.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @action(
-        detail=True,
-        methods=["patch"],
-        serializer_class=MediaSerializer,
-        url_path=r"medias/(?P<uuid_media>[^/.]+)",
-    )
-    def patch_media(self, request, uuid_media, *args, **kwargs):
-        observation = self.get_object()
-        media = get_object_or_404(Media, uuid=uuid_media, observation=observation)
-        serializer = self.get_serializer(media, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        if request.method == "DELETE":
+            media.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        elif request.method == "PATCH":
+            serializer = self.get_serializer(media, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)

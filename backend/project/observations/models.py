@@ -129,10 +129,7 @@ class Media(TimeStampMixin):
 
     def delete(self, using=None, keep_parents=False):
         """Delete media file and thumbnails after deleting the instance."""
-        try:
-            delete(self.media_file)
-        except:
-            pass
+        delete(self.media_file)
         super().delete(using, keep_parents)
 
     class Meta:
