@@ -1,6 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status, viewsets
-from rest_framework.generics import GenericAPIView
+from rest_framework.decorators import action
+from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.mixins import (
     DestroyModelMixin,
     RetrieveModelMixin,
@@ -16,8 +18,9 @@ from project.api.serializers.common import EndpointsSerializer, SettingsSerializ
 from project.api.serializers.observations import (
     ObservationDetailSerializer,
     ObservationListSerializer,
+    MediaSerializer,
 )
-from project.observations.models import Area, Observation, ObservationCategory
+from project.observations.models import Area, Observation, ObservationCategory, Media
 
 
 class SettingsApiView(GenericAPIView):
@@ -36,7 +39,7 @@ class SettingsApiView(GenericAPIView):
         return Response(serializer.data)
 
 
-class ObservationViewSet(viewsets.ReadOnlyModelViewSet):
+class ObservationViewsSetMixin:
     queryset = (
         Observation.objects.all()
         .select_related("source", "category", "observer")
@@ -50,6 +53,10 @@ class ObservationViewSet(viewsets.ReadOnlyModelViewSet):
         if self.action == "list":
             return ObservationListSerializer
         return ObservationDetailSerializer
+
+
+class ObservationViewSet(ObservationViewsSetMixin, viewsets.ReadOnlyModelViewSet):
+    permission_classes = [permissions.AllowAny]
 
 
 class AccountViewSet(
@@ -77,12 +84,8 @@ class SignUpView(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class AccountObservationViewset(viewsets.ModelViewSet):
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = ObservationFilterSet
+class AccountObservationViewset(ObservationViewsSetMixin, viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
-    lookup_field = "uuid"
-    lookup_url_kwarg = "uuid"
 
     def get_queryset(self):
         return (
@@ -91,10 +94,33 @@ class AccountObservationViewset(viewsets.ModelViewSet):
             .prefetch_related("medias")
         )
 
-    def get_serializer_class(self):
-        if self.action == "list":
-            return ObservationListSerializer
-        return ObservationDetailSerializer
-
     def perform_create(self, serializer):
         serializer.save(observer=self.request.user)
+
+    @extend_schema(request=MediaSerializer, responses={204: None}, methods=["POST"])
+    @action(
+        detail=True,
+        methods=["post"],
+        serializer_class=MediaSerializer,
+        url_name="pictures",
+        url_path="pictures",
+    )
+    def add_picture(self, request, *args, **kwargs):
+        observation = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(observation=observation)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        detail=True,
+        methods=["delete"],
+        serializer_class=MediaSerializer,
+        url_path=r"pictures/(?P<uuid_media>[^/.]+)",
+    )
+    def delete_picture(self, request, uuid_media, *args, **kwargs):
+        observation = self.get_object()
+        media = get_object_or_404(Media, uuid=uuid_media, observation=observation)
+        media.media_file.delete()
+        media.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

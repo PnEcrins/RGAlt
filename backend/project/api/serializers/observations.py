@@ -67,7 +67,7 @@ class MediaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Media
-        fields = ("id", "uuid", "legend", "media_file", "media_type", "thumbnails")
+        fields = ("uuid", "legend", "media_file", "media_type", "thumbnails")
 
 
 class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerializer):
