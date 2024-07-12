@@ -1,5 +1,4 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView, get_object_or_404
@@ -99,7 +98,6 @@ class AccountObservationViewset(ObservationViewsSetMixin, viewsets.ModelViewSet)
     def perform_create(self, serializer):
         serializer.save(observer=self.request.user)
 
-    @extend_schema(request=MediaSerializer, responses={204: None}, methods=["POST"])
     @action(
         detail=True,
         methods=["post"],
@@ -116,6 +114,7 @@ class AccountObservationViewset(ObservationViewsSetMixin, viewsets.ModelViewSet)
 
     @action(
         detail=True,
+        serializer_class=MediaSerializer,
         methods=["delete", "patch"],
         url_path=r"medias/(?P<uuid_media>[^/.]+)",
     )
