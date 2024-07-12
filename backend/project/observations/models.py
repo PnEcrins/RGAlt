@@ -3,6 +3,7 @@ from django.contrib.postgres.functions import RandomUUID
 from django.db.models import Func
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
+from sorl.thumbnail import delete
 from treebeard.mp_tree import MP_Node
 
 from project.utils.db.fields import SVGFileField
@@ -125,6 +126,13 @@ class Media(TimeStampMixin):
         related_name="medias",
         verbose_name=_("Observation"),
     )
+
+    def delete(self, using=None, keep_parents=False):
+        """Delete media file and thumbnails after deleting the instance."""
+        value = super().delete()
+        delete(self.media_file)
+        self.media_file.delete()
+        return value
 
     class Meta:
         verbose_name = _("Media")
