@@ -1,16 +1,18 @@
 # Regard d'altitude
 
+To build and launch frontend, go into `/front-end/` folder and run `npm install`.
+
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`.
+Run `npm start` for a dev server. Navigate to `http://localhost:4200/`.
 
 ## Build
 
-Run `ng build` to build the project.
+Run `npm run build` to build the project.
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests.
+Run `npm test` to execute the unit tests.
 
 ## Running end-to-end tests
 
