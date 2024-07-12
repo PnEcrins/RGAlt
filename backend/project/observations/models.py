@@ -43,7 +43,7 @@ class ObservationCategory(TimeStampMixin, MP_Node):
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
-        ordering = ["-numchild", "path"]
+        # ordering = ["-numchild", "path"]
 
 
 class MediaType(models.TextChoices):
