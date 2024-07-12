@@ -63,7 +63,7 @@ class ThumbnailSerializer(serializers.Serializer):
 
 
 class MediaSerializer(serializers.ModelSerializer):
-    thumbnails = ThumbnailSerializer(source="*")
+    thumbnails = ThumbnailSerializer(source="*", read_only=True)
 
     class Meta:
         model = Media
