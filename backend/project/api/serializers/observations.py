@@ -76,7 +76,7 @@ class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerial
     observer = serializers.SlugRelatedField("nickname", read_only=True)
 
     def get_source(self, obj):
-        return obj.source.name if obj.source else _("Regard d'altitude")
+        return obj.source.label if obj.source else _("Regard d'altitude")
 
     class Meta:
         model = Observation
