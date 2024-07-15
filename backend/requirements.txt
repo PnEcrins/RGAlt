@@ -25,15 +25,20 @@ django==5.0.6
     #   -r requirements.in
     #   django-cors-headers
     #   django-filter
+    #   django-picklefield
     #   django-storages
     #   django-treebeard
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
+django-constance==3.1.0
+    # via -r requirements.in
 django-cors-headers==4.4.0
     # via -r requirements.in
 django-filter==24.2
     # via -r requirements.in
+django-picklefield==3.2
+    # via django-constance
 django-storages==1.14.3
     # via -r requirements.in
 django-treebeard==4.7.1

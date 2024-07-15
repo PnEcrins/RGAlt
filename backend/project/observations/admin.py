@@ -22,6 +22,7 @@ class MediaInline(admin.TabularInline):
     fields = ("legend", "media_type", "media_file", "media_preview")
     readonly_fields = ("media_preview", "uuid")
 
+    @admin.display(description=_("Preview"))
     def media_preview(self, obj):
         # ex. the name of column is "image"
         if obj.media_file:

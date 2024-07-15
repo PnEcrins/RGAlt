@@ -1,3 +1,4 @@
+from constance import config
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
@@ -56,3 +57,16 @@ class SettingsSerializer(serializers.Serializer):
     categories = ObservationCategorySerializer(many=True)
     areas = AreaSerializer(many=True)
     endpoints = EndpointsSerializer()
+    base_maps = serializers.SerializerMethodField()
+
+    def get_base_maps(self, obj):
+        return {
+            "main_map": {
+                "url": config.MAIN_BASE_MAP_URL,
+                "attribution": config.MAIN_BASE_MAP_ATTRIBUTION,
+            },
+            "satellite_map": {
+                "url": config.SATELLITE_BASE_MAP_URL,
+                "attribution": config.SATELLITE_BASE_MAP_ATTRIBUTION,
+            },
+        }
