@@ -14,3 +14,4 @@ djangorestframework-simplejwt
 django-treebeard
 django-storages[s3]
 django-cors-headers
+django-constance[redis]

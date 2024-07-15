@@ -45,9 +45,11 @@ ALLOWED_HOSTS = os.getenv("SERVER_NAME", "").split(",")
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "constance",
+    "constance.backends.database",
+    "django.contrib.admin",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -210,6 +212,32 @@ SIMPLE_JWT = {
 }
 
 DEBUG_TOOLBAR_CONFIG = {"IS_RUNNING_TESTS": False}
+
+CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
+CONSTANCE_DATABASE_CACHE_BACKEND = "default"
+CONSTANCE_CONFIG = {
+    "MAIN_BASE_MAP_URL": (
+        "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
+        "Base map raster URL. Should contain {x}, {y} and {z} placeholders",
+    ),
+    "MAIN_BASE_MAP_ATTRIBUTION": (
+        '<a target="_blank" href="https://ign.fr/">IGN</a>',
+        "Base map raster attribution",
+    ),
+    "SATELLITE_BASE_MAP_URL": (
+        "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
+        "Ortho map raster URL. Should contain {x}, {y} and {z} placeholders",
+    ),
+    "SATELLITE_BASE_MAP_ATTRIBUTION": (
+        '<a target="_blank" href="https://ign.fr/">IGN</a>',
+        "Satellite map raster attribution",
+    ),
+}
+CONSTANCE_CONFIG_FIELDSETS = {
+    "Main map": ("MAIN_BASE_MAP_URL", "MAIN_BASE_MAP_ATTRIBUTION"),
+    "Satellite map": ("SATELLITE_BASE_MAP_URL", "SATELLITE_BASE_MAP_ATTRIBUTION"),
+}
+
 
 # try load custom.py in conf folder
 custom_settings_file = CONF_DIR / "custom.py"
