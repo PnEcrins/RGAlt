@@ -63,7 +63,7 @@ export class SynthesisInterfaceComponent {
 
   expansionPanelIsOpen = false;
   bounds: any;
-  private ngZone = inject(NgZone);
+  ngZone = inject(NgZone);
 
   handleObservationsWithinBoundsBind =
     this.handleObservationsWithinBounds.bind(this);
@@ -171,7 +171,9 @@ export class SynthesisInterfaceComponent {
     observationPopup.appendChild(observationName);
 
     const observationDate = this.L.default.DomUtil.create('div');
-    observationDate.innerHTML = geoJsonPoint.properties.event_date;
+    observationDate.innerHTML = moment(
+      geoJsonPoint.properties.event_date,
+    ).format('DD-MM-YYYY');
     observationDate.className = 'observation-date';
     observationPopup.appendChild(observationDate);
 

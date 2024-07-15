@@ -4,6 +4,7 @@ import {
   ViewChild,
   inject,
   afterNextRender,
+  NgZone,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -25,20 +26,23 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 import { Platform, PlatformModule } from '@angular/cdk/platform';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import 'moment/locale/fr';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import 'moment/locale/fr';
 import * as _moment from 'moment';
 import { default as _rollupMoment } from 'moment';
 import { round } from '@turf/helpers';
 
 import {
   Observation,
+  ObservationFeature,
   ObservationType,
   ObservationTypes,
 } from '../../types/types';
 import { OfflineService } from '../../services/offline.service';
 import { v4 as uuidv4 } from 'uuid';
 import { SettingsService } from '../../services/settings.service';
+import { ObservationsService } from '../../services/observations.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 const moment = _rollupMoment || _moment;
 
@@ -61,6 +65,7 @@ const moment = _rollupMoment || _moment;
     PlatformModule,
     MatDatepickerModule,
     MatTooltipModule,
+    MatSnackBarModule,
   ],
   templateUrl: './new-observation.component.html',
   styleUrl: './new-observation.component.scss',
@@ -116,6 +121,9 @@ export class NewObservationComponent {
   router = inject(Router);
   offlineService = inject(OfflineService);
   settingsService = inject(SettingsService);
+  observationsService = inject(ObservationsService);
+  snackBar = inject(MatSnackBar);
+  ngZone = inject(NgZone);
 
   observationsTypes: ObservationTypes =
     this.settingsService.settings.value!.categories;
@@ -167,10 +175,12 @@ export class NewObservationComponent {
 
     this.map.on('move', (e: any) => {
       const center = this.map.getCenter();
-      this.mapForm.value.position = {
-        lat: round(center.lat, 6),
-        lng: round(center.lng, 6),
-      };
+      this.ngZone.run(() => {
+        this.mapForm.value.position = {
+          lat: round(center.lat, 6),
+          lng: round(center.lng, 6),
+        };
+      });
       this.marker.setLatLng(center);
     });
 
@@ -225,16 +235,22 @@ export class NewObservationComponent {
     this.observationsTypes = this.settingsService.settings.value!.categories;
   }
 
-  saveAsDraft() {
+  async saveAsDraft() {
     const newObservation: Observation = {
       uuid: uuidv4(),
       name: this.moreDataForm.value.name!,
-      event_date: this.moreDataForm.value.date!.toDate().toString(),
+      event_date: moment(this.moreDataForm.value.date!.toDate()).format(
+        'YYYY-MM-DD',
+      ),
       comments: this.moreDataForm.value.comment!,
       category: this.typeForm.value.type!.id,
-      source: 'Source',
+      source: undefined,
+      coordinates: [
+        this.mapForm.value.position!.lng,
+        this.mapForm.value.position!.lng,
+      ],
     };
-    this.offlineService.writeOrUpdateDataInStore('observations', [
+    await this.offlineService.writeOrUpdateDataInStore('observations', [
       newObservation,
     ]);
     this.offlineService.handleObservationsPending();
@@ -242,7 +258,43 @@ export class NewObservationComponent {
   }
 
   sendObservation() {
-    this.router.navigate(['/']);
+    const observation: ObservationFeature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          this.mapForm.value.position!.lng,
+          this.mapForm.value.position!.lat,
+        ],
+      },
+      properties: {
+        comments: this.moreDataForm.value.comment ?? '',
+        event_date: moment(this.moreDataForm.value.date.toDate()).format(
+          'YYYY-MM-DD',
+        ),
+        category: this.typeForm.value.type!.id,
+      },
+    };
+    if (Boolean(this.moreDataForm.value.name)) {
+      observation.properties.name = this.moreDataForm.value.name!;
+    }
+    this.observationsService.sendObservation(observation).subscribe({
+      next: () => {
+        this.snackBar.open('Observation transférée', '', { duration: 2000 });
+        this.router.navigate(['/']);
+      },
+      error: async () => {
+        this.snackBar.open(
+          "Une erreur est survenue lors du transfert de l'observation",
+          '',
+          {
+            duration: 2000,
+          },
+        );
+
+        await this.saveAsDraft();
+      },
+    });
   }
 
   getEventType(eventTypeId: number) {

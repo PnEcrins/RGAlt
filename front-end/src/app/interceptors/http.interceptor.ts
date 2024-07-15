@@ -39,7 +39,11 @@ export class HttpRequestInterceptor implements HttpInterceptor {
 
     return next.handle(req).pipe(
       catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 401) {
+        if (
+          error instanceof HttpErrorResponse &&
+          !req.url.includes('token') &&
+          error.status === 401
+        ) {
           return this.handle401Error(req, next);
         }
         return throwError(() => new Error('Erreur'));
@@ -59,6 +63,8 @@ export class HttpRequestInterceptor implements HttpInterceptor {
           switchMap((token: any) => {
             this.isRefreshing = false;
             this.authService.saveToken(token.access);
+            this.refreshTokenSubject.next(token.access);
+
             return next.handle(this.addTokenHeader(req, token.access));
           }),
           catchError(() => {

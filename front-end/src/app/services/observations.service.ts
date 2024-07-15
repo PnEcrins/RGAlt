@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Observation } from '../types/types';
+import { Observation, ObservationFeature } from '../types/types';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -36,7 +36,11 @@ export class ObservationsService {
     );
   }
 
-  sendObservation(observation: Observation) {
-    console.log('sendObservation');
+  sendObservation(observation: ObservationFeature) {
+    return this.httpClient.post(
+      `${environment.apiUrl}/api/accounts/me/observations/`,
+      { ...observation },
+      httpOptions,
+    );
   }
 }

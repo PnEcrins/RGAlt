@@ -20,7 +20,9 @@
   </div>
   <div class="date-container mat-body-medium">
     <span class="mat-title-medium">Date : </span
-    ><span>{{ observationData.properties.event_date }}</span>
+    ><span>{{
+      observationData.properties.event_date | date: "dd/MM/yyyy"
+    }}</span>
   </div>
   <div class="source-container mat-body-medium">
     <span class="mat-title-medium">Source : </span
