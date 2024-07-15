@@ -56,7 +56,7 @@
             [routerLink]="[
               '/detail-d-une-observation',
               slugify(
-                observation.id.concat(
+                observation.id!.concat(
                   observation.properties.name
                     ? '-'.concat(observation.properties.name)
                     : ''

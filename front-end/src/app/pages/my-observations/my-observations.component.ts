@@ -1,19 +1,26 @@
 import { Component, inject } from '@angular/core';
-import {
-  Observation,
-  Observations,
-  observationsFeatureCollection,
-} from '../../types/types';
-import { OfflineService } from '../../services/offline.service';
 import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
 import slugify from 'slugify';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import 'moment/locale/fr';
+import * as _moment from 'moment';
+import { default as _rollupMoment } from 'moment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import {
+  Observation,
+  ObservationFeature,
+  Observations,
+  observationsFeatureCollection,
+} from '../../types/types';
 import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
+import { OfflineService } from '../../services/offline.service';
+
+const moment = _rollupMoment || _moment;
 
 @Component({
   selector: 'app-my-observations',
@@ -24,6 +31,7 @@ import { SettingsService } from '../../services/settings.service';
     MatIconModule,
     MatButtonModule,
     RouterLink,
+    MatSnackBarModule,
   ],
   templateUrl: './my-observations.component.html',
   styleUrl: './my-observations.component.scss',
@@ -35,6 +43,7 @@ export class MyObservationsComponent {
   offlineService = inject(OfflineService);
   observationsService = inject(ObservationsService);
   settingsService = inject(SettingsService);
+  snackBar = inject(MatSnackBar);
 
   slugify = slugify;
 
@@ -56,11 +65,44 @@ export class MyObservationsComponent {
       await this.offlineService.getAllDataInStore('observations');
   }
 
-  async sendObservation(observation: Observation, refreshObservations = true) {
-    this.offlineService.deleteDataInStore('observations', [observation.uuid]);
-    if (refreshObservations) {
-      await this.refreshObservations();
+  async sendObservation(myOfflineObservation: Observation) {
+    const observation: ObservationFeature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: myOfflineObservation.coordinates!,
+      },
+      properties: {
+        comments: myOfflineObservation.comments,
+        event_date: myOfflineObservation.event_date,
+        category: myOfflineObservation.category,
+      },
+    };
+    if (Boolean(myOfflineObservation.name)) {
+      observation.properties.name = myOfflineObservation.name;
     }
+    this.observationsService.sendObservation(observation).subscribe({
+      next: async () => {
+        this.snackBar.open(
+          `Observation "${observation.properties.name ? observation.properties.name : this.getEventType(observation.properties.category)?.label}" transférée`,
+          '',
+          { duration: 2000 },
+        );
+        this.offlineService.deleteDataInStore('observations', [
+          myOfflineObservation.uuid!,
+        ]);
+        await this.refreshObservations();
+      },
+      error: () => {
+        this.snackBar.open(
+          `Une erreur est survenue lors du transfert de l'observation "${observation.properties.name ? observation.properties.name : this.getEventType(observation.properties.category)?.label}"`,
+          '',
+          {
+            duration: 2000,
+          },
+        );
+      },
+    });
   }
 
   getEventType(eventTypeId: number) {
@@ -83,8 +125,7 @@ export class MyObservationsComponent {
   async sendObservations() {
     for (let index = 0; index < this.myOfflineObservations.length; index++) {
       const myOfflineObservation = this.myOfflineObservations[index];
-      await this.sendObservation(myOfflineObservation, false);
+      await this.sendObservation(myOfflineObservation);
     }
-    await this.refreshObservations();
   }
 }

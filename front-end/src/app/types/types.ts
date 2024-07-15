@@ -1,27 +1,31 @@
 export type observationsFeatureCollection = {
   type: 'FeatureCollection';
-  features: {
-    type: 'Feature';
-    id: string;
-    geometry: {
-      type: 'Point';
-      coordinates: number[];
-    };
-    properties: Observation;
-  }[];
+  features: ObservationFeature[];
+};
+
+export type ObservationFeature = {
+  type: 'Feature';
+  id?: string;
+  geometry: {
+    type: 'Point';
+    coordinates: number[];
+  };
+  properties: Observation;
 };
 
 export type Observations = Observation[];
 
 export type Observation = {
-  uuid: string;
-  name: string;
+  uuid?: string;
+  name?: string;
   comments: string;
   event_date: string;
-  source: string;
+  source?: string;
   category: number;
+  picture?: string;
   main_picture?: Picture;
   medias?: Picture[];
+  coordinates?: number[];
 };
 
 export type Picture = {

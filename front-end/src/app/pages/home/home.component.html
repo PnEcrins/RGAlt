@@ -1,7 +1,8 @@
 <section class="new-observation-container">
   <button
-    [disabled]="!(authService.isAuth | async)"
-    routerLink="/nouvelle-observation"
+    [routerLink]="
+      (authService.isAuth | async) ? '/nouvelle-observation' : '/se-connecter'
+    "
     mat-fab
     extended
     color="primary"
