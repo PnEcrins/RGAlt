@@ -72,7 +72,7 @@ class MediaSerializer(serializers.ModelSerializer):
 
 class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerializer):
     source = serializers.SerializerMethodField()
-    name = serializers.CharField(source="public_name")
+    name = serializers.CharField(source="public_name", read_only=False)
     observer = serializers.SlugRelatedField("nickname", read_only=True)
 
     def get_source(self, obj):
