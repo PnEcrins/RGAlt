@@ -49,9 +49,9 @@
               }"
             >
               <img
-                *ngIf="observationsType.pictogram"
+                *ngIf="observationsType.pictogram && this.icons.length > 0"
                 class="observation-type-icon"
-                src="{{ observationsType.pictogram }}"
+                [src]="getIconFromStorage(observationsType.id)"
               />
               <mat-card-footer> {{ observationsType.label }}</mat-card-footer>
             </mat-card>

@@ -162,8 +162,13 @@ export class AppComponent {
       this.handleAuthentification(value);
     });
 
-    this.settingsService.getSettings().subscribe((settings: any) => {
-      this.settingsService.setSettings(settings);
+    this.settingsService.getSettings().subscribe({
+      next: async (settings: any) => {
+        await this.settingsService.setSettings(settings);
+      },
+      error: async () => {
+        await this.settingsService.useOfflineSettings();
+      },
     });
 
     this.router.events.subscribe((event) => {
