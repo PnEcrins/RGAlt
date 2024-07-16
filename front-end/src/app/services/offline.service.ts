@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { DBSchema, openDB } from 'idb';
-import { Area, Areas, Observation, Observations } from '../types/types';
+import {
+  Area,
+  Areas,
+  Icon,
+  Icons,
+  Observation,
+  Observations,
+  OfflineSettings,
+} from '../types/types';
 import { BehaviorSubject } from 'rxjs';
 import { TileInfo, TileLayerOffline } from 'leaflet.offline';
 
@@ -8,7 +16,7 @@ type ObjectStores = ObjectStore[];
 
 type ObjectStore = { name: ObjectStoresName; keyPath: KeyPath };
 
-type ObjectStoresName = 'observations' | 'offline-areas';
+type ObjectStoresName = 'observations' | 'offline-areas' | 'settings' | 'icons';
 
 type KeyPath = 'uuid' | 'id';
 
@@ -16,9 +24,13 @@ type ObjectStoresType<T> = T extends 'observations'
   ? Observation
   : T extends 'offline-areas'
     ? Area
-    : never;
+    : T extends 'settings'
+      ? OfflineSettings
+      : T extends 'icons'
+        ? Icon
+        : never;
 
-type ObjectStoresData = Observations | Areas;
+type ObjectStoresData = Observations | Areas | OfflineSettings[] | Icons;
 
 interface DB extends DBSchema {
   observations: {
@@ -27,6 +39,14 @@ interface DB extends DBSchema {
   };
   'offline-areas': {
     value: Area;
+    key: number;
+  };
+  settings: {
+    value: OfflineSettings;
+    key: number;
+  };
+  icons: {
+    value: Icon;
     key: number;
   };
 }
@@ -61,6 +81,8 @@ export class OfflineService {
             const objectStoresNames: ObjectStores = [
               { name: 'observations', keyPath: 'uuid' },
               { name: 'offline-areas', keyPath: 'id' },
+              { name: 'settings', keyPath: 'id' },
+              { name: 'icons', keyPath: 'id' },
             ];
 
             objectStoresNames.forEach((objectStoresName) => {

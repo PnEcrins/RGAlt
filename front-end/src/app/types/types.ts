@@ -66,6 +66,11 @@ export type Settings = {
   areas: Areas;
 };
 
+export type OfflineSettings = {
+  id: number;
+  settings: Settings;
+};
+
 export type User = {
   id: number;
   uuid: string;
@@ -73,4 +78,13 @@ export type User = {
   is_superuser: boolean;
   last_name: string;
   first_name: string;
+};
+
+export type Icons = Icon[];
+
+export type Icon = {
+  id: number;
+  pictogram: string;
+  file: File;
+  objectUrl?: string;
 };

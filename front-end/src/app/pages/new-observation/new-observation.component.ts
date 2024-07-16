@@ -33,6 +33,8 @@ import { default as _rollupMoment } from 'moment';
 import { round } from '@turf/helpers';
 
 import {
+  Icon,
+  Icons,
   Observation,
   ObservationFeature,
   ObservationType,
@@ -129,8 +131,9 @@ export class NewObservationComponent {
   ngZone = inject(NgZone);
   readonly dialog = inject(MatDialog);
 
-  observationsTypes: ObservationTypes =
-    this.settingsService.settings.value!.categories;
+  observationsTypes: ObservationTypes = [];
+
+  icons: Icons = [];
 
   ngOnInit() {
     this.mobile = this.platform.ANDROID || this.platform.IOS;
@@ -157,10 +160,17 @@ export class NewObservationComponent {
           }
         }
       });
+
+    this.settingsService.settings.subscribe((settings) => {
+      if (settings) {
+        this.observationsTypes = settings.categories;
+      }
+    });
   }
   constructor() {
     afterNextRender(async () => {
-      this.initMap();
+      await this.initIcons();
+      await this.initMap();
     });
   }
 
@@ -352,5 +362,17 @@ export class NewObservationComponent {
       ),
       1,
     );
+  }
+
+  async initIcons() {
+    const icons = await this.offlineService.getAllDataInStore('icons');
+    this.icons = icons.map((icon) => ({
+      ...icon,
+      objectUrl: URL.createObjectURL(icon.file),
+    }));
+  }
+
+  getIconFromStorage(iconId: number) {
+    return this.icons.find((icon) => icon.id === iconId)!.objectUrl;
   }
 }
