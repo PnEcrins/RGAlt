@@ -50,6 +50,16 @@ class SettingsSerializerTestCase(TestCase):
             context={"request": RequestFactory().get("/")},
         )
         data = {
+            "base_maps": {
+                "main_map": {
+                    "attribution": '<a target="_blank" href="https://ign.fr/">IGN</a>',
+                    "url": "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
+                },
+                "satellite_map": {
+                    "attribution": '<a target="_blank" href="https://ign.fr/">IGN</a>',
+                    "url": "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
+                },
+            },
             "categories": [
                 {
                     "id": cat_root_1.id,
