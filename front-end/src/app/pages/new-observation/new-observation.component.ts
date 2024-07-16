@@ -43,6 +43,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { SettingsService } from '../../services/settings.service';
 import { ObservationsService } from '../../services/observations.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
+import { NewObservationLoaderDialog } from './dialogs/new-observation-loader-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 const moment = _rollupMoment || _moment;
 
@@ -95,9 +98,9 @@ export class NewObservationComponent {
   });
 
   photoForm: FormGroup<{
-    photo: FormControl<string | null>;
+    photos: FormControl<{ file: File; objectUrl: string }[] | null>;
   }> = new FormGroup({
-    photo: new FormControl<string | null>(null),
+    photos: new FormControl<any[]>([]),
   });
 
   mapForm: FormGroup<{
@@ -124,6 +127,7 @@ export class NewObservationComponent {
   observationsService = inject(ObservationsService);
   snackBar = inject(MatSnackBar);
   ngZone = inject(NgZone);
+  readonly dialog = inject(MatDialog);
 
   observationsTypes: ObservationTypes =
     this.settingsService.settings.value!.categories;
@@ -222,11 +226,20 @@ export class NewObservationComponent {
   }
 
   onPhotoSelected(event: any) {
-    const photo: File = event.target.files[0];
-
-    if (photo) {
-      this.photoForm.value.photo = URL.createObjectURL(photo);
+    const photoSelected: File = event.target.files[0];
+    if (
+      photoSelected &&
+      this.photoForm.value.photos &&
+      !this.photoForm.value.photos.find(
+        (photo) => photo.file.name === photoSelected.name,
+      )
+    ) {
+      this.photoForm.value.photos.push({
+        file: photoSelected,
+        objectUrl: URL.createObjectURL(photoSelected),
+      } as any);
     }
+    event.target.value = null;
   }
 
   backToPreviousObservations() {
@@ -249,6 +262,7 @@ export class NewObservationComponent {
         this.mapForm.value.position!.lng,
         this.mapForm.value.position!.lng,
       ],
+      files: this.photoForm.value.photos!.map((photo) => photo.file),
     };
     await this.offlineService.writeOrUpdateDataInStore('observations', [
       newObservation,
@@ -258,6 +272,14 @@ export class NewObservationComponent {
   }
 
   sendObservation() {
+    const newObservationLoaderDialogRef = this.dialog.open(
+      NewObservationLoaderDialog,
+      {
+        width: '250px',
+        data: { title: 'Téléchargement en cours' },
+        disableClose: true,
+      },
+    );
     const observation: ObservationFeature = {
       type: 'Feature',
       geometry: {
@@ -279,11 +301,26 @@ export class NewObservationComponent {
       observation.properties.name = this.moreDataForm.value.name!;
     }
     this.observationsService.sendObservation(observation).subscribe({
-      next: () => {
+      next: async (observationResponse: any) => {
+        for (
+          let index = 0;
+          index < this.photoForm.value.photos!.length;
+          index++
+        ) {
+          const photo = this.photoForm.value.photos![index];
+          await firstValueFrom(
+            this.observationsService.sendPhotoObservation(
+              observationResponse.id,
+              photo.file,
+            ),
+          );
+        }
+        newObservationLoaderDialogRef.close();
         this.snackBar.open('Observation transférée', '', { duration: 2000 });
         this.router.navigate(['/']);
       },
       error: async () => {
+        newObservationLoaderDialogRef.close();
         this.snackBar.open(
           "Une erreur est survenue lors du transfert de l'observation",
           '',
@@ -291,7 +328,6 @@ export class NewObservationComponent {
             duration: 2000,
           },
         );
-
         await this.saveAsDraft();
       },
     });
@@ -306,6 +342,15 @@ export class NewObservationComponent {
     ];
     return eventTypes.find(
       (observationType) => observationType.id === eventTypeId,
+    );
+  }
+
+  deletePhoto(selectedPhoto: any) {
+    this.photoForm.value.photos!.splice(
+      this.photoForm.value.photos!.findIndex(
+        (photo) => photo.file.name === selectedPhoto.file.name,
+      ),
+      1,
     );
   }
 }

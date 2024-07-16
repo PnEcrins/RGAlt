@@ -26,6 +26,7 @@ export type Observation = {
   main_picture?: Picture;
   medias?: Picture[];
   coordinates?: number[];
+  files?: File[];
 };
 
 export type Picture = {

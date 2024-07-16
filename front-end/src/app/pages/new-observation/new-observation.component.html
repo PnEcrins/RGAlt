@@ -98,8 +98,20 @@
         Insérez une photo depuis la galerie
       </button>
     </div>
-    <div class="mt-16 photo-container">
-      <img *ngIf="photoForm.value.photo" [src]="photoForm.value.photo" />
+    <div class="photos-container mt-16" *ngIf="photoForm.value.photos">
+      @for (photo of photoForm.value.photos; track photo.file.name) {
+        <div class="photo-container">
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="deletePhoto(photo)"
+            class="delete-photo-button"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+          <img [src]="photo.objectUrl" class="photo" />
+        </div>
+      }
     </div>
     <div class="mt-16">
       <button mat-button matStepperPrevious>Précédent</button>
@@ -109,7 +121,7 @@
   <mat-step>
     <ng-template matStepLabel>Localisez mon observation</ng-template>
     <div id="map"></div>
-    <div *ngIf="mapForm.value.position" class="mt-16 photo-container">
+    <div *ngIf="mapForm.value.position" class="mt-16">
       <div>Latitude : {{ mapForm.value.position.lat }}</div>
       <div>Longitude : {{ mapForm.value.position.lng }}</div>
     </div>
@@ -163,13 +175,17 @@
         {{ typeForm.value.type.label }}
       </div>
     </div>
-    <div *ngIf="photoForm.value.photo" class="mt-16 photo-container">
+    <div *ngIf="photoForm.value.photos" class="mt-16">
       <div>Contenu multimédia</div>
-      <div>
-        <img [src]="photoForm.value.photo" />
+      <div *ngIf="photoForm.value.photos" class="photos-container">
+        @for (photo of photoForm.value.photos; track photo) {
+          <div class="photo-container">
+            <img [src]="photo.objectUrl" class="photo" />
+          </div>
+        }
       </div>
     </div>
-    <div *ngIf="mapForm.value.position" class="mt-16 photo-container">
+    <div *ngIf="mapForm.value.position" class="mt-16">
       <div>Localisation</div>
       <div>Latitude : {{ mapForm.value.position.lat }}</div>
       <div>Longitude : {{ mapForm.value.position.lng }}</div>

@@ -19,8 +19,9 @@ import {
 import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
 import { OfflineService } from '../../services/offline.service';
-
-const moment = _rollupMoment || _moment;
+import { firstValueFrom } from 'rxjs';
+import { MyObservationLoaderDialog } from './dialogs/my-observation-loader-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-my-observations',
@@ -47,6 +48,8 @@ export class MyObservationsComponent {
 
   slugify = slugify;
 
+  readonly dialog = inject(MatDialog);
+
   async ngOnInit() {
     await this.getMyOfflineObservations();
     this.observationsService.getMyObservations().subscribe({
@@ -66,6 +69,14 @@ export class MyObservationsComponent {
   }
 
   async sendObservation(myOfflineObservation: Observation) {
+    const newObservationLoaderDialogRef = this.dialog.open(
+      MyObservationLoaderDialog,
+      {
+        width: '250px',
+        data: { title: 'Téléchargement en cours' },
+        disableClose: true,
+      },
+    );
     const observation: ObservationFeature = {
       type: 'Feature',
       geometry: {
@@ -82,7 +93,21 @@ export class MyObservationsComponent {
       observation.properties.name = myOfflineObservation.name;
     }
     this.observationsService.sendObservation(observation).subscribe({
-      next: async () => {
+      next: async (observationResponse: any) => {
+        for (
+          let index = 0;
+          index < myOfflineObservation.files!.length;
+          index++
+        ) {
+          const file = myOfflineObservation.files![index];
+          await firstValueFrom(
+            this.observationsService.sendPhotoObservation(
+              observationResponse.id,
+              file,
+            ),
+          );
+        }
+        newObservationLoaderDialogRef.close();
         this.snackBar.open(
           `Observation "${observation.properties.name ? observation.properties.name : this.getEventType(observation.properties.category)?.label}" transférée`,
           '',
