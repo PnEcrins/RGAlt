@@ -27,6 +27,7 @@ jobs:
             POSTGRES_PASSWORD: postgres
             POSTGRES_USER: postgres
             POSTGRES_HOST: 127.0.0.1
+            MEMCACHE_HOST: 127.0.0.1
 
         services:
             postgres:
@@ -40,6 +41,11 @@ jobs:
                 # Set health checks to wait until postgres has started
                 options: >-
                     --health-cmd pg_isready
+
+            memcached:
+                image: memcached:alpine
+                ports:
+                    - 11211:11211
 
         steps:
             - uses: actions/checkout@v4

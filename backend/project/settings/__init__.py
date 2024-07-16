@@ -203,7 +203,7 @@ API_SWAGGER_SETTINGS = {
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-        "LOCATION": "memcached:11211",
+        "LOCATION": f"{os.getenv('MEMCACHE_HOST', 'memcached')}:11211",
     }
 }
 
