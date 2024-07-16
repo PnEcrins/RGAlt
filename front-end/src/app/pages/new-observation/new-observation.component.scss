@@ -30,11 +30,23 @@ mat-card {
   gap: 16px;
 }
 
-.photo-container {
-  img {
-    width: 200px;
-    height: 200px;
-    object-fit: contain;
+.photos-container {
+  display: flex;
+  overflow-x: scroll;
+  .photo-container {
+    position: relative;
+    .delete-photo-button {
+      position: absolute;
+      right: 0;
+    }
+    .photo {
+      width: 200px;
+      max-height: 200px;
+      object-fit: contain;
+    }
+    &:not(:last-of-type) {
+      margin-right: 16px;
+    }
   }
 }
 

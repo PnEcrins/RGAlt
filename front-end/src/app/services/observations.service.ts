@@ -1,10 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Observation, ObservationFeature } from '../types/types';
+import { ObservationFeature } from '../types/types';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+};
+
+const httpMediaOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'multipart/form-data' }),
 };
 
 @Injectable({
@@ -41,6 +45,17 @@ export class ObservationsService {
       `${environment.apiUrl}/api/accounts/me/observations/`,
       { ...observation },
       httpOptions,
+    );
+  }
+
+  sendPhotoObservation(observationId: any, file: any) {
+    console.log('sendPhotoObservation', observationId, file);
+    const formData = new FormData();
+    formData.append('media_file', file);
+    formData.append('media_type', 'image');
+    return this.httpClient.post(
+      `${environment.apiUrl}/api/accounts/me/observations/${observationId}/medias/`,
+      formData,
     );
   }
 }
