@@ -81,9 +81,16 @@ export class AppComponent {
     {
       id: 3,
       text: 'Saisir une nouvelle observation',
-      routerLink: 'nouvelle-observation',
-      authenficated: true,
-      click: () => null,
+      routerLink: null,
+      authenficated: null,
+      click: () => {
+        this.sidenav.close();
+        this.router.navigate([
+          this.authService.isAuth.value
+            ? '/nouvelle-observation'
+            : '/se-connecter',
+        ]);
+      },
       observationsPending: false,
     },
     {

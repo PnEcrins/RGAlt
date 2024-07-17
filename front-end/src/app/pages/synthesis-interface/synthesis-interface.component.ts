@@ -23,6 +23,7 @@ import { observationsFeatureCollection } from '../../types/types';
 
 import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -83,13 +84,38 @@ export class SynthesisInterfaceComponent {
     const { tileLayerOffline } = await import('leaflet.offline');
 
     this.map = this.L.default.map('map', { zoom: 4, center: [47, 2] });
+    const defaultLayerUrl = this.settingsService.settings.value?.base_maps
+      .main_map.url
+      ? this.settingsService.settings.value?.base_maps.main_map.url
+      : environment.baseMaps.mainMap.url;
+    const defaultLayerAttribution = this.settingsService.settings.value
+      ?.base_maps.main_map.attribution
+      ? this.settingsService.settings.value?.base_maps.main_map.attribution
+      : environment.baseMaps.mainMap.attribution;
 
-    tileLayerOffline(
-      'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-      {
-        attribution: "<a target='_blank' href='https://ign.fr/'>IGN</a>",
-      },
-    ).addTo(this.map);
+    const satelliteLayerUrl = this.settingsService.settings.value?.base_maps
+      .satellite_map.url
+      ? this.settingsService.settings.value?.base_maps.satellite_map.url
+      : environment.baseMaps.satellitMap.url;
+    const satelliteLayerAttribution = this.settingsService.settings.value
+      ?.base_maps.satellite_map.attribution
+      ? this.settingsService.settings.value?.base_maps.satellite_map.attribution
+      : environment.baseMaps.satellitMap.attribution;
+
+    const defaultLayer = tileLayerOffline(defaultLayerUrl, {
+      attribution: defaultLayerAttribution,
+    });
+    defaultLayer.addTo(this.map);
+    const satelliteLayer = tileLayerOffline(satelliteLayerUrl, {
+      attribution: satelliteLayerAttribution,
+    });
+    this.L.control
+      .layers(
+        { Defaut: defaultLayer, Satellite: satelliteLayer },
+        {},
+        { collapsed: true },
+      )
+      .addTo(this.map);
 
     this.L.default.control
       .locate({ setView: 'once', showPopup: false })
@@ -106,18 +132,24 @@ export class SynthesisInterfaceComponent {
         this.observationsLayer = this.L.default.geoJSON(
           this.observationsFeatureCollection,
           {
-            pointToLayer: (geoJsonPoint: any, latlng: any) =>
-              this.L.default.marker(latlng, {
+            pointToLayer: (geoJsonPoint: any, latlng: any) => {
+              const icon = this.getEventType(geoJsonPoint.properties.category);
+              return this.L.default.marker(latlng, {
                 icon: this.L.default.divIcon({
-                  html: `<div class="observation-marker-container">
-                    <img src="favicon.ico"/>
+                  html:
+                    icon && icon.pictogram
+                      ? `<div class="observation-marker-container">
+                    <img src="${icon.pictogram}"/>
+                    </div>`
+                      : `<div class="observation-marker-container">
                     </div>`,
                   className: 'observation-marker',
                   iconSize: 32,
                   iconAnchor: [18, 28],
                 } as any),
                 autoPanOnFocus: false,
-              } as any),
+              } as any);
+            },
             onEachFeature: (geoJsonPoint: any, layer: any) => {
               layer.once('click', () => {
                 this.handleObservationPopup(geoJsonPoint, layer);

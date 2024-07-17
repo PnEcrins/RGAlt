@@ -48,6 +48,7 @@ export class SettingsService {
         ]);
       }
     }
+    console.log(settings);
     this.settings.next(settings);
   }
 

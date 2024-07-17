@@ -48,6 +48,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { NewObservationLoaderDialog } from './dialogs/new-observation-loader-dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment';
+import { tileLayerOffline } from 'leaflet.offline';
 
 const moment = _rollupMoment || _moment;
 
@@ -180,12 +182,38 @@ export class NewObservationComponent {
 
     this.map = this.L.map('map', { zoom: 4, center: [47, 2] });
 
-    this.L.tileLayer(
-      'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-      {
-        attribution: "<a target='_blank' href='https://ign.fr/'>IGN</a>",
-      },
-    ).addTo(this.map);
+    const defaultLayerUrl = this.settingsService.settings.value?.base_maps
+      .main_map.url
+      ? this.settingsService.settings.value?.base_maps.main_map.url
+      : environment.baseMaps.mainMap.url;
+    const defaultLayerAttribution = this.settingsService.settings.value
+      ?.base_maps.main_map.attribution
+      ? this.settingsService.settings.value?.base_maps.main_map.attribution
+      : environment.baseMaps.mainMap.attribution;
+
+    const satelliteLayerUrl = this.settingsService.settings.value?.base_maps
+      .satellite_map.url
+      ? this.settingsService.settings.value?.base_maps.satellite_map.url
+      : environment.baseMaps.satellitMap.url;
+    const satelliteLayerAttribution = this.settingsService.settings.value
+      ?.base_maps.satellite_map.attribution
+      ? this.settingsService.settings.value?.base_maps.satellite_map.attribution
+      : environment.baseMaps.satellitMap.attribution;
+
+    const defaultLayer = tileLayerOffline(defaultLayerUrl, {
+      attribution: defaultLayerAttribution,
+    });
+    defaultLayer.addTo(this.map);
+    const satelliteLayer = tileLayerOffline(satelliteLayerUrl, {
+      attribution: satelliteLayerAttribution,
+    });
+    this.L.control
+      .layers(
+        { Defaut: defaultLayer, Satellite: satelliteLayer },
+        {},
+        { collapsed: true },
+      )
+      .addTo(this.map);
 
     this.map.on('move', (e: any) => {
       const center = this.map.getCenter();
