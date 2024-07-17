@@ -24,6 +24,7 @@ import { observationsFeatureCollection } from '../../types/types';
 import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
 import { environment } from '../../../environments/environment';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -248,7 +249,7 @@ export class SynthesisInterfaceComponent {
       data: this.filter,
     });
 
-    deleteDialogRef.afterClosed().subscribe((result) => {
+    deleteDialogRef.afterClosed().subscribe(async (result) => {
       if (
         result &&
         result.filter &&
@@ -257,63 +258,27 @@ export class SynthesisInterfaceComponent {
           (result.filter.observationDates.start &&
             result.filter.observationDates.end))
       ) {
-        let observationFeatures = null;
-
-        if (
-          Boolean(result.filter.observationTypes) &&
-          result.filter.observationTypes.length > 0
-        ) {
-          this.filter.observationTypes = result.filter.observationTypes;
-          observationFeatures =
-            this.observationsFeatureCollection?.features.filter(
-              (feature: any) =>
-                result.filter.observationTypes
-                  .map((observationType: any) => observationType.id)
-                  .includes(feature.properties.id_event_type),
-            );
-        }
-        if (
-          Boolean(
-            result.filter.observationDates &&
-              result.filter.observationDates.start &&
-              result.filter.observationDates.end,
-          )
-        ) {
-          this.filter.observationTypes = result.filter.observationTypes;
-          if (observationFeatures) {
-            observationFeatures = observationFeatures.filter(
-              (observationFeature: any) =>
-                moment(observationFeature.properties.date_event).isBetween(
-                  result.filter.observationDates.start,
-                  result.filter.observationDates.end,
-                  null,
-                  '[]',
-                ),
-            );
-          } else {
-            observationFeatures =
-              this.observationsFeatureCollection?.features.filter(
-                (observationFeature: any) =>
-                  moment(observationFeature.properties.date_event).isBetween(
-                    result.filter.observationDates.start,
-                    result.filter.observationDates.end,
-                    null,
-                    '[]',
-                  ),
-              );
-          }
-        }
-        this.observationsFeatureCollectionFiltered = {
-          ...this.observationsFeatureCollection!,
-          features: observationFeatures || [],
-        };
-      } else {
-        this.filter = {
-          observationTypes: [],
-          observationDates: { start: null, end: null },
-        };
+        const observations = await firstValueFrom(
+          this.observationsService.getObservations(
+            result.filter.observationTypes
+              ? result.filter.observationTypes.map(
+                  (observationType: any) => observationType.id,
+                )
+              : undefined,
+            result.filter.observationDates.start
+              ? moment(result.filter.observationDates.start.toDate()).format(
+                  'YYYY-MM-DD',
+                )
+              : undefined,
+            result.filter.observationDates.end
+              ? moment(result.filter.observationDates.end.toDate()).format(
+                  'YYYY-MM-DD',
+                )
+              : undefined,
+          ),
+        );
         this.observationsFeatureCollectionFiltered =
-          this.observationsFeatureCollection;
+          observations as observationsFeatureCollection;
       }
       if (result && !result.cancel) {
         this.updateMap();
@@ -343,6 +308,7 @@ export class SynthesisInterfaceComponent {
 
       this.bounds && this.map.fitBounds(this.bounds);
     }
+    this.handleObservationsWithinBounds();
   }
 
   handleObservationsWithinBounds() {

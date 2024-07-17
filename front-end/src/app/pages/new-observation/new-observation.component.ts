@@ -298,7 +298,7 @@ export class NewObservationComponent {
       source: undefined,
       coordinates: [
         this.mapForm.value.position!.lng,
-        this.mapForm.value.position!.lng,
+        this.mapForm.value.position!.lat,
       ],
       files: this.photoForm.value.photos!.map((photo) => photo.file),
     };

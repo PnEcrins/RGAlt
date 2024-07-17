@@ -25,6 +25,11 @@
       <mat-error>Un mot de passe est nécessaire</mat-error>
     }
   </mat-form-field>
+  @if (error) {
+    <div class="login-error-container">
+      <mat-error>{{ error }}</mat-error>
+    </div>
+  }
   <button mat-flat-button color="primary">Se connecter</button>
 </form>
 <div class="forget-password-button-container">

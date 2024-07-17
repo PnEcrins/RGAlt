@@ -77,6 +77,7 @@ export class MyObservationsComponent {
         disableClose: true,
       },
     );
+    console.log(myOfflineObservation.coordinates);
     const observation: ObservationFeature = {
       type: 'Feature',
       geometry: {

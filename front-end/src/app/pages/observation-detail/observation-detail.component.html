@@ -1,12 +1,14 @@
 <ng-container *ngIf="observationData">
-  <div class="photo-container">
-    <img
-      *ngIf="
-        observationData.properties.medias &&
-        observationData.properties.medias.length > 0
-      "
-      [src]="observationData.properties.medias[0].thumbnails.large"
-    />
+  <div
+    class="photos-container"
+    *ngIf="
+      observationData.properties.medias &&
+      observationData.properties.medias.length > 0
+    "
+  >
+    @for (media of observationData.properties.medias; track media.uuid) {
+      <img [src]="observationData.properties.medias[0].thumbnails.large" />
+    }
   </div>
   <div class="name-container mat-title-large">
     {{

@@ -6,7 +6,10 @@ import { Settings } from '../types/types';
 import { OfflineService } from './offline.service';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Accept-Language': 'fr-FR',
+  }),
 };
 
 const httpIconOptions = {
