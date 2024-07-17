@@ -4,11 +4,10 @@ import { environment } from '../../environments/environment';
 import { ObservationFeature } from '../types/types';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-};
-
-const httpMediaOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'multipart/form-data' }),
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Accept-Language': 'fr-FR',
+  }),
 };
 
 @Injectable({
@@ -19,11 +18,26 @@ export class ObservationsService {
 
   constructor() {}
 
-  getObservations() {
-    return this.httpClient.get(
-      `${environment.apiUrl}/api/observations/`,
-      httpOptions,
-    );
+  getObservations(
+    observationTypesId?: number[],
+    startDate?: string,
+    endDate?: string,
+  ) {
+    let url = `${environment.apiUrl}/api/observations/`;
+    if (observationTypesId) {
+      for (let index = 0; index < observationTypesId.length; index++) {
+        const observationTypeId = observationTypesId[index];
+        url = url.concat(
+          `${index === 0 ? '?' : '&'}categories=${observationTypeId}`,
+        );
+      }
+    }
+    if (startDate && endDate) {
+      url = url.concat(
+        `${observationTypesId ? '&' : '?'}event_date_after=${startDate}&event_date_before=${endDate}`,
+      );
+    }
+    return this.httpClient.get(`${url}`, httpOptions);
   }
 
   getObservation(observationId: string) {
@@ -49,7 +63,6 @@ export class ObservationsService {
   }
 
   sendPhotoObservation(observationId: any, file: any) {
-    console.log('sendPhotoObservation', observationId, file);
     const formData = new FormData();
     formData.append('media_file', file);
     formData.append('media_type', 'image');

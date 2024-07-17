@@ -41,6 +41,8 @@ export class LoginComponent {
   authService = inject(AuthService);
   snackBar = inject(MatSnackBar);
 
+  error: String | null = null;
+
   onLogin() {
     if (this.emailFormControl.valid && this.passwordFormControl.valid) {
       this.authService
@@ -57,8 +59,10 @@ export class LoginComponent {
             this.authService.checkAuth();
             this.router.navigate(['..']);
           },
-          error: (error) => {
-            console.log('error', error);
+          error: (error: any) => {
+            console.log(error);
+            this.error = error.toString();
+            console.log(this.error);
           },
         });
     }

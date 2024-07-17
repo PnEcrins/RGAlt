@@ -5,7 +5,7 @@ $panel-height: 100vh;
   display: flex;
   justify-content: center;
   position: absolute;
-  bottom: calc(16px + 48px + 56px);
+  bottom: calc(16px + 48px);
   z-index: 400;
   pointer-events: none;
   button {

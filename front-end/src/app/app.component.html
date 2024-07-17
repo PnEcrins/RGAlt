@@ -22,7 +22,10 @@
   </button>
   <span>{{ title }}</span>
 </mat-toolbar>
-<mat-sidenav-container [style.marginTop.px]="0">
+<mat-sidenav-container
+  [class.mat-sidenav-container-home]="!backButton"
+  [style.marginTop.px]="0"
+>
   <mat-sidenav
     #sidenav
     mode="over"

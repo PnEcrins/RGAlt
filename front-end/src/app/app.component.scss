@@ -7,6 +7,10 @@ mat-sidenav-container {
   background: var(--mat-toolbar-container-background-color);
 }
 
+.mat-sidenav-container-home {
+  height: calc(100vh - var(--mat-toolbar-standard-height));
+}
+
 @media (max-width: 599px) {
   mat-sidenav-container {
     height: calc(
