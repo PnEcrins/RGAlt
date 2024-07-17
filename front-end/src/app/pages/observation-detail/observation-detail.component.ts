@@ -1,7 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { Observation, ObservationType } from '../../types/types';
-import { CommonModule } from '@angular/common';
 import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
 

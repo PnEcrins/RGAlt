@@ -59,11 +59,24 @@ export type Area = {
   name: string;
   description: string;
   bbox: number[][];
+  min_zoom: number;
+  max_zoom: number;
+  offline?: boolean;
 };
 
 export type Settings = {
   categories: ObservationTypes;
   areas: Areas;
+  base_maps: {
+    main_map: {
+      url: string;
+      attribution: string;
+    };
+    satellite_map: {
+      url: string;
+      attribution: string;
+    };
+  };
 };
 
 export type OfflineSettings = {
