@@ -88,13 +88,10 @@ export class CreateAccountComponent {
           })
           .subscribe({
             next: (success) => {
-              console.log('success', success);
               this.snackBar.open('Compte créé', '', { duration: 2000 });
               this.router.navigate(['/se-connecter']);
             },
-            error: (error) => {
-              console.log('error', error);
-            },
+            error: () => {},
           });
       }
     } else {
