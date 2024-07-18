@@ -119,6 +119,22 @@ export class AppComponent {
     },
     {
       id: 7,
+      text: 'En savoir plus',
+      routerLink: 'en-savoir-plus',
+      authenficated: null,
+      click: () => null,
+      observationsPending: false,
+    },
+    {
+      id: 8,
+      text: 'Mentions légales',
+      routerLink: 'legal-notice',
+      authenficated: null,
+      click: () => null,
+      observationsPending: false,
+    },
+    {
+      id: 0,
       text: 'Me déconnecter',
       routerLink: null,
       authenficated: true,
@@ -167,15 +183,6 @@ export class AppComponent {
         });
       }
       this.handleAuthentification(value);
-    });
-
-    this.settingsService.getSettings().subscribe({
-      next: async (settings: any) => {
-        await this.settingsService.setSettings(settings);
-      },
-      error: async () => {
-        await this.settingsService.useOfflineSettings();
-      },
     });
 
     this.router.events.subscribe((event) => {

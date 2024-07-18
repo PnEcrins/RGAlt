@@ -2,6 +2,7 @@ import {
   ApplicationConfig,
   provideZoneChangeDetection,
   isDevMode,
+  APP_INITIALIZER,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
@@ -17,6 +18,7 @@ import {
 } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { httpInterceptorProviders } from './interceptors/http.interceptor';
+import { SettingsService } from './services/settings.service';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -45,5 +47,24 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (settingsService: SettingsService) => async () => {
+        return new Promise(async (resolve) => {
+          settingsService.getSettings().subscribe({
+            next: async (settings: any) => {
+              await settingsService.setSettings(settings);
+              resolve(true);
+            },
+            error: async () => {
+              await settingsService.useOfflineSettings();
+              resolve(true);
+            },
+          });
+        });
+      },
+      deps: [SettingsService],
+      multi: true,
+    },
   ],
 };
