@@ -7,9 +7,9 @@ mat-card {
   width: 240px;
   cursor: pointer;
   .area-type-icon {
-    font-size: 40px;
-    height: 40px;
-    width: 40px;
+    font-size: 72px;
+    height: 72px;
+    width: 72px;
   }
 }
 
@@ -26,12 +26,11 @@ mat-card {
 }
 
 mat-grid-list {
-  margin-top: 24px;
   mat-grid-tile {
     overflow: visible;
   }
 }
 
-.information-container {
-  padding: 16px;
+.areas-container {
+  padding-top: 24px;
 }

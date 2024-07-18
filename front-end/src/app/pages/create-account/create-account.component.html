@@ -13,6 +13,20 @@
     }
   </mat-form-field>
   <mat-form-field>
+    <mat-label>Nom</mat-label>
+    <input type="text" matInput [formControl]="lastNameFormControl" />
+    @if (lastNameFormControl.hasError("required")) {
+      <mat-error>Un nom nécessaire</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Prénom</mat-label>
+    <input type="text" matInput [formControl]="firstNameFormControl" />
+    @if (emailFormControl.hasError("required")) {
+      <mat-error>Un prénom nécessaire</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
     <mat-label>Mot de passe</mat-label>
     <input type="password" matInput [formControl]="passwordFormControl" />
     @if (

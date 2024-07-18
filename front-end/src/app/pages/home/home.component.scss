@@ -24,7 +24,10 @@
 .explanatory-sentence-container {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 80px;
+  min-height: 80px;
+  text-align: justify;
   color: var(--mat-fab-foreground-color);
+  padding: 16px;
 }

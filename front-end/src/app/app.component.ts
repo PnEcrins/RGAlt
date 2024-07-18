@@ -18,11 +18,13 @@ import {
 import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { Location } from '@angular/common';
-import { AuthService } from './services/auth.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Platform } from '@angular/cdk/platform';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 import { OfflineService } from './services/offline.service';
+import { AuthService } from './services/auth.service';
+import { SettingsService } from './services/settings.service';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +40,7 @@ import { OfflineService } from './services/offline.service';
     MatListModule,
     MatBadgeModule,
     MatDividerModule,
+    MatSnackBarModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -51,7 +54,10 @@ export class AppComponent {
   router = inject(Router);
   location = inject(Location);
   authService = inject(AuthService);
+  settingsService = inject(SettingsService);
+
   offlineService = inject(OfflineService);
+  snackBar = inject(MatSnackBar);
 
   @ViewChild('sidenav') private sidenav!: MatSidenav;
 
@@ -75,9 +81,16 @@ export class AppComponent {
     {
       id: 3,
       text: 'Saisir une nouvelle observation',
-      routerLink: 'nouvelle-observation',
-      authenficated: true,
-      click: () => null,
+      routerLink: null,
+      authenficated: null,
+      click: () => {
+        this.sidenav.close();
+        this.router.navigate([
+          this.authService.isAuth.value
+            ? '/nouvelle-observation'
+            : '/se-connecter',
+        ]);
+      },
       observationsPending: false,
     },
     {
@@ -98,20 +111,38 @@ export class AppComponent {
     },
     {
       id: 6,
-      text: 'Mes données hors ligne',
-      routerLink: 'mes-donnees-hors-ligne',
+      text: 'Fonds de carte hors ligne',
+      routerLink: 'fonds-de-carte-hors-ligne',
       authenficated: true,
       click: () => null,
       observationsPending: false,
     },
     {
       id: 7,
+      text: 'En savoir plus',
+      routerLink: 'en-savoir-plus',
+      authenficated: null,
+      click: () => null,
+      observationsPending: false,
+    },
+    {
+      id: 8,
+      text: 'Mentions légales',
+      routerLink: 'legal-notice',
+      authenficated: null,
+      click: () => null,
+      observationsPending: false,
+    },
+    {
+      id: 0,
       text: 'Me déconnecter',
       routerLink: null,
       authenficated: true,
       click: () => {
         this.authService.logout();
         this.sidenav.close();
+        this.snackBar.open('Vous êtes déconnecté', '', { duration: 2000 });
+        this.router.navigate(['..']);
       },
       observationsPending: false,
     },
@@ -138,14 +169,22 @@ export class AppComponent {
       this.authService.checkAuth();
     }
     afterNextRender(() => {
-      this.offlineService.handleObservationsPending();
+      if (this.authService.isAuth) {
+        this.offlineService.handleObservationsPending();
+      }
     });
   }
 
   ngOnInit() {
     this.authService.isAuth.subscribe((value) => {
+      if (value) {
+        this.authService.getAccount().subscribe((account: any) => {
+          this.authService.setUser(account);
+        });
+      }
       this.handleAuthentification(value);
     });
+
     this.router.events.subscribe((event) => {
       if (event instanceof ActivationEnd) {
         if (this.sidenav.opened) {

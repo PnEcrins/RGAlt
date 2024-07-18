@@ -1,7 +1,30 @@
 <form class="account-form">
   <mat-form-field>
     <mat-label>Email</mat-label>
-    <input disabled type="email" matInput [value]="email" />
+    <input
+      disabled
+      type="email"
+      matInput
+      [value]="(authService.user | async)?.email"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Nom</mat-label>
+    <input
+      disabled
+      type="text"
+      matInput
+      [value]="(authService.user | async)?.last_name"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Prénom</mat-label>
+    <input
+      disabled
+      type="text"
+      matInput
+      [value]="(authService.user | async)?.first_name"
+    />
   </mat-form-field>
 </form>
 

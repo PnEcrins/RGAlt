@@ -1,11 +1,14 @@
-.photo-container {
+.photos-container {
   display: flex;
-  justify-content: center;
+  overflow-x: scroll;
   width: 100%;
   height: 400px;
   img {
     width: 100%;
     object-fit: contain;
+    &:not(:last-of-type) {
+      margin-right: 16px;
+    }
   }
 }
 .source-container {

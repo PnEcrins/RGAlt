@@ -11,9 +11,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { DownloadDialog } from './dialogs/download-dialog';
 import { DeleteDialog } from './dialogs/delete-dialog';
 
-import areas from '../../../data/areas.json';
 import { OfflineService } from '../../services/offline.service';
 import { LoaderDialog } from './dialogs/loader-dialog';
+import { SettingsService } from '../../services/settings.service';
+import { environment } from '../../../environments/environment';
+import { Area } from '../../types/types';
 
 @Component({
   selector: 'app-my-offline-data',
@@ -32,6 +34,7 @@ import { LoaderDialog } from './dialogs/loader-dialog';
 export class MyOfflineDataComponent {
   readonly dialog = inject(MatDialog);
   offlineService = inject(OfflineService);
+  settingsService = inject(SettingsService);
 
   areas: any[] = [];
 
@@ -79,8 +82,12 @@ export class MyOfflineDataComponent {
   }
 
   async initAreas() {
-    for (let index = 0; index < areas.length; index++) {
-      const area = areas[index];
+    for (
+      let index = 0;
+      index < this.settingsService.settings.value!.areas.length;
+      index++
+    ) {
+      const area = this.settingsService.settings.value!.areas[index];
       this.areas.push({
         ...area,
         offline: Boolean(
@@ -98,7 +105,7 @@ export class MyOfflineDataComponent {
     }
   }
 
-  openDownloadDialog(area: any) {
+  openDownloadDialog(area: Area) {
     const downloadDialogRef = this.dialog.open(DownloadDialog, {
       width: '250px',
       data: { name: area.name },
@@ -113,17 +120,25 @@ export class MyOfflineDataComponent {
         });
         const { tileLayerOffline } = await import('leaflet.offline');
         const L = await import('leaflet');
-        const url =
-          'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
-        const attribution = "<a target='_blank' href='https://ign.fr/'>IGN</a>";
-        const minZoom = 0;
-        const maxZoom = 9;
+        const defaultLayer = this.settingsService.settings.value?.base_maps
+          .main_map.url
+          ? this.settingsService.settings.value?.base_maps.main_map.url
+          : environment.baseMaps.mainMap.url;
+        const defaultAttribution = this.settingsService.settings.value
+          ?.base_maps.main_map.attribution
+          ? this.settingsService.settings.value?.base_maps.main_map.attribution
+          : environment.baseMaps.mainMap.attribution;
+        const minZoom = area.min_zoom;
+        const maxZoom = area.max_zoom;
 
         const bounds = L.default.latLngBounds([
           { lat: area.bbox[0][0], lng: area.bbox[0][1] },
           { lat: area.bbox[1][0], lng: area.bbox[1][1] },
         ]);
-        const offlineLayer = tileLayerOffline(url, { attribution });
+
+        const offlineLayer = tileLayerOffline(defaultLayer, {
+          attribution: defaultAttribution,
+        });
         await this.offlineService.writeOrUpdateTilesInStore(
           offlineLayer,
           bounds,

@@ -1,30 +1,40 @@
-<div class="photo-container">
-  <img
+<ng-container *ngIf="observationData">
+  <div
+    class="photos-container"
     *ngIf="
       observationData.properties.medias &&
       observationData.properties.medias.length > 0
     "
-    [src]="observationData.properties.medias[0].thumbnails.large"
-  />
-</div>
-<div class="name-container mat-title-large">
-  {{
-    observationData.properties.name && observationData.properties.name !== ""
-      ? observationData.properties.name
-      : observationType.label
-  }}
-</div>
-<div class="type-name-container mat-body-large">
-  {{ observationType.label }}
-</div>
-<div class="date-container mat-body-medium">
-  <span class="mat-title-medium">Date : </span
-  ><span>{{ observationData.properties.event_date }}</span>
-</div>
-<div class="source-container mat-body-medium">
-  <span class="mat-title-medium">Source : </span
-  ><span>{{ observationData.properties.source }}</span>
-</div>
-<div class="comments-container mat-body-medium">
-  {{ observationData.properties.comments }}
-</div>
+  >
+    @for (media of observationData.properties.medias; track media.uuid) {
+      <img [src]="observationData.properties.medias[0].thumbnails.large" />
+    }
+  </div>
+  <div class="name-container mat-title-large">
+    {{
+      observationData.properties.name && observationData.properties.name !== ""
+        ? observationData.properties.name
+        : observationType.label
+    }}
+  </div>
+  <div class="type-name-container mat-body-large">
+    {{ observationType.label }}
+  </div>
+  <div class="date-container mat-body-medium">
+    <span class="mat-title-medium">Date : </span
+    ><span>{{
+      observationData.properties.event_date | date: "dd/MM/yyyy"
+    }}</span>
+  </div>
+  <div class="source-container mat-body-medium">
+    <span class="mat-title-medium">Source : </span
+    ><span>{{
+      observationData.properties.source
+        ? observationData.properties.source
+        : "Inconnue"
+    }}</span>
+  </div>
+  <div class="comments-container mat-body-medium">
+    {{ observationData.properties.comments }}
+  </div>
+</ng-container>

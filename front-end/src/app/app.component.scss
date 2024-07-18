@@ -1,12 +1,28 @@
-main {
-  height: calc(100vh - var(--mat-toolbar-standard-height));
+mat-sidenav-container {
+  height: calc(
+    100vh - var(--mat-toolbar-standard-height) - var(
+        --mat-toolbar-standard-height
+      )
+  );
   background: var(--mat-toolbar-container-background-color);
 }
 
+.mat-sidenav-container-home {
+  height: calc(100vh - var(--mat-toolbar-standard-height));
+}
+
 @media (max-width: 599px) {
-  main {
-    height: calc(100vh - var(--mat-toolbar-mobile-height));
+  mat-sidenav-container {
+    height: calc(
+      100vh - var(--mat-toolbar-mobile-height) - var(
+          --mat-toolbar-mobile-height
+        )
+    );
   }
+}
+
+main {
+  height: 100%;
 }
 
 .toolbar-spacer {

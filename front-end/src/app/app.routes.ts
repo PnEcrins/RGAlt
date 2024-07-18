@@ -11,6 +11,8 @@ import { ForgetPasswordComponent } from './pages/forget-password/forget-password
 import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 import { authGuard } from './guards/auth.guard';
 import { ObservationDetailComponent } from './pages/observation-detail/observation-detail.component';
+import { LearnMoreComponent } from './pages/learn-more/learn-more.component';
+import { LegalNoticeComponent } from './pages/legal-notice/legal-notice.component';
 
 export const routes: Routes = [
   {
@@ -91,7 +93,6 @@ export const routes: Routes = [
       backButton: true,
       accountButton: false,
     },
-    canActivate: [authGuard],
   },
   {
     path: 'mon-compte',
@@ -108,15 +109,35 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'mes-donnees-hors-ligne',
-    title: 'Mes données hors ligne',
+    path: 'fonds-de-carte-hors-ligne',
+    title: 'Fonds de carte hors ligne',
     component: MyOfflineDataComponent,
     data: {
-      title: 'Mes données hors ligne',
+      title: 'Fonds de carte hors ligne',
       backButton: true,
       accountButton: false,
     },
     canActivate: [authGuard],
+  },
+  {
+    path: 'en-savoir-plus',
+    title: 'En savoir plus',
+    component: LearnMoreComponent,
+    data: {
+      title: 'En savoir plus',
+      backButton: true,
+      accountButton: false,
+    },
+  },
+  {
+    path: 'legal-notice',
+    title: 'Mentions légales',
+    component: LegalNoticeComponent,
+    data: {
+      title: 'Mentions légales',
+      backButton: true,
+      accountButton: false,
+    },
   },
   { path: '**', redirectTo: '' },
 ];

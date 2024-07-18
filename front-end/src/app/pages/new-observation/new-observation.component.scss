@@ -2,14 +2,13 @@ mat-card {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: auto;
+  height: 136px;
   padding: 20px;
   width: 240px;
   cursor: pointer;
   .observation-type-icon {
-    font-size: 40px;
-    height: 40px;
-    width: 40px;
+    height: 72px;
+    width: 72px;
   }
 }
 
@@ -31,11 +30,23 @@ mat-card {
   gap: 16px;
 }
 
-.photo-container {
-  img {
-    width: 200px;
-    height: 200px;
-    object-fit: contain;
+.photos-container {
+  display: flex;
+  overflow-x: scroll;
+  .photo-container {
+    position: relative;
+    .delete-photo-button {
+      position: absolute;
+      right: 0;
+    }
+    .photo {
+      width: 200px;
+      max-height: 200px;
+      object-fit: contain;
+    }
+    &:not(:last-of-type) {
+      margin-right: 16px;
+    }
   }
 }
 

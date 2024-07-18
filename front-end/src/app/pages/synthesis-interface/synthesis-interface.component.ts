@@ -19,10 +19,12 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
-import { Observations } from '../../types/types';
+import { observationsFeatureCollection } from '../../types/types';
 
-import evenementsRemarquables from '../../../data/evenements_remarquables.json';
-import observationTypes from '../../../data/types.json';
+import { ObservationsService } from '../../services/observations.service';
+import { SettingsService } from '../../services/settings.service';
+import { environment } from '../../../environments/environment';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -49,18 +51,21 @@ export class SynthesisInterfaceComponent {
 
   L: any;
   map: any;
-  observationsFeatureCollection: { features: Observations } =
-    evenementsRemarquables as any;
-  currentObservationsFeatureCollection: any = evenementsRemarquables;
-  observationsFeatureCollectionFiltered: any = evenementsRemarquables;
+  observationsFeatureCollection: observationsFeatureCollection | null = null;
+  currentObservationsFeatureCollection: observationsFeatureCollection | null =
+    null;
+  observationsFeatureCollectionFiltered: observationsFeatureCollection | null =
+    null;
 
   observationsLayer: L.GeoJSON<any> | null = null;
   observationsClusterGroup: any;
   router = inject(Router);
+  observationsService = inject(ObservationsService);
+  settingsService = inject(SettingsService);
 
   expansionPanelIsOpen = false;
   bounds: any;
-  private ngZone = inject(NgZone);
+  ngZone = inject(NgZone);
 
   handleObservationsWithinBoundsBind =
     this.handleObservationsWithinBounds.bind(this);
@@ -77,16 +82,39 @@ export class SynthesisInterfaceComponent {
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
     await import('leaflet.markercluster');
-    const tileLayerOffline = await import('leaflet.offline');
+    const { tileLayerOffline } = await import('leaflet.offline');
 
     this.map = this.L.default.map('map', { zoom: 4, center: [47, 2] });
+    const defaultLayerUrl = this.settingsService.settings.value?.base_maps
+      .main_map.url
+      ? this.settingsService.settings.value?.base_maps.main_map.url
+      : environment.baseMaps.mainMap.url;
+    const defaultLayerAttribution = this.settingsService.settings.value
+      ?.base_maps.main_map.attribution
+      ? this.settingsService.settings.value?.base_maps.main_map.attribution
+      : environment.baseMaps.mainMap.attribution;
 
-    this.L.default
-      .tileLayerOffline(
-        'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-        {
-          attribution: "<a target='_blank' href='https://ign.fr/'>IGN</a>",
-        },
+    const satelliteLayerUrl = this.settingsService.settings.value?.base_maps
+      .satellite_map.url
+      ? this.settingsService.settings.value?.base_maps.satellite_map.url
+      : environment.baseMaps.satellitMap.url;
+    const satelliteLayerAttribution = this.settingsService.settings.value
+      ?.base_maps.satellite_map.attribution
+      ? this.settingsService.settings.value?.base_maps.satellite_map.attribution
+      : environment.baseMaps.satellitMap.attribution;
+
+    const defaultLayer = tileLayerOffline(defaultLayerUrl, {
+      attribution: defaultLayerAttribution,
+    });
+    defaultLayer.addTo(this.map);
+    const satelliteLayer = tileLayerOffline(satelliteLayerUrl, {
+      attribution: satelliteLayerAttribution,
+    });
+    this.L.control
+      .layers(
+        { Defaut: defaultLayer, Satellite: satelliteLayer },
+        {},
+        { collapsed: true },
       )
       .addTo(this.map);
 
@@ -94,49 +122,68 @@ export class SynthesisInterfaceComponent {
       .locate({ setView: 'once', showPopup: false })
       .addTo(this.map);
 
-    this.observationsLayer = this.L.default.geoJSON(
-      this.observationsFeatureCollection,
-      {
-        pointToLayer: (geoJsonPoint: any, latlng: any) =>
-          this.L.default.marker(latlng, {
-            icon: this.L.default.divIcon({
-              html: `<div class="observation-marker-container">
-              <img src="favicon.ico"/>
-              </div>`,
-              className: 'observation-marker',
-              iconSize: 32,
-              iconAnchor: [18, 28],
-            } as any),
-            autoPanOnFocus: false,
-          } as any),
-        onEachFeature: (geoJsonPoint: any, layer: any) => {
-          layer.once('click', () => {
-            this.handleObservationPopup(geoJsonPoint, layer);
-          });
-        },
-      },
-    );
+    this.observationsService.getObservations().subscribe({
+      next: (success: any) => {
+        console.log('success', success);
+        this.ngZone.run(() => {
+          this.observationsFeatureCollection = success;
+          this.currentObservationsFeatureCollection = success;
+          this.observationsFeatureCollectionFiltered = success;
+        });
+        this.observationsLayer = this.L.default.geoJSON(
+          this.observationsFeatureCollection,
+          {
+            pointToLayer: (geoJsonPoint: any, latlng: any) => {
+              const icon = this.getEventType(geoJsonPoint.properties.category);
+              return this.L.default.marker(latlng, {
+                icon: this.L.default.divIcon({
+                  html:
+                    icon && icon.pictogram
+                      ? `<div class="observation-marker-container">
+                    <img src="${icon.pictogram}"/>
+                    </div>`
+                      : `<div class="observation-marker-container">
+                    </div>`,
+                  className: 'observation-marker',
+                  iconSize: 32,
+                  iconAnchor: [18, 28],
+                } as any),
+                autoPanOnFocus: false,
+              } as any);
+            },
+            onEachFeature: (geoJsonPoint: any, layer: any) => {
+              layer.once('click', () => {
+                this.handleObservationPopup(geoJsonPoint, layer);
+              });
+            },
+          },
+        );
 
-    this.observationsClusterGroup = this.L.default.markerClusterGroup({
-      showCoverageOnHover: false,
-      removeOutsideVisibleBounds: false,
-      iconCreateFunction: (cluster: any) => {
-        return this.L.default.divIcon({
-          html:
-            '<div class="observations-marker-cluster-group-icon">' +
-            cluster.getChildCount() +
-            '</div>',
-          className: '',
-          iconSize: 48,
-        } as any);
+        this.observationsClusterGroup = this.L.default.markerClusterGroup({
+          showCoverageOnHover: false,
+          removeOutsideVisibleBounds: false,
+          iconCreateFunction: (cluster: any) => {
+            return this.L.default.divIcon({
+              html:
+                '<div class="observations-marker-cluster-group-icon">' +
+                cluster.getChildCount() +
+                '</div>',
+              className: '',
+              iconSize: 48,
+            } as any);
+          },
+        });
+
+        this.observationsClusterGroup.addLayer(this.observationsLayer);
+        this.map.addLayer(this.observationsClusterGroup);
+
+        this.fitToCurrentObservations();
+        this.map.on('moveend', this.handleObservationsWithinBoundsBind);
+      },
+      error: (error) => {
+        console.log('error', error);
       },
     });
-
-    this.observationsClusterGroup.addLayer(this.observationsLayer);
-    this.map.addLayer(this.observationsClusterGroup);
-
-    this.fitToCurrentObservations();
-    this.map.on('moveend', this.handleObservationsWithinBoundsBind);
   }
 
   handleObservationPopup(geoJsonPoint: any, layer?: any) {
@@ -157,7 +204,9 @@ export class SynthesisInterfaceComponent {
     observationPopup.appendChild(observationName);
 
     const observationDate = this.L.default.DomUtil.create('div');
-    observationDate.innerHTML = geoJsonPoint.properties.event_date;
+    observationDate.innerHTML = moment(
+      geoJsonPoint.properties.event_date,
+    ).format('DD-MM-YYYY');
     observationDate.className = 'observation-date';
     observationPopup.appendChild(observationDate);
 
@@ -166,7 +215,7 @@ export class SynthesisInterfaceComponent {
     observationButton.className = 'observation-button';
     observationButton.onclick = () => {
       const slug = slugify(
-        `${geoJsonPoint.properties.uuid}-${geoJsonPoint.properties.name}`,
+        `${geoJsonPoint.id}-${geoJsonPoint.properties.name}`,
       );
       this.router.navigate(['/detail-d-une-observation', slug]);
     };
@@ -200,7 +249,7 @@ export class SynthesisInterfaceComponent {
       data: this.filter,
     });
 
-    deleteDialogRef.afterClosed().subscribe((result) => {
+    deleteDialogRef.afterClosed().subscribe(async (result) => {
       if (
         result &&
         result.filter &&
@@ -209,62 +258,27 @@ export class SynthesisInterfaceComponent {
           (result.filter.observationDates.start &&
             result.filter.observationDates.end))
       ) {
-        let observationFeatures = null;
-
-        if (
-          Boolean(result.filter.observationTypes) &&
-          result.filter.observationTypes.length > 0
-        ) {
-          this.filter.observationTypes = result.filter.observationTypes;
-          observationFeatures =
-            this.observationsFeatureCollection.features.filter((feature: any) =>
-              result.filter.observationTypes
-                .map((observationType: any) => observationType.id)
-                .includes(feature.properties.id_event_type),
-            );
-        }
-        if (
-          Boolean(
-            result.filter.observationDates &&
-              result.filter.observationDates.start &&
-              result.filter.observationDates.end,
-          )
-        ) {
-          this.filter.observationTypes = result.filter.observationTypes;
-          if (observationFeatures) {
-            observationFeatures = observationFeatures.filter(
-              (observationFeature: any) =>
-                moment(observationFeature.properties.date_event).isBetween(
-                  result.filter.observationDates.start,
-                  result.filter.observationDates.end,
-                  null,
-                  '[]',
-                ),
-            );
-          } else {
-            observationFeatures =
-              this.observationsFeatureCollection.features.filter(
-                (observationFeature: any) =>
-                  moment(observationFeature.properties.date_event).isBetween(
-                    result.filter.observationDates.start,
-                    result.filter.observationDates.end,
-                    null,
-                    '[]',
-                  ),
-              );
-          }
-        }
-        this.observationsFeatureCollectionFiltered = {
-          ...this.observationsFeatureCollection,
-          features: observationFeatures || [],
-        };
-      } else {
-        this.filter = {
-          observationTypes: [],
-          observationDates: { start: null, end: null },
-        };
+        const observations = await firstValueFrom(
+          this.observationsService.getObservations(
+            result.filter.observationTypes
+              ? result.filter.observationTypes.map(
+                  (observationType: any) => observationType.id,
+                )
+              : undefined,
+            result.filter.observationDates.start
+              ? moment(result.filter.observationDates.start.toDate()).format(
+                  'YYYY-MM-DD',
+                )
+              : undefined,
+            result.filter.observationDates.end
+              ? moment(result.filter.observationDates.end.toDate()).format(
+                  'YYYY-MM-DD',
+                )
+              : undefined,
+          ),
+        );
         this.observationsFeatureCollectionFiltered =
-          this.observationsFeatureCollection;
+          observations as observationsFeatureCollection;
       }
       if (result && !result.cancel) {
         this.updateMap();
@@ -282,9 +296,9 @@ export class SynthesisInterfaceComponent {
   }
 
   fitToCurrentObservations() {
-    if (this.observationsFeatureCollectionFiltered.features.length > 0) {
+    if (this.observationsFeatureCollectionFiltered!.features.length > 0) {
       this.bounds = this.L.default.latLngBounds(
-        this.observationsFeatureCollectionFiltered.features.map(
+        this.observationsFeatureCollectionFiltered!.features.map(
           (feature: any) => [
             feature.geometry.coordinates[1],
             feature.geometry.coordinates[0],
@@ -294,13 +308,14 @@ export class SynthesisInterfaceComponent {
 
       this.bounds && this.map.fitBounds(this.bounds);
     }
+    this.handleObservationsWithinBounds();
   }
 
   handleObservationsWithinBounds() {
     this.ngZone.run(() => {
       this.currentObservationsFeatureCollection = {
-        ...this.currentObservationsFeatureCollection,
-        features: this.observationsFeatureCollectionFiltered.features.filter(
+        ...this.currentObservationsFeatureCollection!,
+        features: this.observationsFeatureCollectionFiltered!.features.filter(
           (feature: any) =>
             this.map
               .getBounds()
@@ -329,15 +344,19 @@ export class SynthesisInterfaceComponent {
 
   updateMap() {
     this.observationsLayer!.clearLayers();
-    this.observationsLayer!.addData(this.observationsFeatureCollectionFiltered);
+    this.observationsLayer!.addData(
+      this.observationsFeatureCollectionFiltered!,
+    );
     this.observationsClusterGroup.clearLayers();
     this.observationsClusterGroup.addLayer(this.observationsLayer);
   }
 
   getEventType(eventTypeId: number) {
     const eventTypes = [
-      ...observationTypes.map((type) => type),
-      ...observationTypes.map((type) => type.children).flat(),
+      ...this.settingsService.settings.value!.categories.map((type) => type),
+      ...this.settingsService.settings
+        .value!.categories.map((type) => type.children)
+        .flat(),
     ];
     return eventTypes.find(
       (observationType) => observationType.id === eventTypeId,

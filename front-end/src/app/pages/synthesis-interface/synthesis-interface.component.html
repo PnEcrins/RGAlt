@@ -9,7 +9,12 @@
   </button>
 </div>
 
-<mat-accordion>
+<mat-accordion
+  *ngIf="
+    currentObservationsFeatureCollection &&
+    currentObservationsFeatureCollection.features
+  "
+>
   <mat-expansion-panel
     (opened)="expansionPanelOpen()"
     (closed)="expansionPanelClose()"
@@ -25,7 +30,7 @@
     <mat-list class="mat-expansion-panel-body-visible">
       @for (
         observation of currentObservationsFeatureCollection.features;
-        track observation.properties.uuid
+        track observation.id
       ) {
         <mat-list-item>
           <span matListItemIcon
@@ -52,13 +57,11 @@
               [routerLink]="[
                 '/detail-d-une-observation',
                 slugify(
-                  observation.properties.uuid
-                    .toString()
-                    .concat(
-                      observation.properties.name
-                        ? '-'.concat(observation.properties.name)
-                        : ''
-                    )
+                  observation.id!.concat(
+                    observation.properties.name
+                      ? '-'.concat(observation.properties.name)
+                      : ''
+                  )
                 ),
               ]"
             >

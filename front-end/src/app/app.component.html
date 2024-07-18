@@ -7,7 +7,11 @@
   <button mat-icon-button (click)="sidenav.toggle()">
     <mat-icon
       aria-hidden="false"
-      [matBadge]="this.offlineService.observationsPending | async"
+      [matBadge]="
+        (authService.isAuth | async)
+          ? (offlineService.observationsPending | async)
+          : null
+      "
       >account_circle</mat-icon
     >
   </button>
@@ -18,7 +22,10 @@
   </button>
   <span>{{ title }}</span>
 </mat-toolbar>
-<mat-sidenav-container [style.marginTop.px]="0">
+<mat-sidenav-container
+  [class.mat-sidenav-container-home]="!backButton"
+  [style.marginTop.px]="0"
+>
   <mat-sidenav
     #sidenav
     mode="over"
@@ -42,7 +49,7 @@
           <div
             [matBadge]="
               currentSideNavItem.observationsPending
-                ? (this.offlineService.observationsPending | async)
+                ? (offlineService.observationsPending | async)
                 : null
             "
           >

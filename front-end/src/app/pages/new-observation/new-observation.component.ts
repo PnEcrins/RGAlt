@@ -4,6 +4,7 @@ import {
   ViewChild,
   inject,
   afterNextRender,
+  NgZone,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -25,20 +26,29 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 import { Platform, PlatformModule } from '@angular/cdk/platform';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import 'moment/locale/fr';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import 'moment/locale/fr';
 import * as _moment from 'moment';
 import { default as _rollupMoment } from 'moment';
 import { round } from '@turf/helpers';
 
-import observationTypes from '../../../data/types.json';
 import {
+  Icon,
+  Icons,
   Observation,
+  ObservationFeature,
   ObservationType,
   ObservationTypes,
 } from '../../types/types';
 import { OfflineService } from '../../services/offline.service';
 import { v4 as uuidv4 } from 'uuid';
+import { SettingsService } from '../../services/settings.service';
+import { ObservationsService } from '../../services/observations.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
+import { NewObservationLoaderDialog } from './dialogs/new-observation-loader-dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment';
 
 const moment = _rollupMoment || _moment;
 
@@ -61,12 +71,12 @@ const moment = _rollupMoment || _moment;
     PlatformModule,
     MatDatepickerModule,
     MatTooltipModule,
+    MatSnackBarModule,
   ],
   templateUrl: './new-observation.component.html',
   styleUrl: './new-observation.component.scss',
 })
 export class NewObservationComponent {
-  observationsTypes: ObservationTypes = observationTypes;
   observationTypeParent: ObservationType | null = null;
   columns: number = 2;
   breakpoints = {
@@ -91,9 +101,9 @@ export class NewObservationComponent {
   });
 
   photoForm: FormGroup<{
-    photo: FormControl<string | null>;
+    photos: FormControl<{ file: File; objectUrl: string }[] | null>;
   }> = new FormGroup({
-    photo: new FormControl<string | null>(null),
+    photos: new FormControl<any[]>([]),
   });
 
   mapForm: FormGroup<{
@@ -116,6 +126,15 @@ export class NewObservationComponent {
   platform = inject(Platform);
   router = inject(Router);
   offlineService = inject(OfflineService);
+  settingsService = inject(SettingsService);
+  observationsService = inject(ObservationsService);
+  snackBar = inject(MatSnackBar);
+  ngZone = inject(NgZone);
+  readonly dialog = inject(MatDialog);
+
+  observationsTypes: ObservationTypes = [];
+
+  icons: Icons = [];
 
   ngOnInit() {
     this.mobile = this.platform.ANDROID || this.platform.IOS;
@@ -142,32 +161,63 @@ export class NewObservationComponent {
           }
         }
       });
+    this.observationsTypes = this.settingsService.settings.value!.categories!;
   }
   constructor() {
     afterNextRender(async () => {
-      this.initMap();
+      await this.initIcons();
+      await this.initMap();
     });
   }
 
   async initMap() {
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
+    const { tileLayerOffline } = await import('leaflet.offline');
 
     this.map = this.L.map('map', { zoom: 4, center: [47, 2] });
 
-    this.L.tileLayer(
-      'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-      {
-        attribution: "<a target='_blank' href='https://ign.fr/'>IGN</a>",
-      },
-    ).addTo(this.map);
+    const defaultLayerUrl = this.settingsService.settings.value?.base_maps
+      .main_map.url
+      ? this.settingsService.settings.value?.base_maps.main_map.url
+      : environment.baseMaps.mainMap.url;
+    const defaultLayerAttribution = this.settingsService.settings.value
+      ?.base_maps.main_map.attribution
+      ? this.settingsService.settings.value?.base_maps.main_map.attribution
+      : environment.baseMaps.mainMap.attribution;
+
+    const satelliteLayerUrl = this.settingsService.settings.value?.base_maps
+      .satellite_map.url
+      ? this.settingsService.settings.value?.base_maps.satellite_map.url
+      : environment.baseMaps.satellitMap.url;
+    const satelliteLayerAttribution = this.settingsService.settings.value
+      ?.base_maps.satellite_map.attribution
+      ? this.settingsService.settings.value?.base_maps.satellite_map.attribution
+      : environment.baseMaps.satellitMap.attribution;
+
+    const defaultLayer = tileLayerOffline(defaultLayerUrl, {
+      attribution: defaultLayerAttribution,
+    });
+    defaultLayer.addTo(this.map);
+    const satelliteLayer = tileLayerOffline(satelliteLayerUrl, {
+      attribution: satelliteLayerAttribution,
+    });
+    this.L.control
+      .layers(
+        { Defaut: defaultLayer, Satellite: satelliteLayer },
+        {},
+        { collapsed: true },
+      )
+      .addTo(this.map);
 
     this.map.on('move', (e: any) => {
       const center = this.map.getCenter();
-      this.mapForm.value.position = {
-        lat: round(center.lat, 6),
-        lng: round(center.lng, 6),
-      };
+      this.ngZone.run(() => {
+        this.mapForm.value.position = {
+          lat: round(center.lat, 6),
+          lng: round(center.lng, 6),
+        };
+      });
       this.marker.setLatLng(center);
     });
 
@@ -209,29 +259,45 @@ export class NewObservationComponent {
   }
 
   onPhotoSelected(event: any) {
-    const photo: File = event.target.files[0];
-
-    if (photo) {
-      this.photoForm.value.photo = URL.createObjectURL(photo);
+    const photoSelected: File = event.target.files[0];
+    if (
+      photoSelected &&
+      this.photoForm.value.photos &&
+      !this.photoForm.value.photos.find(
+        (photo) => photo.file.name === photoSelected.name,
+      )
+    ) {
+      this.photoForm.value.photos.push({
+        file: photoSelected,
+        objectUrl: URL.createObjectURL(photoSelected),
+      } as any);
     }
+    event.target.value = null;
   }
 
   backToPreviousObservations() {
     this.observationTypeParent = null;
     this.typeForm.setValue({ type: null });
-    this.observationsTypes = observationTypes;
+    this.observationsTypes = this.settingsService.settings.value!.categories;
   }
 
-  saveAsDraft() {
+  async saveAsDraft() {
     const newObservation: Observation = {
       uuid: uuidv4(),
       name: this.moreDataForm.value.name!,
-      event_date: this.moreDataForm.value.date!.toDate().toString(),
+      event_date: moment(this.moreDataForm.value.date!.toDate()).format(
+        'YYYY-MM-DD',
+      ),
       comments: this.moreDataForm.value.comment!,
       category: this.typeForm.value.type!.id,
-      source: 'Source',
+      source: undefined,
+      coordinates: [
+        this.mapForm.value.position!.lng,
+        this.mapForm.value.position!.lat,
+      ],
+      files: this.photoForm.value.photos!.map((photo) => photo.file),
     };
-    this.offlineService.writeOrUpdateDataInStore('observations', [
+    await this.offlineService.writeOrUpdateDataInStore('observations', [
       newObservation,
     ]);
     this.offlineService.handleObservationsPending();
@@ -239,16 +305,97 @@ export class NewObservationComponent {
   }
 
   sendObservation() {
-    this.router.navigate(['/']);
+    const newObservationLoaderDialogRef = this.dialog.open(
+      NewObservationLoaderDialog,
+      {
+        width: '250px',
+        data: { title: 'Téléchargement en cours' },
+        disableClose: true,
+      },
+    );
+    const observation: ObservationFeature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          this.mapForm.value.position!.lng,
+          this.mapForm.value.position!.lat,
+        ],
+      },
+      properties: {
+        comments: this.moreDataForm.value.comment ?? '',
+        event_date: moment(this.moreDataForm.value.date.toDate()).format(
+          'YYYY-MM-DD',
+        ),
+        category: this.typeForm.value.type!.id,
+      },
+    };
+    if (Boolean(this.moreDataForm.value.name)) {
+      observation.properties.name = this.moreDataForm.value.name!;
+    }
+    this.observationsService.sendObservation(observation).subscribe({
+      next: async (observationResponse: any) => {
+        for (
+          let index = 0;
+          index < this.photoForm.value.photos!.length;
+          index++
+        ) {
+          const photo = this.photoForm.value.photos![index];
+          await firstValueFrom(
+            this.observationsService.sendPhotoObservation(
+              observationResponse.id,
+              photo.file,
+            ),
+          );
+        }
+        newObservationLoaderDialogRef.close();
+        this.snackBar.open('Observation transférée', '', { duration: 2000 });
+        this.router.navigate(['/']);
+      },
+      error: async () => {
+        newObservationLoaderDialogRef.close();
+        this.snackBar.open(
+          "Une erreur est survenue lors du transfert de l'observation",
+          '',
+          {
+            duration: 2000,
+          },
+        );
+        await this.saveAsDraft();
+      },
+    });
   }
 
   getEventType(eventTypeId: number) {
     const eventTypes = [
-      ...observationTypes.map((type) => type),
-      ...observationTypes.map((type) => type.children).flat(),
+      ...this.settingsService.settings.value!.categories.map((type) => type),
+      ...this.settingsService.settings
+        .value!.categories.map((type) => type.children)
+        .flat(),
     ];
     return eventTypes.find(
       (observationType) => observationType.id === eventTypeId,
     );
+  }
+
+  deletePhoto(selectedPhoto: any) {
+    this.photoForm.value.photos!.splice(
+      this.photoForm.value.photos!.findIndex(
+        (photo) => photo.file.name === selectedPhoto.file.name,
+      ),
+      1,
+    );
+  }
+
+  async initIcons() {
+    const icons = await this.offlineService.getAllDataInStore('icons');
+    this.icons = icons.map((icon) => ({
+      ...icon,
+      objectUrl: URL.createObjectURL(icon.file),
+    }));
+  }
+
+  getIconFromStorage(iconId: number) {
+    return this.icons.find((icon) => icon.id === iconId)!.objectUrl;
   }
 }
