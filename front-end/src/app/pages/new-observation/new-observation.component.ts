@@ -161,12 +161,7 @@ export class NewObservationComponent {
           }
         }
       });
-
-    this.settingsService.settings.subscribe((settings) => {
-      if (settings) {
-        this.observationsTypes = settings.categories;
-      }
-    });
+    this.observationsTypes = this.settingsService.settings.value!.categories!;
   }
   constructor() {
     afterNextRender(async () => {
