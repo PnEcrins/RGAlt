@@ -49,7 +49,6 @@ import { firstValueFrom } from 'rxjs';
 import { NewObservationLoaderDialog } from './dialogs/new-observation-loader-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
-import { tileLayerOffline } from 'leaflet.offline';
 
 const moment = _rollupMoment || _moment;
 
@@ -179,6 +178,7 @@ export class NewObservationComponent {
   async initMap() {
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
+    const { tileLayerOffline } = await import('leaflet.offline');
 
     this.map = this.L.map('map', { zoom: 4, center: [47, 2] });
 
