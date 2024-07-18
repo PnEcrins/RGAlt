@@ -19,12 +19,12 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
+import { firstValueFrom } from 'rxjs';
 import { observationsFeatureCollection } from '../../types/types';
 
 import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
 import { environment } from '../../../environments/environment';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -82,7 +82,7 @@ export class SynthesisInterfaceComponent {
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
     await import('leaflet.markercluster');
-    const { tileLayerOffline } = await import('leaflet.offline');
+    await import('leaflet.offline');
 
     this.map = this.L.default.map('map', { zoom: 4, center: [47, 2] });
     const defaultLayerUrl = this.settingsService.settings.value?.base_maps
@@ -103,14 +103,15 @@ export class SynthesisInterfaceComponent {
       ? this.settingsService.settings.value?.base_maps.satellite_map.attribution
       : environment.baseMaps.satellitMap.attribution;
 
-    const defaultLayer = tileLayerOffline(defaultLayerUrl, {
+    const defaultLayer = this.L.default.tileLayer.offline(defaultLayerUrl, {
       attribution: defaultLayerAttribution,
     });
     defaultLayer.addTo(this.map);
-    const satelliteLayer = tileLayerOffline(satelliteLayerUrl, {
+    const satelliteLayer = this.L.default.tileLayer.offline(satelliteLayerUrl, {
       attribution: satelliteLayerAttribution,
     });
-    this.L.control
+
+    this.L.default.control
       .layers(
         { Defaut: defaultLayer, Satellite: satelliteLayer },
         {},
@@ -124,7 +125,6 @@ export class SynthesisInterfaceComponent {
 
     this.observationsService.getObservations().subscribe({
       next: (success: any) => {
-        console.log('success', success);
         this.ngZone.run(() => {
           this.observationsFeatureCollection = success;
           this.currentObservationsFeatureCollection = success;
@@ -180,9 +180,7 @@ export class SynthesisInterfaceComponent {
         this.fitToCurrentObservations();
         this.map.on('moveend', this.handleObservationsWithinBoundsBind);
       },
-      error: (error) => {
-        console.log('error', error);
-      },
+      error: () => {},
     });
   }
 

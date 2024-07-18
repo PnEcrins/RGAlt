@@ -74,16 +74,13 @@ export class ChangePasswordComponent {
           .changePassword(this.passwordFormControl.value!)
           .subscribe({
             next: (success) => {
-              console.log('success', success);
               this.authService.logout();
               this.snackBar.open('Vous êtes déconnecté', '', {
                 duration: 2000,
               });
               this.router.navigate(['/se-connecter']);
             },
-            error: (error) => {
-              console.log('error', error);
-            },
+            error: () => {},
           });
       }
     } else {

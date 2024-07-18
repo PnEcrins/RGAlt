@@ -54,12 +54,9 @@ export class MyObservationsComponent {
     await this.getMyOfflineObservations();
     this.observationsService.getMyObservations().subscribe({
       next: (success: any) => {
-        console.log('success', success);
         this.myObservations = success;
       },
-      error: (error) => {
-        console.log('error', error);
-      },
+      error: () => {},
     });
   }
 
@@ -77,7 +74,7 @@ export class MyObservationsComponent {
         disableClose: true,
       },
     );
-    console.log(myOfflineObservation.coordinates);
+
     const observation: ObservationFeature = {
       type: 'Feature',
       geometry: {
