@@ -173,9 +173,9 @@ export class NewObservationComponent {
   async initMap() {
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
-    const { tileLayerOffline } = await import('leaflet.offline');
+    await import('leaflet.offline');
 
-    this.map = this.L.map('map', { zoom: 4, center: [47, 2] });
+    this.map = this.L.default.map('map', { zoom: 4, center: [47, 2] });
 
     const defaultLayerUrl = this.settingsService.settings.value?.base_maps
       .main_map.url
@@ -195,14 +195,15 @@ export class NewObservationComponent {
       ? this.settingsService.settings.value?.base_maps.satellite_map.attribution
       : environment.baseMaps.satellitMap.attribution;
 
-    const defaultLayer = tileLayerOffline(defaultLayerUrl, {
+    const defaultLayer = this.L.default.tileLayer.offline(defaultLayerUrl, {
       attribution: defaultLayerAttribution,
     });
     defaultLayer.addTo(this.map);
-    const satelliteLayer = tileLayerOffline(satelliteLayerUrl, {
+    const satelliteLayer = this.L.default.tileLayer.offline(satelliteLayerUrl, {
       attribution: satelliteLayerAttribution,
     });
-    this.L.control
+
+    this.L.default.control
       .layers(
         { Defaut: defaultLayer, Satellite: satelliteLayer },
         {},
@@ -221,7 +222,7 @@ export class NewObservationComponent {
       this.marker.setLatLng(center);
     });
 
-    this.L.control
+    this.L.default.control
       .locate({ setView: 'once', showPopup: false })
       .addTo(this.map);
 
@@ -230,14 +231,16 @@ export class NewObservationComponent {
       lat: round(center.lat, 6),
       lng: round(center.lng, 6),
     };
-    this.marker = this.L.marker(center, {
-      icon: this.L.icon({
-        ...this.L.Icon.Default.prototype.options,
-        iconUrl: 'assets/marker-icon.png',
-        iconRetinaUrl: 'assets/marker-icon-2x.png',
-        shadowUrl: 'assets/marker-shadow.png',
-      }),
-    }).addTo(this.map);
+    this.marker = this.L.default
+      .marker(center, {
+        icon: this.L.default.icon({
+          ...this.L.default.Icon.Default.prototype.options,
+          iconUrl: 'assets/marker-icon.png',
+          iconRetinaUrl: 'assets/marker-icon-2x.png',
+          shadowUrl: 'assets/marker-shadow.png',
+        }),
+      })
+      .addTo(this.map);
   }
 
   observationClick(value: ObservationType) {

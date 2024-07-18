@@ -52,7 +52,6 @@ export class LoginComponent {
         })
         .subscribe({
           next: (success: any) => {
-            console.log('success', success);
             this.snackBar.open('Vous êtes connecté', '', { duration: 2000 });
             this.authService.saveToken(success.access);
             this.authService.saveRefreshToken(success.refresh);
@@ -60,9 +59,7 @@ export class LoginComponent {
             this.router.navigate(['..']);
           },
           error: (error: any) => {
-            console.log(error);
             this.error = error.toString();
-            console.log(this.error);
           },
         });
     }

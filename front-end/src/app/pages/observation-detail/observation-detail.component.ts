@@ -24,15 +24,12 @@ export class ObservationDetailComponent {
     const observationId = this.observation.slice(0, 36);
     this.observationsService.getObservation(observationId).subscribe({
       next: (success: any) => {
-        console.log('success', success);
         this.observationData = success;
         this.observationType = this.getEventType(
           this.observationData!.properties.category,
         )!;
       },
-      error: (error) => {
-        console.log('error', error);
-      },
+      error: () => {},
     });
   }
 

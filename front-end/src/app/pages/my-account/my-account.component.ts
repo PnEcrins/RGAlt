@@ -43,7 +43,6 @@ export class MyAccountComponent {
       if (result && result.delete) {
         this.authService.deleteAccount().subscribe({
           next: (success: any) => {
-            console.log('success', success);
             this.authService.removeToken();
             this.authService.removeRefreshToken();
             this.authService.checkAuth();
@@ -52,9 +51,7 @@ export class MyAccountComponent {
             });
             this.router.navigate(['..']);
           },
-          error: (error) => {
-            console.log('error', error);
-          },
+          error: () => {},
         });
       }
     });
