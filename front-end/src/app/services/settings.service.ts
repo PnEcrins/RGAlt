@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { environment } from '../../environments/environment';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { Settings } from '../types/types';
 import { OfflineService } from './offline.service';
@@ -21,6 +20,7 @@ const httpIconOptions = {
   providedIn: 'root',
 })
 export class SettingsService {
+  apiUrl = (import.meta as any).env.NG_APP_API_URL;
   httpClient = inject(HttpClient);
   settings = new BehaviorSubject<Settings | null>(null);
   offlineService = inject(OfflineService);
@@ -32,10 +32,7 @@ export class SettingsService {
   }
 
   getSettings() {
-    return this.httpClient.get(
-      `${environment.apiUrl}/api/settings/`,
-      httpOptions,
-    );
+    return this.httpClient.get(`${this.apiUrl}/api/settings/`, httpOptions);
   }
 
   async setSettings(settings: Settings) {

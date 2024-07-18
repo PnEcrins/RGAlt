@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { User } from '../types/types';
 import { OfflineService } from './offline.service';
 
@@ -17,6 +16,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class AuthService {
+  apiUrl = (import.meta as any).env.NG_APP_API_URL;
   httpClient = inject(HttpClient);
   offlineService = inject(OfflineService);
 
@@ -28,15 +28,12 @@ export class AuthService {
   }
 
   getAccount() {
-    return this.httpClient.get(
-      `${environment.apiUrl}/api/accounts/me/`,
-      httpOptions,
-    );
+    return this.httpClient.get(`${this.apiUrl}/api/accounts/me/`, httpOptions);
   }
 
   login(account: { email: string; password: string }) {
     return this.httpClient.post(
-      `${environment.apiUrl}/api/token/`,
+      `${this.apiUrl}/api/token/`,
       account,
       httpOptions,
     );
@@ -56,7 +53,7 @@ export class AuthService {
     password: string;
   }) {
     return this.httpClient.post(
-      `${environment.apiUrl}/api/accounts/sign-up/`,
+      `${this.apiUrl}/api/accounts/sign-up/`,
       account,
       httpOptions,
     );
@@ -64,14 +61,14 @@ export class AuthService {
 
   deleteAccount() {
     return this.httpClient.delete(
-      `${environment.apiUrl}/api/accounts/me/`,
+      `${this.apiUrl}/api/accounts/me/`,
       httpOptions,
     );
   }
 
   changePassword(password: string) {
     return this.httpClient.patch(
-      `${environment.apiUrl}/api/accounts/me/`,
+      `${this.apiUrl}/api/accounts/me/`,
       { password },
       httpOptions,
     );
@@ -81,7 +78,7 @@ export class AuthService {
 
   refreshToken(refreshRoken: string) {
     return this.httpClient.post(
-      `${environment.apiUrl}/api/token/refresh/`,
+      `${this.apiUrl}/api/token/refresh/`,
       {
         refresh: refreshRoken,
       },
