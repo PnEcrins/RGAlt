@@ -20,9 +20,7 @@
             "outputPath": "dist/regard-d-altitude",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -43,6 +41,10 @@
               "./node_modules/leaflet.markercluster/dist/MarkerCluster.css"
             ],
             "scripts": [],
+            "ngxEnv": {
+              "prefix": "NG_APP_",
+              "runtime": true
+            },
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {
@@ -98,10 +100,7 @@
         "test": {
           "builder": "@ngx-env/builder:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
