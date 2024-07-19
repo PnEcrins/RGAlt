@@ -100,6 +100,7 @@ jobs:
             - name: npm build
               working-directory: ./front-end
               run: |
+                cp .env.dist .env
                 npm run build
 
     docker-build:

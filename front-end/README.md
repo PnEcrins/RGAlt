@@ -8,6 +8,7 @@ Run `npm start` for a dev server. Navigate to `http://localhost:4200/`.
 
 ## Build
 
+Copy and fill .env.dist to .env with your API url
 Run `npm run build` to build the project.
 
 ## Running unit tests
