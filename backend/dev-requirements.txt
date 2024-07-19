@@ -38,7 +38,7 @@ django==5.0.6
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
-django-debug-toolbar==4.4.2
+django-debug-toolbar==4.4.6
     # via -r dev-requirements.in
 factory-boy==3.3.0
     # via -r dev-requirements.in
