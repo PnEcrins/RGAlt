@@ -1,0 +1,69 @@
+<mat-toolbar>
+  <a routerLink="/" class="logo-container">
+    <img src="favicon.ico" />
+  </a>
+  <span>Regard d'altitude</span>
+  <span class="toolbar-spacer"></span>
+  <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon
+      aria-hidden="false"
+      [matBadge]="
+        (authService.isAuth | async)
+          ? (offlineService.observationsPending | async)
+          : null
+      "
+      >account_circle</mat-icon
+    >
+  </button>
+</mat-toolbar>
+<mat-toolbar *ngIf="backButton">
+  <button (click)="handleBackButton()" mat-icon-button>
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>{{ title }}</span>
+</mat-toolbar>
+<mat-sidenav-container
+  [class.mat-sidenav-container-home]="!backButton"
+  [style.marginTop.px]="0"
+>
+  <mat-sidenav
+    #sidenav
+    mode="over"
+    fixedInViewport="true"
+    fixedTopGap="56"
+    position="end"
+  >
+    <mat-nav-list>
+      @for (
+        currentSideNavItem of currentSideNavItems;
+        track currentSideNavItem.id;
+        let last = $last
+      ) {
+        <a
+          mat-list-item
+          [routerLink]="currentSideNavItem.routerLink"
+          (click)="
+            !currentSideNavItem.routerLink ? currentSideNavItem.click() : null
+          "
+        >
+          <div
+            [matBadge]="
+              currentSideNavItem.observationsPending
+                ? (offlineService.observationsPending | async)
+                : null
+            "
+          >
+            {{ currentSideNavItem.text }}
+          </div>
+        </a>
+        <mat-divider *ngIf="!last"></mat-divider>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <main>
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

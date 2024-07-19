@@ -1,0 +1,17 @@
+django
+psycopg
+djangorestframework
+djangorestframework-gis
+drf-spectacular
+django-filter
+pillow
+sorl-thumbnail
+pymemcache
+sentry-sdk
+gunicorn
+drf-dynamic-fields
+djangorestframework-simplejwt
+django-treebeard
+django-storages[s3]
+django-cors-headers
+django-constance[redis]

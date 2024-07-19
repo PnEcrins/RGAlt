@@ -1,0 +1,42 @@
+<form class="login-form" (ngSubmit)="onLogin()">
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input type="email" matInput [formControl]="emailFormControl" />
+    @if (
+      emailFormControl.hasError("email") &&
+      !emailFormControl.hasError("required")
+    ) {
+      <mat-error>Renseignez une adresse email valide</mat-error>
+    }
+    @if (emailFormControl.hasError("required")) {
+      <mat-error>Une adresse email est nécessaire</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Mot de passe</mat-label>
+    <input type="password" matInput [formControl]="passwordFormControl" />
+    @if (
+      passwordFormControl.hasError("password") &&
+      !passwordFormControl.hasError("minLength")
+    ) {
+      <mat-error>Le mot de passe doit avoir au moins 6 caractères</mat-error>
+    }
+    @if (passwordFormControl.hasError("required")) {
+      <mat-error>Un mot de passe est nécessaire</mat-error>
+    }
+  </mat-form-field>
+  @if (error) {
+    <div class="login-error-container">
+      <mat-error>{{ error }}</mat-error>
+    </div>
+  }
+  <button mat-flat-button color="primary">Se connecter</button>
+</form>
+<div class="forget-password-button-container">
+  <button mat-button routerLink="/mot-de-passe-oublie">
+    Mot de passe oublié
+  </button>
+</div>
+<div class="create-account-button-container">
+  <button mat-button routerLink="/creer-un-compte">Créer un compte</button>
+</div>

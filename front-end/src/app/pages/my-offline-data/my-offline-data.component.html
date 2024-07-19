@@ -1,0 +1,25 @@
+<div class="areas-container">
+  <mat-grid-list #grid [cols]="columns" rowHeight="120px" gutterSize="20px">
+    @for (area of areas; track area.id) {
+      <mat-grid-tile>
+        <div class="area-type-tooltip-container">
+          <button
+            mat-icon-button
+            matTooltip="{{ area.tooltip }}"
+            class="area-type-tooltip"
+            #tooltip="matTooltip"
+            (click)="tooltip.show()"
+          >
+            <mat-icon>info</mat-icon>
+          </button>
+        </div>
+        <mat-card (click)="areaClick(area)">
+          <mat-icon class="area-type-icon">
+            {{ area.offline ? "delete" : "download_for_offline" }}
+          </mat-icon>
+          <mat-card-footer> {{ area.name }}</mat-card-footer>
+        </mat-card>
+      </mat-grid-tile>
+    }
+  </mat-grid-list>
+</div>

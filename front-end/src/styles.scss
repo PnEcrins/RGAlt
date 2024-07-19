@@ -1,0 +1,133 @@
+@use "@angular/material" as mat;
+@use "./../m3-theme.scss";
+
+@include mat.core();
+@include mat.typography-hierarchy(m3-theme.$light-theme);
+
+:root {
+  @include mat.all-component-themes(m3-theme.$light-theme);
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  background-color: var(--mat-app-background-color);
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.observation-marker,
+.selected-observation-marker {
+  .observation-marker-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50% 50% 50% 0;
+    border: 2px solid #ffffff;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-44deg);
+    img {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform: rotate(45deg);
+      position: absolute;
+      z-index: 20;
+      width: 24px !important;
+    }
+    background-color: var(--mdc-fab-container-color);
+    color: var(--mat-fab-foreground-color);
+    box-shadow: var(--mdc-extended-fab-container-elevation-shadow);
+  }
+}
+
+.leaflet-popup {
+  cursor: default !important;
+}
+
+.observation-popup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  .observation-name {
+    color: var(--mat-app-text-color);
+    font-weight: 700;
+    font-size: 16px;
+    padding: 2px 0px;
+  }
+  .observation-date {
+    color: var(--mat-app-text-color);
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .observation-button {
+    cursor: pointer;
+    color: var(--mdc-text-button-label-text-color);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    text-decoration: none;
+    font-family: var(--mdc-text-button-label-text-font);
+    font-size: var(--mdc-text-button-label-text-size);
+    letter-spacing: var(--mdc-text-button-label-text-tracking);
+    font-weight: var(--mdc-text-button-label-text-weight);
+    text-transform: var(--mdc-text-button-label-text-transform);
+    height: var(--mdc-text-button-container-height);
+    border-radius: var(--mdc-text-button-container-shape);
+    padding: 0 var(--mat-text-button-horizontal-padding, 8px);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 64px;
+    border: none;
+    outline: none;
+    line-height: inherit;
+    user-select: none;
+    overflow: visible;
+    vertical-align: middle;
+    background: rgba(0, 0, 0, 0);
+  }
+  img {
+    max-height: 200px;
+    object-fit: contain;
+  }
+}
+
+.observations-marker-cluster-group-icon {
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  height: 100%;
+  width: 100%;
+  background-color: var(--mdc-fab-container-color);
+  color: var(--mat-fab-foreground-color);
+  box-shadow: var(--mdc-extended-fab-container-elevation-shadow);
+}
+
+mat-nav-list {
+  .mat-mdc-list-item {
+    border-radius: 0% !important;
+  }
+  .mat-badge-after .mat-badge-content {
+    bottom: calc((100% + 8px) / 2);
+    left: calc(100% - 16px);
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

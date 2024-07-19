@@ -1,0 +1,68 @@
+mat-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 136px;
+  padding: 20px;
+  width: 240px;
+  cursor: pointer;
+  .observation-type-icon {
+    height: 72px;
+    width: 72px;
+  }
+}
+
+.observation-type-tooltip-container {
+  width: 240px;
+  position: absolute;
+  top: 0px;
+  .observation-type-tooltip {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    z-index: 4;
+  }
+}
+
+.media-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.photos-container {
+  display: flex;
+  overflow-x: scroll;
+  .photo-container {
+    position: relative;
+    .delete-photo-button {
+      position: absolute;
+      right: 0;
+    }
+    .photo {
+      width: 200px;
+      max-height: 200px;
+      object-fit: contain;
+    }
+    &:not(:last-of-type) {
+      margin-right: 16px;
+    }
+  }
+}
+
+.comment-form-field,
+.name-form-field {
+  width: 240px;
+}
+
+mat-grid-list {
+  margin-top: 24px;
+  mat-grid-tile {
+    overflow: visible;
+  }
+}
+
+#map {
+  height: 400px;
+  width: 100%;
+}

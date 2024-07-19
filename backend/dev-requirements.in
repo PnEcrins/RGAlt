@@ -1,0 +1,11 @@
+-c requirements.txt
+
+pip-tools
+django-debug-toolbar
+tblib
+flake8
+isort
+black
+coverage
+factory-boy
+bpython

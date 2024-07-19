@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Filtrer</h2>
+<mat-dialog-content>
+  <div>
+    <mat-form-field>
+      <mat-label>Types d'observation</mat-label>
+      <mat-select [formControl]="observationsTypesForm" multiple>
+        @for (observationType of observationsTypes; track observationType.id) {
+        <mat-option [value]="observationType"
+          >{{observationType.label}}</mat-option
+        >
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field>
+      <mat-label>Date</mat-label>
+      <mat-date-range-input
+        [formGroup]="observationsDates"
+        [rangePicker]="observationsDatesPicker"
+      >
+        <input
+          matStartDate
+          placeholder="Date de début"
+          formControlName="start"
+        />
+        <input matEndDate placeholder="Date de fin" formControlName="end" />
+      </mat-date-range-input>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="observationsDatesPicker"
+      ></mat-datepicker-toggle>
+      <mat-date-range-picker #observationsDatesPicker></mat-date-range-picker>
+    </mat-form-field>
+    @if ( observationsDates.hasError("emptyStart") ) {
+    <mat-error>La date de début est obligatoire.</mat-error>
+    } @if ( observationsDates.hasError("emptyEnd") ) {
+    <mat-error>La date de fin est obligatoire.</mat-error>
+    }
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="filterCancel()">Annuler</button>
+  <button mat-button (click)="filterConfirm()" cdkFocusInitial>
+    Confirmer
+  </button>
+</mat-dialog-actions>

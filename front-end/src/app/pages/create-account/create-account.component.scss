@@ -1,0 +1,17 @@
+.login-form {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-direction: column;
+}
+
+mat-form-field {
+  width: calc(100vw - 32px);
+  max-width: 400px;
+  padding: 16px;
+}
+
+.password-error-container {
+  color: var(--mat-form-field-error-text-color);
+  padding-bottom: 16px;
+}

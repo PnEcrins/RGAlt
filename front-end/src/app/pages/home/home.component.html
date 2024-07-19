@@ -1,0 +1,32 @@
+<section class="explanatory-sentence-container">
+  <div class="mat-body-large">
+    Regard d'Altitude est un projet ayant pour but la création d'un réseau
+    d'échanges entre acteurs de la montagne, des territoires et de la science
+    autour de la question des transformations de la montagne dans un contexte de
+    changement climatique. Notamment en permettant un inventaire collaboratif
+    des évènements en montagne.
+  </div>
+  <button routerLink="/en-savoir-plus" mat-button color="primary">
+    En savoir plus
+  </button>
+</section>
+<section class="new-observation-container">
+  <button
+    [routerLink]="
+      (authService.isAuth | async) ? '/nouvelle-observation' : '/se-connecter'
+    "
+    mat-fab
+    extended
+    color="primary"
+  >
+    Saisir une observation
+  </button>
+</section>
+<section class="explanatory-sentence-container">
+  <div class="mat-body-large">Un collectif pour voir changer la montagne</div>
+</section>
+<section class="synthesis-interface-container">
+  <button routerLink="/interface-de-synthese" mat-fab extended color="primary">
+    Consulter la base de données
+  </button>
+</section>

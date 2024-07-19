@@ -1,0 +1,116 @@
+name: Quality checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - main
+      - next
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DEBIAN_FRONTEND: noninteractive
+
+jobs:
+    flake8:
+        name: Python Flake8 check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version-file: ./backend/.python-version
+
+            - name: Install flake8
+              working-directory: ./backend
+              run: |
+                pip install flake8 -c dev-requirements.txt
+
+            - name: Flake8
+              working-directory: ./backend
+              run: |
+                flake8 project
+
+    isort:
+        name: Python iSort check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version-file: ./backend/.python-version
+
+            - name: Install isort
+              working-directory: ./backend
+              run: |
+                pip install isort -c dev-requirements.txt
+
+            - name: iSort
+              working-directory: ./backend
+              run: |
+                isort -c project
+
+    black:
+        name: Python Black check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version-file: ./backend/.python-version
+
+            - name: Install black
+              working-directory: ./backend
+              run: |
+                pip install black -c dev-requirements.txt
+
+            - name: black
+              working-directory: ./backend
+              run: |
+                black --check project
+
+    prettier:
+        name: JS Prettier check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: ./front-end/.nvmrc
+                  cache: 'npm'
+                  cache-dependency-path: ./front-end/.nvmrc
+
+            - name: Install node dependencies
+              working-directory: ./front-end
+              run: |
+                npm ci --no-audit
+
+            - name: Prettier check
+              working-directory: ./front-end
+              run: |
+                npm run format:check
+
+    type:
+        name: JS Type check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: ./front-end/.nvmrc
+                  cache: 'npm'
+                  cache-dependency-path: ./front-end/.nvmrc
+
+            - name: Install node dependencies
+              working-directory: ./front-end
+              run: |
+                npm ci --no-audit
+
+            - name: Type check
+              working-directory: ./front-end
+              run: |
+                npm run type:check

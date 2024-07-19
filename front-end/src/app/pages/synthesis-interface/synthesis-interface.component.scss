@@ -1,0 +1,47 @@
+$panel-height: 100vh;
+
+.tune-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: calc(16px + 48px);
+  z-index: 400;
+  pointer-events: none;
+  button {
+    pointer-events: all;
+  }
+}
+
+#map {
+  height: calc(100% - 48px);
+  width: 100%;
+}
+
+.map-panel-open {
+  height: calc(100% - $panel-height) !important;
+}
+
+.tune-button-container-panel-open {
+  bottom: calc(16px + $panel-height);
+}
+
+.expansion-panel {
+  border-radius: unset !important;
+}
+
+.expansion-panel-open {
+  height: calc($panel-height - 56px - 56px);
+  mat-list {
+    overflow: scroll;
+    max-height: calc($panel-height - var(--mat-toolbar-standard-height) - 16px);
+  }
+}
+
+@media (max-width: 599px) {
+  .expansion-panel-open {
+    mat-list {
+      max-height: calc($panel-height - var(--mat-toolbar-mobile-height) - 16px);
+    }
+  }
+}

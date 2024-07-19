@@ -1,0 +1,75 @@
+<div id="map" [class.map-panel-open]="expansionPanelIsOpen"></div>
+<div
+  class="tune-button-container"
+  [class.tune-button-container-panel-open]="expansionPanelIsOpen"
+>
+  <button mat-fab extended color="primary" (click)="openFilterDialog()">
+    <mat-icon>tune</mat-icon>
+    Filtrer
+  </button>
+</div>
+
+<mat-accordion
+  *ngIf="
+    currentObservationsFeatureCollection &&
+    currentObservationsFeatureCollection.features
+  "
+>
+  <mat-expansion-panel
+    (opened)="expansionPanelOpen()"
+    (closed)="expansionPanelClose()"
+    class="expansion-panel"
+    [class.expansion-panel-open]="expansionPanelIsOpen"
+    #expansionPanel
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{ currentObservationsFeatureCollection.features.length }} observations
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-list class="mat-expansion-panel-body-visible">
+      @for (
+        observation of currentObservationsFeatureCollection.features;
+        track observation.id
+      ) {
+        <mat-list-item>
+          <span matListItemIcon
+            ><button
+              mat-icon-button
+              (click)="handleObservationView(observation)"
+            >
+              <mat-icon>place</mat-icon>
+            </button></span
+          >
+
+          <span matListItemTitle>{{
+            observation.properties.name && observation.properties.name !== ""
+              ? observation.properties.name
+              : getEventType(observation.properties.category)!.label
+          }}</span>
+          <span matListItemLine>{{
+            observation.properties.event_date | date: "dd/MM/yyyy"
+          }}</span>
+          <span matListItemMeta>
+            <button
+              mat-icon-button
+              class="mt-16"
+              [routerLink]="[
+                '/detail-d-une-observation',
+                slugify(
+                  observation.id!.concat(
+                    observation.properties.name
+                      ? '-'.concat(observation.properties.name)
+                      : ''
+                  )
+                ),
+              ]"
+            >
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </span>
+        </mat-list-item>
+      }
+    </mat-list>
+  </mat-expansion-panel>
+</mat-accordion>
