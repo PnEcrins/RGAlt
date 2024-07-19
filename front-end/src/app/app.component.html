@@ -1,10 +1,5 @@
 <mat-toolbar>
-  <a routerLink="/" class="logo-container">
-    <img src="favicon.ico" />
-  </a>
-  <span>Regard d'altitude</span>
-  <span class="toolbar-spacer"></span>
-  <button mat-icon-button (click)="sidenav.toggle()">
+  <button mat-icon-button (click)="handleSideNavMenu()">
     <mat-icon
       aria-hidden="false"
       [matBadge]="
@@ -12,8 +7,16 @@
           ? (offlineService.observationsPending | async)
           : null
       "
-      >account_circle</mat-icon
+      >menu</mat-icon
     >
+  </button>
+  <a routerLink="/" class="logo-container">
+    <img src="favicon.ico" />
+  </a>
+  <span>Regard d'altitude</span>
+  <span class="toolbar-spacer"></span>
+  <button mat-icon-button (click)="handleSideNavAccount()">
+    <mat-icon aria-hidden="false">account_circle</mat-icon>
   </button>
 </mat-toolbar>
 <mat-toolbar *ngIf="backButton">
@@ -27,7 +30,44 @@
   [style.marginTop.px]="0"
 >
   <mat-sidenav
-    #sidenav
+    #sidenavMenu
+    mode="over"
+    fixedInViewport="true"
+    fixedTopGap="56"
+    position="start"
+  >
+    <mat-nav-list>
+      @for (
+        currentSideNavMenuItem of currentSideNavMenuItems;
+        track currentSideNavMenuItem.id;
+        let last = $last
+      ) {
+        <a
+          mat-list-item
+          [routerLink]="currentSideNavMenuItem.routerLink"
+          (click)="
+            !currentSideNavMenuItem.routerLink
+              ? currentSideNavMenuItem.click()
+              : null
+          "
+        >
+          <div
+            [matBadge]="
+              currentSideNavMenuItem.observationsPending
+                ? (offlineService.observationsPending | async)
+                : null
+            "
+          >
+            {{ currentSideNavMenuItem.text }}
+          </div>
+        </a>
+        <mat-divider *ngIf="!last"></mat-divider>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav
+    #sidenavAccount
     mode="over"
     fixedInViewport="true"
     fixedTopGap="56"
@@ -35,25 +75,27 @@
   >
     <mat-nav-list>
       @for (
-        currentSideNavItem of currentSideNavItems;
-        track currentSideNavItem.id;
+        currentSideNavAccountItem of currentSideNavAccountItems;
+        track currentSideNavAccountItem.id;
         let last = $last
       ) {
         <a
           mat-list-item
-          [routerLink]="currentSideNavItem.routerLink"
+          [routerLink]="currentSideNavAccountItem.routerLink"
           (click)="
-            !currentSideNavItem.routerLink ? currentSideNavItem.click() : null
+            !currentSideNavAccountItem.routerLink
+              ? currentSideNavAccountItem.click()
+              : null
           "
         >
           <div
             [matBadge]="
-              currentSideNavItem.observationsPending
+              currentSideNavAccountItem.observationsPending
                 ? (offlineService.observationsPending | async)
                 : null
             "
           >
-            {{ currentSideNavItem.text }}
+            {{ currentSideNavAccountItem.text }}
           </div>
         </a>
         <mat-divider *ngIf="!last"></mat-divider>
