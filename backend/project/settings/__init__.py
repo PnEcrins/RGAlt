@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+from django.utils.translation import gettext_lazy as _
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PROJECT_DIR = BASE_DIR / "project"
@@ -233,11 +235,18 @@ CONSTANCE_CONFIG = {
         "Satellite map raster attribution",
     ),
 }
-CONSTANCE_CONFIG_FIELDSETS = {
-    "Main map": ("MAIN_BASE_MAP_URL", "MAIN_BASE_MAP_ATTRIBUTION"),
-    "Satellite map": ("SATELLITE_BASE_MAP_URL", "SATELLITE_BASE_MAP_ATTRIBUTION"),
-}
-
+CONSTANCE_CONFIG_FIELDSETS = (
+    (
+        _("Main map"),
+        {
+            "fields": ("MAIN_BASE_MAP_URL", "MAIN_BASE_MAP_ATTRIBUTION"),
+        },
+    ),
+    (
+        _("Satellite map"),
+        ("SATELLITE_BASE_MAP_URL", "SATELLITE_BASE_MAP_ATTRIBUTION"),
+    ),
+)
 
 # try load custom.py in conf folder
 custom_settings_file = CONF_DIR / "custom.py"
