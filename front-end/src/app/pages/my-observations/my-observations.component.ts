@@ -98,6 +98,7 @@ export class MyObservationsComponent {
           index++
         ) {
           const file = myOfflineObservation.files![index];
+          console.log(file);
           await firstValueFrom(
             this.observationsService.sendPhotoObservation(
               observationResponse.id,
@@ -117,6 +118,7 @@ export class MyObservationsComponent {
         await this.refreshObservations();
       },
       error: () => {
+        newObservationLoaderDialogRef.close();
         this.snackBar.open(
           `Une erreur est survenue lors du transfert de l'observation "${observation.properties.name ? observation.properties.name : this.getEventType(observation.properties.category)?.label}"`,
           '',
