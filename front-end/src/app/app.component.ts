@@ -59,9 +59,10 @@ export class AppComponent {
   offlineService = inject(OfflineService);
   snackBar = inject(MatSnackBar);
 
-  @ViewChild('sidenav') private sidenav!: MatSidenav;
+  @ViewChild('sidenavMenu') private sidenavMenu!: MatSidenav;
+  @ViewChild('sidenavAccount') private sidenavAccount!: MatSidenav;
 
-  sideNavItems = [
+  sideNavAccountItems = [
     {
       id: 1,
       text: 'Se connecter',
@@ -80,11 +81,27 @@ export class AppComponent {
     },
     {
       id: 3,
+      text: 'Me déconnecter',
+      routerLink: null,
+      authenficated: true,
+      click: () => {
+        this.authService.logout();
+        this.sidenavAccount.close();
+        this.snackBar.open('Vous êtes déconnecté', '', { duration: 2000 });
+        this.router.navigate(['..']);
+      },
+      observationsPending: false,
+    },
+  ];
+
+  sideNavMenuItems = [
+    {
+      id: 1,
       text: 'Saisir une nouvelle observation',
       routerLink: null,
       authenficated: null,
       click: () => {
-        this.sidenav.close();
+        this.sidenavMenu.close();
         this.router.navigate([
           this.authService.isAuth.value
             ? '/nouvelle-observation'
@@ -94,7 +111,7 @@ export class AppComponent {
       observationsPending: false,
     },
     {
-      id: 4,
+      id: 2,
       text: 'Interface de synthèse',
       routerLink: 'interface-de-synthese',
       authenficated: null,
@@ -102,7 +119,7 @@ export class AppComponent {
       observationsPending: false,
     },
     {
-      id: 5,
+      id: 3,
       text: 'Mes observations',
       routerLink: 'mes-observations',
       authenficated: true,
@@ -110,7 +127,7 @@ export class AppComponent {
       observationsPending: true,
     },
     {
-      id: 6,
+      id: 4,
       text: 'Fonds de carte hors ligne',
       routerLink: 'fonds-de-carte-hors-ligne',
       authenficated: true,
@@ -118,7 +135,7 @@ export class AppComponent {
       observationsPending: false,
     },
     {
-      id: 7,
+      id: 5,
       text: 'En savoir plus',
       routerLink: 'en-savoir-plus',
       authenficated: null,
@@ -126,38 +143,31 @@ export class AppComponent {
       observationsPending: false,
     },
     {
-      id: 8,
+      id: 6,
       text: 'Mentions légales',
       routerLink: 'legal-notice',
       authenficated: null,
       click: () => null,
       observationsPending: false,
     },
-    {
-      id: 0,
-      text: 'Me déconnecter',
-      routerLink: null,
-      authenficated: true,
-      click: () => {
-        this.authService.logout();
-        this.sidenav.close();
-        this.snackBar.open('Vous êtes déconnecté', '', { duration: 2000 });
-        this.router.navigate(['..']);
-      },
-      observationsPending: false,
-    },
   ];
 
-  currentSideNavItems: any[] = [];
+  currentSideNavMenuItems: any[] = [];
+  currentSideNavAccountItems: any[] = [];
 
   platform = inject(Platform);
   platformId = inject(PLATFORM_ID);
 
   handleAuthentification(value: any) {
-    this.currentSideNavItems = this.sideNavItems.filter(
-      (sideNavItem) =>
-        sideNavItem.authenficated === value ||
-        sideNavItem.authenficated === null,
+    this.currentSideNavMenuItems = this.sideNavMenuItems.filter(
+      (sideNavMenuItem) =>
+        sideNavMenuItem.authenficated === value ||
+        sideNavMenuItem.authenficated === null,
+    );
+    this.currentSideNavAccountItems = this.sideNavAccountItems.filter(
+      (sideNavAccountItem) =>
+        sideNavAccountItem.authenficated === value ||
+        sideNavAccountItem.authenficated === null,
     );
   }
 
@@ -187,8 +197,11 @@ export class AppComponent {
 
     this.router.events.subscribe((event) => {
       if (event instanceof ActivationEnd) {
-        if (this.sidenav.opened) {
-          this.sidenav.close();
+        if (this.sidenavAccount.opened) {
+          this.sidenavAccount.close();
+        }
+        if (this.sidenavMenu.opened) {
+          this.sidenavMenu.close();
         }
         this.title = event.snapshot.data['title'];
         this.backButton = event.snapshot.data['backButton'];
@@ -205,5 +218,19 @@ export class AppComponent {
     } else {
       this.router.navigate(['..']);
     }
+  }
+
+  handleSideNavMenu() {
+    if (this.sidenavAccount.opened) {
+      this.sidenavAccount.close();
+    }
+    this.sidenavMenu.toggle();
+  }
+
+  handleSideNavAccount() {
+    if (this.sidenavMenu.opened) {
+      this.sidenavMenu.close();
+    }
+    this.sidenavAccount.toggle();
   }
 }
