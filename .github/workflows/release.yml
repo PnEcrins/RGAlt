@@ -9,7 +9,6 @@ on:
       - master
       - main
       - next
-      - add_release_process
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -65,6 +64,7 @@ jobs:
         if: steps.cache-front.outputs.cache-hit != 'true'
         working-directory: ./front-end
         run: |
+          cp .env.dist .env
           npm run build
 
       - uses: docker/setup-buildx-action@v3
