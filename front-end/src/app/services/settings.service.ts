@@ -45,7 +45,7 @@ export class SettingsService {
       ]);
       for (let index = 0; index < settings.categories.length; index++) {
         const category = settings.categories[index];
-        if (!(await this.offlineService.getDataInStore('icons', category.id))) {
+        if (Boolean(category.pictogram) && !(await this.offlineService.getDataInStore('icons', category.id))) {
           const file: any = await firstValueFrom(
             this.getIcon(category.pictogram),
           );
