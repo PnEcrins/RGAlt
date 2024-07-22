@@ -45,13 +45,35 @@ export class SettingsService {
       ]);
       for (let index = 0; index < settings.categories.length; index++) {
         const category = settings.categories[index];
-        if (Boolean(category.pictogram) && !(await this.offlineService.getDataInStore('icons', category.id))) {
+        if (
+          Boolean(category.pictogram) &&
+          !(await this.offlineService.getDataInStore('icons', category.id))
+        ) {
           const file: any = await firstValueFrom(
             this.getIcon(category.pictogram),
           );
           await this.offlineService.writeOrUpdateDataInStore('icons', [
             { id: category.id, pictogram: category.pictogram, file },
           ]);
+        }
+
+        for (let index = 0; index < category.children.length; index++) {
+          const subCategory = category.children[index];
+          if (
+            Boolean(subCategory.pictogram) &&
+            !(await this.offlineService.getDataInStore('icons', subCategory.id))
+          ) {
+            const file: any = await firstValueFrom(
+              this.getIcon(subCategory.pictogram),
+            );
+            await this.offlineService.writeOrUpdateDataInStore('icons', [
+              {
+                id: subCategory.id,
+                pictogram: subCategory.pictogram,
+                file,
+              },
+            ]);
+          }
         }
       }
     }
