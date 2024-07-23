@@ -51,7 +51,6 @@ class ObservationCategoryAdmin(TreeAdmin):
     form = movenodeform_factory(ObservationCategory)
     list_display = ("label", "description", "picto_preview")
     search_fields = ("label", "description")
-    ordering = ("label",)
     readonly_fields = ("picto_preview",)
 
     @admin.display(description=_("Preview"))
@@ -68,7 +67,7 @@ class ObservationCategoryAdmin(TreeAdmin):
 @admin.register(Observation)
 class ObservationAdmin(GISModelAdmin):
     list_display = ("uuid", "name", "category", "event_date", "observer")
-    list_filter = ("category", "event_date")
+    list_filter = ("category", "event_date", "source")
     ordering = ("-event_date",)
     date_hierarchy = "event_date"
     readonly_fields = ("uuid",)

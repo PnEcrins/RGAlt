@@ -29,7 +29,6 @@ class ObservationCategory(TimeStampMixin, MP_Node):
     pictogram = SVGFileField(
         upload_to="observation_categories", verbose_name=_("Pictogram"), blank=True
     )
-    node_order_by = ["label"]
 
     def __str__(self):
         parent = self.get_parent()
@@ -44,7 +43,6 @@ class ObservationCategory(TimeStampMixin, MP_Node):
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
-        # ordering = ["-numchild", "path"]
 
 
 class MediaType(models.TextChoices):
