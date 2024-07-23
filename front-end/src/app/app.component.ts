@@ -25,6 +25,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { OfflineService } from './services/offline.service';
 import { AuthService } from './services/auth.service';
 import { SettingsService } from './services/settings.service';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-root',
@@ -41,6 +42,7 @@ import { SettingsService } from './services/settings.service';
     MatBadgeModule,
     MatDividerModule,
     MatSnackBarModule,
+    MatCardModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
