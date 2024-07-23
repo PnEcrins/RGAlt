@@ -131,3 +131,37 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+
+.container {
+  margin: auto;
+  width: 80%;
+}
+
+mat-toolbar {
+  border-bottom: 1px #afafaf solid !important;
+}
+
+
+.mt-1{
+  margin-top: 1em;
+}
+
+.row {
+  display: inline-block;
+  width: 100%;
+}
+.col-6{
+  float: left;
+  width: 48%;
+  margin-left: 1%;
+}
+
+
+@media (max-width: 992px) {
+  .col-6{
+    width: 96%;
+    margin-left: 2%;
+    margin-bottom: 1em;
+  }
+}
