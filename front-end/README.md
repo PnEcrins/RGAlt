@@ -4,11 +4,12 @@ To build and launch frontend, go into `/front-end/` folder and run `npm install`
 
 ## Development server
 
+Copy .env.dist to .env then edit it with your data.\
 Run `npm start` for a dev server. Navigate to `http://localhost:4200/`.
 
 ## Build
 
-Copy and fill .env.dist to .env with your API url
+Copy .env.dist to .env then edit it with your data.\
 Run `npm run build` to build the project.
 
 ## Running unit tests
