@@ -126,11 +126,23 @@ mat-nav-list {
 html,
 body {
   height: 100%;
-}
-body {
+  font-family: Afacad, Geneva, Tahoma, sans-serif !important;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.afacad {
+  font-family: Afacad, Geneva, Tahoma, sans-serif !important;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.main-color {
+  color: var(--mdc-filled-button-container-color);
+}
+
+
 
 
 .container {
