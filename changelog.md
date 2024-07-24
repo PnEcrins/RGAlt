@@ -7,7 +7,11 @@ CHANGE LOG
 **Bugfix**
 
 - Import data command does not work
+- Fix offline download
 
+**Improvements**
+
+- improve UI
 
 1.0.1    (2024-07-24)
 ----------------------
