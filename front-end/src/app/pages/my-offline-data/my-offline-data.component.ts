@@ -132,8 +132,8 @@ export class MyOfflineDataComponent {
         const maxZoom = area.max_zoom;
 
         const bounds = L.default.latLngBounds([
-          { lat: area.bbox[0][0], lng: area.bbox[0][1] },
-          { lat: area.bbox[1][0], lng: area.bbox[1][1] },
+          { lat: area.bbox[0][1], lng: area.bbox[0][0] },
+          { lat: area.bbox[1][1], lng: area.bbox[1][0] },
         ]);
 
         const offlineLayer = tileLayerOffline(defaultLayer, {
