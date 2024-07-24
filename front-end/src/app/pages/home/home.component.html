@@ -1,32 +1,62 @@
-<section class="explanatory-sentence-container">
-  <div class="mat-body-large">
-    Regard d'Altitude est un projet ayant pour but la création d'un réseau
-    d'échanges entre acteurs de la montagne, des territoires et de la science
-    autour de la question des transformations de la montagne dans un contexte de
-    changement climatique. Notamment en permettant un inventaire collaboratif
-    des évènements en montagne.
+<div id="banner-container">
+  <h1 id="text-banner">Un collectif pour voir changer la montagne</h1>
+</div>
+
+
+
+<div id="home-container">
+  <section class="explanatory-sentence-container mt-1">
+    <div class="mat-body-large" id="pres-text">
+      <p>
+        Regard d'Altitude est un projet ayant pour objectif la création d'un réseau
+        d'échanges entre acteurs de la montagne, des territoires et de la science
+        autour de la question des transformations de la montagne dans un contexte
+        de changement climatique. Notamment en permettant un inventaire
+        collaboratif des évènements en montagne.
+      </p>
+      <button class="text-align" routerLink="/en-savoir-plus" mat-flat-button color="primary">
+        À propos
+      </button>
+    </div>
+
+  </section>
+  <div class="row mt-1 card-button" id="new-observation">
+    <a  [routerLink]="
+    (authService.isAuth | async)
+      ? '/nouvelle-observation'
+      : '/se-connecter'
+    ">
+      <mat-card class="col-6 hover">
+        <img id="add-img"/>
+        <button
+          mat-flat-button
+          extended
+          color="primary"
+          class="card-button"
+        >
+          Saisir une observation
+        </button>
+      </mat-card>
+
+    </a>
+    <!-- <section class="explanatory-sentence-container col-6">
+      <div class="mat-body-large">
+        Un collectif pour voir changer la montagne
+      </div>
+    </section> -->
+    <a routerLink="/interface-de-synthese" >
+      <mat-card class="col-6 hover mb-3">
+        <img id="map-img"/>
+        <button
+        mat-flat-button
+          extended
+          color="primary"
+          class="card-button"
+        >
+          Consulter les évènements
+        </button>
+      </mat-card>
+    </a>
   </div>
-  <button routerLink="/en-savoir-plus" mat-button color="primary">
-    En savoir plus
-  </button>
-</section>
-<section class="new-observation-container">
-  <button
-    [routerLink]="
-      (authService.isAuth | async) ? '/nouvelle-observation' : '/se-connecter'
-    "
-    mat-fab
-    extended
-    color="primary"
-  >
-    Saisir une observation
-  </button>
-</section>
-<section class="explanatory-sentence-container">
-  <div class="mat-body-large">Un collectif pour voir changer la montagne</div>
-</section>
-<section class="synthesis-interface-container">
-  <button routerLink="/interface-de-synthese" mat-fab extended color="primary">
-    Consulter la base de données
-  </button>
-</section>
+
+</div>

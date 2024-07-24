@@ -136,7 +136,7 @@ export class AppComponent {
     },
     {
       id: 5,
-      text: 'En savoir plus',
+      text: 'À propos',
       routerLink: 'en-savoir-plus',
       authenficated: null,
       click: () => null,
