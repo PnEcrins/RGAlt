@@ -143,9 +143,7 @@ export class OfflineService {
     minZoom: any,
     MaxZoom: any,
   ) {
-    const { downloadTile, getBlobByKey, saveTile } = await import(
-      'leaflet.offline'
-    );
+    const leafletOffline = await import('leaflet.offline');
     const L = await import('leaflet');
 
     const tilesToStore: TileInfo[] = [];
@@ -163,9 +161,13 @@ export class OfflineService {
 
     const tilesToDownload = [];
     for (let index = 0; index < tilesToStore.length; index++) {
-      if (!(await getBlobByKey(tilesToStore[index].key))) {
+      if (
+        !(await leafletOffline.default.getBlobByKey(tilesToStore[index].key))
+      ) {
         tilesToDownload.push(
-          downloadTile(tilesToStore[index].url).catch(() => null),
+          leafletOffline.default
+            .downloadTile(tilesToStore[index].url)
+            .catch(() => null),
         );
       }
     }
@@ -174,7 +176,10 @@ export class OfflineService {
       tilesToDownload.filter((tileToDownload) => tileToDownload),
     ).then((blob) => blob);
     for (let index = 0; index < tilesBlob.length; index++) {
-      await saveTile(tilesToStore[index], tilesBlob[index]!);
+      await leafletOffline.default.saveTile(
+        tilesToStore[index],
+        tilesBlob[index]!,
+      );
     }
   }
 
@@ -184,7 +189,7 @@ export class OfflineService {
     minZoom: any,
     MaxZoom: any,
   ) {
-    const { getBlobByKey, removeTile } = await import('leaflet.offline');
+    const leafletOffline = await import('leaflet.offline');
     const L = await import('leaflet');
 
     const tilesToStore: TileInfo[] = [];
@@ -202,9 +207,11 @@ export class OfflineService {
 
     const tilesToRemove = [];
     for (let index = 0; index < tilesToStore.length; index++) {
-      if (await getBlobByKey(tilesToStore[index].key)) {
+      if (await leafletOffline.default.getBlobByKey(tilesToStore[index].key)) {
         tilesToRemove.push(
-          removeTile(tilesToStore[index].url).catch(() => null),
+          leafletOffline.default
+            .removeTile(tilesToStore[index].url)
+            .catch(() => null),
         );
       }
     }
