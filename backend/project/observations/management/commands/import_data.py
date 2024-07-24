@@ -39,11 +39,12 @@ class Command(BaseCommand):
         return self.source
 
     def get_category(self, feature):
-        try:
-            return ObservationCategory.objects.filter(
-                label=self.mapping_category.get(feature.get("id_event_type"))
-            ).last()
-        except ObservationCategory.DoesNotExist:
+        category = ObservationCategory.objects.filter(
+            label=self.mapping_category.get(feature.get("id_event_type"))
+        ).last()
+        if category:
+            return category
+        else:
             return ObservationCategory.add_root(
                 label=self.mapping_category.get(feature.get("id_event_type")),
             )

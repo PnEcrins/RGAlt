@@ -21,7 +21,9 @@ certifi==2024.6.2
     #   -c requirements.txt
     #   requests
 charset-normalizer==3.3.2
-    # via requests
+    # via
+    #   -c requirements.txt
+    #   requests
 click==8.1.7
     # via
     #   black
@@ -49,7 +51,9 @@ flake8==7.1.0
 greenlet==3.0.3
     # via bpython
 idna==3.7
-    # via requests
+    # via
+    #   -c requirements.txt
+    #   requests
 isort==5.13.2
     # via -r dev-requirements.in
 mccabe==0.7.0
@@ -84,7 +88,9 @@ python-dateutil==2.9.0.post0
 pyxdg==0.28
     # via bpython
 requests==2.32.3
-    # via bpython
+    # via
+    #   -c requirements.txt
+    #   bpython
 six==1.16.0
     # via
     #   -c requirements.txt

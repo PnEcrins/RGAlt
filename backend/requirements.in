@@ -4,6 +4,7 @@ djangorestframework
 djangorestframework-gis
 drf-spectacular
 django-filter
+requests
 pillow
 sorl-thumbnail
 pymemcache
