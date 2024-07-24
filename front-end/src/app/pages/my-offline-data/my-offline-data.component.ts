@@ -118,7 +118,7 @@ export class MyOfflineDataComponent {
           data: { title: 'Téléchargement en cours' },
           disableClose: true,
         });
-        const { tileLayerOffline } = await import('leaflet.offline');
+        const leafletOffline = await import('leaflet.offline');
         const L = await import('leaflet');
         const defaultLayer = this.settingsService.settings.value?.base_maps
           .main_map.url
@@ -136,9 +136,13 @@ export class MyOfflineDataComponent {
           { lat: area.bbox[1][1], lng: area.bbox[1][0] },
         ]);
 
-        const offlineLayer = tileLayerOffline(defaultLayer, {
-          attribution: defaultAttribution,
-        });
+        const offlineLayer = leafletOffline.default.tileLayerOffline(
+          defaultLayer,
+          {
+            attribution: defaultAttribution,
+          },
+        );
+
         await this.offlineService.writeOrUpdateTilesInStore(
           offlineLayer,
           bounds,
@@ -168,7 +172,7 @@ export class MyOfflineDataComponent {
           width: '250px',
           data: { title: 'Suppression en  cours' },
         });
-        const { tileLayerOffline } = await import('leaflet.offline');
+        const leafletOffline = await import('leaflet.offline');
         const L = await import('leaflet');
         const url =
           'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
@@ -177,10 +181,12 @@ export class MyOfflineDataComponent {
         const maxZoom = 9;
 
         const bounds = L.default.latLngBounds([
-          { lat: area.bbox[0][0], lng: area.bbox[0][1] },
-          { lat: area.bbox[1][0], lng: area.bbox[1][1] },
+          { lat: area.bbox[0][1], lng: area.bbox[0][0] },
+          { lat: area.bbox[1][1], lng: area.bbox[1][0] },
         ]);
-        const offlineLayer = tileLayerOffline(url, { attribution });
+        const offlineLayer = leafletOffline.default.tileLayerOffline(url, {
+          attribution,
+        });
         await this.offlineService.removeTilesInStore(
           offlineLayer,
           bounds,
