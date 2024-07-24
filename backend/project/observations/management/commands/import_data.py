@@ -75,7 +75,6 @@ class Command(BaseCommand):
             raise CommandError(
                 f"File {options["file_path"]} does not exist in config directory"
             )
-        Observation.objects.all().delete()
         ds = DataSource(self.file_path)
 
         layer = ds[0]
