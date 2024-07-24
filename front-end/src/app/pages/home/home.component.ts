@@ -5,7 +5,6 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 
-
 @Component({
   selector: 'app-home',
   standalone: true,

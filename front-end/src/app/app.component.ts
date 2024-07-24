@@ -42,7 +42,7 @@ import { MatCardModule } from '@angular/material/card';
     MatBadgeModule,
     MatDividerModule,
     MatSnackBarModule,
-    MatCardModule
+    MatCardModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
