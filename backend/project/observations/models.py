@@ -40,6 +40,14 @@ class ObservationCategory(TimeStampMixin, MP_Node):
     def children(self):
         return self.get_children()
 
+    @property
+    def inherited_pictogram(self):
+        """Return parent pictogram if current pictogram is empty."""
+        if not self.pictogram:
+            parent = self.get_ancestors().filter(pictogram__isnull=False).last()
+            return parent.pictogram if parent else None
+        return self.pictogram
+
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
