@@ -6,12 +6,12 @@ changelog:
       exclude:
         labels:
           - dependencies
-          - Bug
+          - bug
           - documentation
 
     - title: 🛠 Bug fixes
       labels:
-        - 'Bug'
+        - 'bug'
 
     - title: 📘 Documentation
       labels:
