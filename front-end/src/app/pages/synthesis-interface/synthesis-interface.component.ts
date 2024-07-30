@@ -261,16 +261,6 @@ export class SynthesisInterfaceComponent {
           (result.filter.observationDates.start &&
             result.filter.observationDates.end))
       ) {
-        this.filter.observationTypes = result.filter.observationTypes;
-        this.filter.observationDates.start =
-          result.filter.observationDates.start;
-        this.filter.observationDates.end = result.filter.observationDates.end;
-        this.currentFiltersNumber =
-          (result.filter.observationDates.start &&
-          result.filter.observationDates.end
-            ? 1
-            : 0) + result.filter.observationTypes.length;
-
         const observationsTypes = result.filter.observationTypes
           ? result.filter.observationTypes
               .map((observationType: any) =>
@@ -303,6 +293,17 @@ export class SynthesisInterfaceComponent {
           observations as observationsFeatureCollection;
       }
       if (result && !result.cancel) {
+        this.filter.observationTypes = result.filter.observationTypes;
+        this.filter.observationDates.start =
+          result.filter.observationDates.start;
+        this.filter.observationDates.end = result.filter.observationDates.end;
+        this.currentFiltersNumber =
+          (result.filter.observationDates.start &&
+          result.filter.observationDates.end
+            ? 1
+            : 0) + result.filter.observationTypes
+            ? result.filter.observationTypes.length
+            : 0;
         this.updateMap();
         this.fitToCurrentObservations();
       }
