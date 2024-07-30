@@ -262,9 +262,10 @@ export class SynthesisInterfaceComponent {
           (result.filter.observationDates.start &&
           result.filter.observationDates.end
             ? 1
-            : 0) + result.filter.observationTypes
+            : 0) +
+          (result.filter.observationTypes
             ? result.filter.observationTypes.length
-            : 0;
+            : 0);
         const observationsTypes = result.filter.observationTypes
           ? result.filter.observationTypes
               .map((observationType: any) =>
