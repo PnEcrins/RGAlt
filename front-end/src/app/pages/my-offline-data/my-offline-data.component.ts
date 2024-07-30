@@ -150,8 +150,11 @@ export class MyOfflineDataComponent {
           maxZoom,
         );
 
+        const areaToWrite = { ...area };
+        delete areaToWrite.offline;
+
         await this.offlineService.writeOrUpdateDataInStore('offline-areas', [
-          area,
+          areaToWrite,
         ]);
 
         area.offline = !area.offline;
