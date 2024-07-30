@@ -10,6 +10,8 @@ import { CommonModule } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import {
@@ -72,6 +74,7 @@ const moment = _rollupMoment || _moment;
     MatDatepickerModule,
     MatTooltipModule,
     MatSnackBarModule,
+    MatChipsModule,
   ],
   templateUrl: './new-observation.component.html',
   styleUrl: './new-observation.component.scss',
