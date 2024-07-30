@@ -54,6 +54,7 @@ mat-card img {
 @media (max-width: 992px) {
   #text-banner {
     font-size: x-large ;
+    font: revert!important;
   }
 }
 
@@ -63,7 +64,8 @@ mat-card img {
   left: 50%;
   transform: translate(-50%, -50%);
   font-weight: bold;
-  color: #ffa007;
+  color: var(--mdc-filled-button-container-color);
+  font-family: Afacad!important;
 }
 
 #map-img {
