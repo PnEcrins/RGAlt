@@ -2,10 +2,10 @@
   <mat-grid-list #grid [cols]="columns" rowHeight="120px" gutterSize="20px">
     @for (area of areas; track area.id) {
       <mat-grid-tile>
-        <div class="area-type-tooltip-container">
+        <div class="area-type-tooltip-container" *ngIf="area.description">
           <button
             mat-icon-button
-            matTooltip="{{ area.tooltip }}"
+            matTooltip="{{ area.description }}"
             class="area-type-tooltip"
             #tooltip="matTooltip"
             (click)="tooltip.show()"
