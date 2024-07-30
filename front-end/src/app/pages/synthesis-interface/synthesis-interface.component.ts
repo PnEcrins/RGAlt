@@ -20,7 +20,10 @@ import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
 import { firstValueFrom } from 'rxjs';
-import { observationsFeatureCollection } from '../../types/types';
+import {
+  observationsFeatureCollection,
+  ObservationType,
+} from '../../types/types';
 
 import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
@@ -71,6 +74,8 @@ export class SynthesisInterfaceComponent {
     this.handleObservationsWithinBounds.bind(this);
 
   slugify = slugify;
+
+  currentFiltersNumber = 0;
 
   constructor() {
     afterNextRender(() => {
@@ -256,13 +261,32 @@ export class SynthesisInterfaceComponent {
           (result.filter.observationDates.start &&
             result.filter.observationDates.end))
       ) {
+        this.filter.observationTypes = result.filter.observationTypes;
+        this.filter.observationDates.start =
+          result.filter.observationDates.start;
+        this.filter.observationDates.end = result.filter.observationDates.end;
+        this.currentFiltersNumber =
+          (result.filter.observationDates.start &&
+          result.filter.observationDates.end
+            ? 1
+            : 0) + result.filter.observationTypes.length;
+
+        const observationsTypes = result.filter.observationTypes
+          ? result.filter.observationTypes
+              .map((observationType: any) =>
+                observationType.children && observationType.children.length > 0
+                  ? observationType.children.map(
+                      (observationTypeChildren: ObservationType) =>
+                        observationTypeChildren.id,
+                    )
+                  : observationType.id,
+              )
+              .flat()
+          : undefined;
+
         const observations = await firstValueFrom(
           this.observationsService.getObservations(
-            result.filter.observationTypes
-              ? result.filter.observationTypes.map(
-                  (observationType: any) => observationType.id,
-                )
-              : undefined,
+            observationsTypes,
             result.filter.observationDates.start
               ? moment(result.filter.observationDates.start.toDate()).format(
                   'YYYY-MM-DD',

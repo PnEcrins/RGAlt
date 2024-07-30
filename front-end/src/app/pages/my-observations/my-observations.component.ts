@@ -98,7 +98,6 @@ export class MyObservationsComponent {
           index++
         ) {
           const file = myOfflineObservation.files![index];
-          console.log(file);
           await firstValueFrom(
             this.observationsService.sendPhotoObservation(
               observationResponse.id,

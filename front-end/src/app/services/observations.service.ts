@@ -34,7 +34,7 @@ export class ObservationsService {
     }
     if (startDate && endDate) {
       url = url.concat(
-        `${observationTypesId ? '&' : '?'}event_date_after=${startDate}&event_date_before=${endDate}`,
+        `${observationTypesId && observationTypesId.length > 0 ? '&' : '?'}event_date_after=${startDate}&event_date_before=${endDate}`,
       );
     }
     return this.httpClient.get(`${url}`, httpOptions);

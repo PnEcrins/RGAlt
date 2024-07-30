@@ -5,7 +5,11 @@
 >
   <button mat-fab extended color="primary" (click)="openFilterDialog()">
     <mat-icon>tune</mat-icon>
-    Filtrer
+    Filtrer{{
+      currentFiltersNumber
+        ? " (".concat(currentFiltersNumber.toString()).concat(")")
+        : ""
+    }}
   </button>
 </div>
 
