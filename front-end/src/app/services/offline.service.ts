@@ -160,15 +160,22 @@ export class OfflineService {
     }
 
     const tilesToDownload = [];
+    let delay = 0;
     for (let index = 0; index < tilesToStore.length; index++) {
       if (
         !(await leafletOffline.default.getBlobByKey(tilesToStore[index].key))
       ) {
         tilesToDownload.push(
-          leafletOffline.default
-            .downloadTile(tilesToStore[index].url)
-            .catch(() => null),
+          new Promise((resolve) =>
+            setTimeout(() => {
+              return leafletOffline.default
+                .downloadTile(tilesToStore[index].url)
+                .then((tile) => resolve(tile))
+                .catch(() => resolve(null));
+            }, delay),
+          ),
         );
+        delay += 20;
       } else {
         tilesToDownload.push(new Promise((resolve) => resolve(null)));
       }
