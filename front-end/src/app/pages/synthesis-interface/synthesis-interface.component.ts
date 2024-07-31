@@ -220,7 +220,7 @@ export class SynthesisInterfaceComponent {
       const slug = slugify(
         `${geoJsonPoint.id}-${geoJsonPoint.properties.name}`,
       );
-      this.router.navigate(['/detail-d-une-observation', slug]);
+      this.router.navigate(['/evenement', slug]);
     };
     observationPopup.appendChild(observationButton);
     if (layer) {
