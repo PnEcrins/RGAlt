@@ -28,7 +28,7 @@
   >
     <mat-expansion-panel-header>
       <mat-panel-title>
-        {{ currentObservationsFeatureCollection.features.length }} observations
+        {{ currentObservationsFeatureCollection.features.length }} évènements
       </mat-panel-title>
     </mat-expansion-panel-header>
     <mat-list class="mat-expansion-panel-body-visible">
@@ -59,7 +59,7 @@
               mat-icon-button
               class="mt-16"
               [routerLink]="[
-                '/detail-d-une-observation',
+                '/evenement',
                 slugify(
                   observation.id!.concat(
                     observation.properties.name
