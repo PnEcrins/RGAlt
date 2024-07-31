@@ -21,6 +21,7 @@ import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
 import { firstValueFrom } from 'rxjs';
 import {
+  ObservationFeature,
   observationsFeatureCollection,
   ObservationType,
 } from '../../types/types';
@@ -131,6 +132,7 @@ export class SynthesisInterfaceComponent {
     this.observationsService.getObservations().subscribe({
       next: (success: any) => {
         this.ngZone.run(() => {
+          this.sortObservations(success);
           this.observationsFeatureCollection = success;
           this.currentObservationsFeatureCollection = success;
           this.observationsFeatureCollectionFiltered = success;
@@ -294,6 +296,7 @@ export class SynthesisInterfaceComponent {
               : undefined,
           ),
         );
+        this.sortObservations(observations as observationsFeatureCollection);
         this.observationsFeatureCollectionFiltered =
           observations as observationsFeatureCollection;
         this.updateMap();
@@ -375,6 +378,17 @@ export class SynthesisInterfaceComponent {
     ];
     return eventTypes.find(
       (observationType) => observationType.id === eventTypeId,
+    );
+  }
+
+  sortObservations(observations: observationsFeatureCollection) {
+    observations.features.sort(
+      (a: ObservationFeature, b: ObservationFeature) => {
+        return a.properties.name!.localeCompare(b.properties.name!, undefined, {
+          numeric: true,
+          sensitivity: 'base',
+        });
+      },
     );
   }
 }

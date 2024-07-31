@@ -31,7 +31,7 @@ $panel-height: 100vh;
 }
 
 .expansion-panel-open {
-  height: calc($panel-height - 56px - 56px);
+  height: calc($panel-height - 64px - 64px);
   mat-list {
     overflow: scroll;
     max-height: calc($panel-height - var(--mat-toolbar-standard-height) - 16px);
@@ -40,6 +40,7 @@ $panel-height: 100vh;
 
 @media (max-width: 599px) {
   .expansion-panel-open {
+    height: calc($panel-height - 56px - 56px);
     mat-list {
       max-height: calc($panel-height - var(--mat-toolbar-mobile-height) - 16px);
     }

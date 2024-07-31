@@ -2,7 +2,7 @@
 <mat-dialog-content>
   <div>
     <mat-form-field>
-      <mat-label>Types d'observation</mat-label>
+      <mat-label>Types d'évènements</mat-label>
       <mat-select [formControl]="observationsTypesForm" multiple>
         @for (observationType of observationsTypes; track observationType.id) {
         <mat-option [value]="observationType"
