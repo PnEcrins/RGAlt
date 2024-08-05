@@ -39,7 +39,7 @@ django-constance==3.1.0
     # via -r requirements.in
 django-cors-headers==4.4.0
     # via -r requirements.in
-django-filter==24.2
+django-filter==24.3
     # via -r requirements.in
 django-picklefield==3.2
     # via django-constance
