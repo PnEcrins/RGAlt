@@ -1,4 +1,6 @@
--- Création de la BDD RGAlt
+-- Création de la BDD RGAlt version 0.0.1
+-- A partir de la version 1.0.0, la structure de la BDD est gérée dans des modèles Python
+-- Notamment /backend/project/observations/models.py
 
 CREATE SCHEMA IF NOT EXISTS rgalt;
 
