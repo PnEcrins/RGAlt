@@ -1,10 +1,10 @@
 # Regards d'altitude
 
-![](images/logoRGalt.png)
+![](https://rgalt.osug.fr/logo.png)
 
 ## Base de données
 
-Consultable sur  http://rgalt.ecrins.net.
+Consultable sur https://rgalt.osug.fr.
 
 ## Description du projet
 
