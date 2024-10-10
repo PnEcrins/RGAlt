@@ -40,7 +40,9 @@ django-constance==3.1.0
 django-cors-headers==4.4.0
     # via -r requirements.in
 django-filter==24.3
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   djangorestframework-gis
 django-picklefield==3.2
     # via django-constance
 django-storages==1.14.3
@@ -53,7 +55,7 @@ djangorestframework==3.15.2
     #   djangorestframework-gis
     #   djangorestframework-simplejwt
     #   drf-spectacular
-djangorestframework-gis==1.0
+djangorestframework-gis==1.1
     # via -r requirements.in
 djangorestframework-simplejwt==5.3.1
     # via -r requirements.in
