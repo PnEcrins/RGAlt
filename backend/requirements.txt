@@ -79,7 +79,7 @@ packaging==24.1
     # via gunicorn
 pillow==10.4.0
     # via -r requirements.in
-psycopg==3.2.1
+psycopg==3.2.3
     # via -r requirements.in
 pyjwt==2.8.0
     # via djangorestframework-simplejwt
