@@ -107,7 +107,7 @@ sentry-sdk==2.15.0
     # via -r requirements.in
 six==1.16.0
     # via python-dateutil
-sorl-thumbnail==12.10.0
+sorl-thumbnail==12.11.0
     # via -r requirements.in
 sqlparse==0.5.0
     # via django
