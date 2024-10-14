@@ -384,10 +384,10 @@ export class SynthesisInterfaceComponent {
   sortObservations(observations: observationsFeatureCollection) {
     observations.features.sort(
       (a: ObservationFeature, b: ObservationFeature) => {
-        return a.properties.name!.localeCompare(b.properties.name!, undefined, {
-          numeric: true,
-          sensitivity: 'base',
-        });
+        return (
+          new Date(b.properties.event_date).getTime() -
+          new Date(a.properties.event_date).getTime()
+        );
       },
     );
   }
