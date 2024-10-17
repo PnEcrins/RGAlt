@@ -69,6 +69,9 @@ export class SynthesisInterfaceComponent {
 
   constructor() {
     afterNextRender(() => {
+      this.filter = this.settingsService.getCurrentFilters();
+      this.currentFiltersNumber =
+        this.settingsService.getCurrentFiltersNumber();
       this.initMap();
     });
   }
@@ -176,7 +179,12 @@ export class SynthesisInterfaceComponent {
         this.observationsClusterGroup.addLayer(this.observationsLayer);
         this.map.addLayer(this.observationsClusterGroup);
 
-        this.fitToCurrentObservations();
+        if (this.settingsService.currentMap?.bounds) {
+          this.map.fitBounds(this.settingsService.currentMap.bounds);
+          this.handleObservationsWithinBounds();
+        } else {
+          this.fitToCurrentObservations();
+        }
         this.map.on('moveend', this.handleObservationsWithinBoundsBind);
       },
       error: () => {},
@@ -253,14 +261,9 @@ export class SynthesisInterfaceComponent {
           result.filter.observationDates.start;
         this.filter.observationDates.end = result.filter.observationDates.end;
         this.currentFiltersNumber =
-          (result.filter.observationDates.start &&
-          result.filter.observationDates.end
-            ? 1
-            : 0) +
-          (result.filter.observationTypes
-            ? result.filter.observationTypes.length
-            : 0);
-        const observationsTypes = result.filter.observationTypes
+          this.settingsService.getCurrentFiltersNumber();
+
+        const observationTypes = result.filter.observationTypes
           ? result.filter.observationTypes
               .map((observationType: any) =>
                 observationType.children && observationType.children.length > 0
@@ -275,7 +278,7 @@ export class SynthesisInterfaceComponent {
 
         const observations = await firstValueFrom(
           this.observationsService.getObservations(
-            observationsTypes,
+            observationTypes,
             result.filter.observationDates.start
               ? moment(result.filter.observationDates.start.toDate()).format(
                   'YYYY-MM-DD',
@@ -288,6 +291,9 @@ export class SynthesisInterfaceComponent {
               : undefined,
           ),
         );
+
+        this.settingsService.setCurrentFilters(this.filter);
+
         this.sortObservations(observations as observationsFeatureCollection);
         this.observationsFeatureCollectionFiltered =
           observations as observationsFeatureCollection;
@@ -315,18 +321,18 @@ export class SynthesisInterfaceComponent {
 
   handleObservationsWithinBounds() {
     this.ngZone.run(() => {
+      const mapBounds = this.map.getBounds();
+      this.settingsService.setCurrentMap(mapBounds);
       this.currentObservationsFeatureCollection = {
         ...this.currentObservationsFeatureCollection!,
         features: this.observationsFeatureCollectionFiltered!.features.filter(
           (feature: any) =>
-            this.map
-              .getBounds()
-              .contains(
-                this.L.default.latLng(
-                  feature.geometry.coordinates[1],
-                  feature.geometry.coordinates[0],
-                ),
+            mapBounds.contains(
+              this.L.default.latLng(
+                feature.geometry.coordinates[1],
+                feature.geometry.coordinates[0],
               ),
+            ),
         ),
       };
     });
