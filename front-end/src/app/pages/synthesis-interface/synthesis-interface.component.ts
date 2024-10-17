@@ -124,71 +124,100 @@ export class SynthesisInterfaceComponent {
       .locate({ setView: 'once', showPopup: false })
       .addTo(this.map);
 
-    this.observationsService.getObservations().subscribe({
-      next: (success: any) => {
-        this.ngZone.run(() => {
-          this.sortObservations(success);
-          this.observationsFeatureCollection = success;
-          this.currentObservationsFeatureCollection = success;
-          this.observationsFeatureCollectionFiltered = success;
-        });
-        this.observationsLayer = this.L.default.geoJSON(
-          this.observationsFeatureCollection,
-          {
-            pointToLayer: (geoJsonPoint: any, latlng: any) => {
-              const icon = this.getEventType(geoJsonPoint.properties.category);
-              return this.L.default.marker(latlng, {
-                icon: this.L.default.divIcon({
-                  html:
-                    icon && icon.pictogram
-                      ? `<div class="observation-marker-container">
+    const observationTypes = this.filter.observationTypes
+      ? this.filter.observationTypes
+          .map((observationType: any) =>
+            observationType.children && observationType.children.length > 0
+              ? observationType.children.map(
+                  (observationTypeChildren: ObservationType) =>
+                    observationTypeChildren.id,
+                )
+              : observationType.id,
+          )
+          .flat()
+      : undefined;
+
+    this.observationsService
+      .getObservations(
+        observationTypes,
+        this.filter.observationDates.start
+          ? moment(this.filter.observationDates.start.toDate()).format(
+              'YYYY-MM-DD',
+            )
+          : undefined,
+        this.filter.observationDates.end
+          ? moment(this.filter.observationDates.end.toDate()).format(
+              'YYYY-MM-DD',
+            )
+          : undefined,
+      )
+      .subscribe({
+        next: (success: any) => {
+          this.ngZone.run(() => {
+            this.sortObservations(success);
+            this.observationsFeatureCollection = success;
+            this.currentObservationsFeatureCollection = success;
+            this.observationsFeatureCollectionFiltered = success;
+          });
+          this.observationsLayer = this.L.default.geoJSON(
+            this.observationsFeatureCollection,
+            {
+              pointToLayer: (geoJsonPoint: any, latlng: any) => {
+                const icon = this.getEventType(
+                  geoJsonPoint.properties.category,
+                );
+                return this.L.default.marker(latlng, {
+                  icon: this.L.default.divIcon({
+                    html:
+                      icon && icon.pictogram
+                        ? `<div class="observation-marker-container">
                     <img src="${icon.pictogram}"/>
                     </div>`
-                      : `<div class="observation-marker-container">
+                        : `<div class="observation-marker-container">
                     </div>`,
-                  className: 'observation-marker',
-                  iconSize: 32,
-                  iconAnchor: [18, 28],
-                } as any),
-                autoPanOnFocus: false,
+                    className: 'observation-marker',
+                    iconSize: 32,
+                    iconAnchor: [18, 28],
+                  } as any),
+                  autoPanOnFocus: false,
+                } as any);
+              },
+              onEachFeature: (geoJsonPoint: any, layer: any) => {
+                layer.once('click', () => {
+                  this.handleObservationPopup(geoJsonPoint, layer);
+                });
+              },
+            },
+          );
+
+          this.observationsClusterGroup = this.L.default.markerClusterGroup({
+            showCoverageOnHover: false,
+            removeOutsideVisibleBounds: false,
+            iconCreateFunction: (cluster: any) => {
+              return this.L.default.divIcon({
+                html:
+                  '<div class="observations-marker-cluster-group-icon">' +
+                  cluster.getChildCount() +
+                  '</div>',
+                className: '',
+                iconSize: 48,
               } as any);
             },
-            onEachFeature: (geoJsonPoint: any, layer: any) => {
-              layer.once('click', () => {
-                this.handleObservationPopup(geoJsonPoint, layer);
-              });
-            },
-          },
-        );
+          });
 
-        this.observationsClusterGroup = this.L.default.markerClusterGroup({
-          showCoverageOnHover: false,
-          removeOutsideVisibleBounds: false,
-          iconCreateFunction: (cluster: any) => {
-            return this.L.default.divIcon({
-              html:
-                '<div class="observations-marker-cluster-group-icon">' +
-                cluster.getChildCount() +
-                '</div>',
-              className: '',
-              iconSize: 48,
-            } as any);
-          },
-        });
+          this.observationsClusterGroup.addLayer(this.observationsLayer);
+          this.map.addLayer(this.observationsClusterGroup);
 
-        this.observationsClusterGroup.addLayer(this.observationsLayer);
-        this.map.addLayer(this.observationsClusterGroup);
-
-        if (this.settingsService.currentMap?.bounds) {
-          this.map.fitBounds(this.settingsService.currentMap.bounds);
-          this.handleObservationsWithinBounds();
-        } else {
-          this.fitToCurrentObservations();
-        }
-        this.map.on('moveend', this.handleObservationsWithinBoundsBind);
-      },
-      error: () => {},
-    });
+          if (this.settingsService.currentMap?.bounds) {
+            this.map.fitBounds(this.settingsService.currentMap.bounds);
+            this.handleObservationsWithinBounds();
+          } else {
+            this.fitToCurrentObservations();
+          }
+          this.map.on('moveend', this.handleObservationsWithinBoundsBind);
+        },
+        error: () => {},
+      });
   }
 
   handleObservationPopup(geoJsonPoint: any, layer?: any) {
