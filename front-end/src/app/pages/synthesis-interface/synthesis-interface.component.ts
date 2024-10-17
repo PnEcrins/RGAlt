@@ -12,10 +12,6 @@ import { Router, RouterLink } from '@angular/router';
 import slugify from 'slugify';
 import { MatDialog } from '@angular/material/dialog';
 import { FilterDialog } from './dialogs/filter-dialog';
-import {
-  MatExpansionModule,
-  MatExpansionPanel,
-} from '@angular/material/expansion';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
@@ -39,14 +35,12 @@ import { environment } from '../../../environments/environment';
     MatIconModule,
     RouterLink,
     MatButtonModule,
-    MatExpansionModule,
     MatListModule,
   ],
   templateUrl: './synthesis-interface.component.html',
   styleUrl: './synthesis-interface.component.scss',
 })
 export class SynthesisInterfaceComponent {
-  @ViewChild('expansionPanel') private expansionPanel!: MatExpansionPanel;
   readonly dialog = inject(MatDialog);
   filter: {
     observationTypes: any[];
@@ -67,7 +61,6 @@ export class SynthesisInterfaceComponent {
   observationsService = inject(ObservationsService);
   settingsService = inject(SettingsService);
 
-  expansionPanelIsOpen = false;
   bounds: any;
   ngZone = inject(NgZone);
 
@@ -77,6 +70,8 @@ export class SynthesisInterfaceComponent {
   slugify = slugify;
 
   currentFiltersNumber = 0;
+
+  showMap = true;
 
   constructor() {
     afterNextRender(() => {
@@ -305,14 +300,6 @@ export class SynthesisInterfaceComponent {
     });
   }
 
-  expansionPanelOpen() {
-    this.expansionPanelIsOpen = true;
-  }
-
-  expansionPanelClose() {
-    this.expansionPanelIsOpen = false;
-  }
-
   fitToCurrentObservations() {
     if (this.observationsFeatureCollectionFiltered!.features.length > 0) {
       this.bounds = this.L.default.latLngBounds(
@@ -357,7 +344,7 @@ export class SynthesisInterfaceComponent {
       19,
     );
     this.handleObservationPopup(observation);
-    this.expansionPanel.close();
+    this.handleView();
   }
 
   updateMap() {
@@ -390,5 +377,9 @@ export class SynthesisInterfaceComponent {
         );
       },
     );
+  }
+
+  handleView() {
+    this.showMap = !this.showMap;
   }
 }

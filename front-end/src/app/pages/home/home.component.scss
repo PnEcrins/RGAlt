@@ -1,18 +1,16 @@
-.card-button{
+.card-button {
   border-radius: 0px 0px 10px 10px;
 }
 
-
 .new-observation-container {
   justify-content: end;
-  // background-image: url("/061245.jpg");
 }
 
 mat-card img {
   height: 300px;
 }
 
-.hover:hover{
+.hover:hover {
   opacity: 85%;
   cursor: pointer;
 }
@@ -24,7 +22,6 @@ mat-card img {
 #add-img {
   background-image: url("/061245.jpg");
   background-size: cover;
-
 }
 
 .text-align {
@@ -33,7 +30,7 @@ mat-card img {
 
 #pres-text {
   text-align: center;
-  margin: 2rem
+  margin: 2rem;
 }
 
 #banner-container {
@@ -53,8 +50,8 @@ mat-card img {
 
 @media (max-width: 992px) {
   #text-banner {
-    font-size: x-large ;
-    font: revert!important;
+    font-size: x-large;
+    font: revert !important;
   }
 }
 
@@ -65,7 +62,7 @@ mat-card img {
   transform: translate(-50%, -50%);
   font-weight: bold;
   color: var(--mdc-filled-button-container-color);
-  font-family: Afacad!important;
+  font-family: Afacad !important;
 }
 
 #map-img {
@@ -74,14 +71,14 @@ mat-card img {
 }
 
 @media (min-width: 992px) {
-  #home-container  {
+  #home-container {
     margin: auto;
     width: 50%;
   }
 }
 
 @media (min-width: 1200px) {
-  #home-container  {
+  #home-container {
     margin: auto;
     width: 60%;
   }
