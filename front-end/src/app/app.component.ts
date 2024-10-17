@@ -197,6 +197,23 @@ export class AppComponent {
 
     this.router.events.subscribe((event) => {
       if (event instanceof ActivationEnd) {
+        if (
+          !(
+            event.snapshot.routeConfig?.path === 'evenements' ||
+            event.snapshot.routeConfig?.path === 'evenement/:observation'
+          )
+        ) {
+          if (this.settingsService.currentMap) {
+            this.settingsService.resetCurrentMap();
+          }
+          if (
+            this.settingsService.currentFilters.observationTypes.length > 0 ||
+            this.settingsService.currentFilters.observationDates.start ||
+            this.settingsService.currentFilters.observationDates.end
+          ) {
+            this.settingsService.resetCurrentFilters();
+          }
+        }
         if (this.sidenavAccount.opened) {
           this.sidenavAccount.close();
         }

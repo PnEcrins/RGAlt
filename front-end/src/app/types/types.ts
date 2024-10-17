@@ -1,3 +1,5 @@
+import { LatLngBounds } from 'leaflet';
+
 export type observationsFeatureCollection = {
   type: 'FeatureCollection';
   features: ObservationFeature[];
@@ -101,4 +103,10 @@ export type Icon = {
   pictogram: string;
   file: File;
   objectUrl?: string;
+};
+
+export type CurrentMap = { bounds: LatLngBounds | undefined };
+export type CurrentFilters = {
+  observationTypes: any[];
+  observationDates: { start: any; end: any };
 };

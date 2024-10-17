@@ -1,9 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { Settings } from '../types/types';
+import { CurrentFilters, CurrentMap, Settings } from '../types/types';
 import { OfflineService } from './offline.service';
 import { isPlatformBrowser } from '@angular/common';
+import { LatLngBounds } from 'leaflet';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -26,6 +27,13 @@ export class SettingsService {
   offlineService = inject(OfflineService);
   platformId = inject(PLATFORM_ID);
   platformIsBrowser: boolean;
+
+  currentMap: CurrentMap | undefined;
+  currentFilters: CurrentFilters = {
+    observationTypes: [],
+    observationDates: { start: null, end: null },
+  };
+  currentFiltersNumber: number = 0;
 
   constructor() {
     this.platformIsBrowser = isPlatformBrowser(this.platformId);
@@ -95,5 +103,44 @@ export class SettingsService {
       ...httpIconOptions,
       responseType: 'blob',
     });
+  }
+
+  getCurrentMap(): CurrentMap | undefined {
+    return this.currentMap;
+  }
+
+  setCurrentMap(currentMapBounds: LatLngBounds | undefined) {
+    this.currentMap = { bounds: currentMapBounds };
+  }
+
+  getCurrentFilters(): CurrentFilters {
+    return this.currentFilters;
+  }
+
+  setCurrentFilters(currentFilters: CurrentFilters) {
+    this.currentFilters = currentFilters;
+  }
+
+  getCurrentFiltersNumber(): number {
+    return (
+      (this.currentFilters.observationDates.start &&
+      this.currentFilters.observationDates.end
+        ? 1
+        : 0) +
+      (this.currentFilters.observationTypes
+        ? this.currentFilters.observationTypes.length
+        : 0)
+    );
+  }
+
+  resetCurrentMap() {
+    this.currentMap = undefined;
+  }
+
+  resetCurrentFilters() {
+    this.currentFilters = {
+      observationTypes: [],
+      observationDates: { start: null, end: null },
+    };
   }
 }
