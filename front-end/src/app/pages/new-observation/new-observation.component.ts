@@ -178,7 +178,10 @@ export class NewObservationComponent {
     await import('leaflet.locatecontrol');
     await import('leaflet.offline');
 
-    this.map = this.L.default.map('map', { zoom: 4, center: [47, 2] });
+    this.map = this.L.default.map('map', {
+      zoom: environment.baseMaps.zoom,
+      center: environment.baseMaps.center,
+    });
 
     const defaultLayerUrl = this.settingsService.settings.value?.base_maps
       .main_map.url

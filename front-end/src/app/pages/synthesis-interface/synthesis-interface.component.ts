@@ -1,10 +1,4 @@
-import {
-  Component,
-  NgZone,
-  ViewChild,
-  afterNextRender,
-  inject,
-} from '@angular/core';
+import { Component, NgZone, afterNextRender, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -85,7 +79,10 @@ export class SynthesisInterfaceComponent {
     await import('leaflet.markercluster');
     await import('leaflet.offline');
 
-    this.map = this.L.default.map('map', { zoom: 4, center: [47, 2] });
+    this.map = this.L.default.map('map', {
+      zoom: environment.baseMaps.zoom,
+      center: environment.baseMaps.center,
+    });
     const defaultLayerUrl = this.settingsService.settings.value?.base_maps
       .main_map.url
       ? this.settingsService.settings.value?.base_maps.main_map.url
@@ -341,7 +338,7 @@ export class SynthesisInterfaceComponent {
         observation.geometry.coordinates[1],
         observation.geometry.coordinates[0],
       ],
-      19,
+      environment.baseMaps.zoomTo,
     );
     this.handleObservationPopup(observation);
     this.handleView();
