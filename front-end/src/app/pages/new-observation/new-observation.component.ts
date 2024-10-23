@@ -35,7 +35,6 @@ import { default as _rollupMoment } from 'moment';
 import { round } from '@turf/helpers';
 
 import {
-  Icon,
   Icons,
   Observation,
   ObservationFeature,
@@ -138,6 +137,8 @@ export class NewObservationComponent {
   observationsTypes: ObservationTypes = [];
 
   icons: Icons = [];
+
+  observationIsInvalid = true;
 
   ngOnInit() {
     this.mobile = this.platform.ANDROID || this.platform.IOS;
@@ -406,5 +407,12 @@ export class NewObservationComponent {
 
   getIconFromStorage(iconId: number) {
     return this.icons.find((icon) => icon.id === iconId)!.objectUrl;
+  }
+
+  selectedStepperIndexChange(stepperIndex: number) {
+    if (stepperIndex === 4) {
+      this.observationIsInvalid =
+        this.typeForm.invalid || this.moreDataForm.invalid;
+    }
   }
 }
