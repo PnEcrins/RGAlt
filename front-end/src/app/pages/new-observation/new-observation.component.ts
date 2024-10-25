@@ -178,11 +178,21 @@ export class NewObservationComponent {
     this.L = await import('leaflet');
     await import('leaflet.locatecontrol');
     await import('leaflet.offline');
+    await import('leaflet.fullscreen');
 
     this.map = this.L.default.map('map', {
       zoom: environment.baseMaps.zoom,
       center: environment.baseMaps.center,
     });
+
+    this.L.control
+      .fullscreen({
+        position: 'topleft',
+        title: 'Voir la carte en plein écran',
+        titleCancel: 'Sortir de la carte du plein écran',
+        forceSeparateButton: true,
+      })
+      .addTo(this.map);
 
     const defaultLayerUrl = this.settingsService.settings.value?.base_maps
       .main_map.url
@@ -414,5 +424,9 @@ export class NewObservationComponent {
       this.observationIsInvalid =
         this.typeForm.invalid || this.moreDataForm.invalid;
     }
+  }
+
+  toggleMapFullscreen() {
+    this.map.toggleFullscreen();
   }
 }

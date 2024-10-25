@@ -63,6 +63,20 @@ mat-grid-list {
 }
 
 #map {
-  height: 400px;
+  height: calc(
+    100vh - var(--mat-toolbar-standard-height) - var(
+        --mat-toolbar-standard-height
+      ) - 200px
+  );
   width: 100%;
+}
+
+@media (max-width: 599px) {
+  #map {
+    height: calc(
+      100vh - var(--mat-toolbar-mobile-height) - var(
+          --mat-toolbar-mobile-height
+        ) - 200px
+    );
+  }
 }
