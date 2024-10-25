@@ -20,9 +20,7 @@
             "outputPath": "dist/regard-d-altitude",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -40,7 +38,8 @@
               "src/styles.scss",
               "./node_modules/leaflet/dist/leaflet.css",
               "./node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min.css",
-              "./node_modules/leaflet.markercluster/dist/MarkerCluster.css"
+              "./node_modules/leaflet.markercluster/dist/MarkerCluster.css",
+              "./node_modules/leaflet.fullscreen/Control.FullScreen.css"
             ],
             "scripts": [],
             "server": "src/main.server.ts",
@@ -98,10 +97,7 @@
         "test": {
           "builder": "@ngx-env/builder:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -119,7 +115,8 @@
               "src/styles.scss",
               "./node_modules/leaflet/dist/leaflet.css",
               "./node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min.css",
-              "./node_modules/leaflet.markercluster/dist/MarkerCluster.css"
+              "./node_modules/leaflet.markercluster/dist/MarkerCluster.css",
+              "./node_modules/leaflet.fullscreen/Control.FullScreen.css"
             ],
             "scripts": []
           }
