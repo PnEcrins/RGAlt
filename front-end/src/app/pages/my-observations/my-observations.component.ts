@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import slugify from 'slugify';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -50,6 +50,8 @@ export class MyObservationsComponent {
 
   readonly dialog = inject(MatDialog);
 
+  router = inject(Router);
+
   async ngOnInit() {
     await this.getMyOfflineObservations();
     this.observationsService.getMyObservations().subscribe({
@@ -65,7 +67,7 @@ export class MyObservationsComponent {
       await this.offlineService.getAllDataInStore('observations');
   }
 
-  async sendObservation(myOfflineObservation: Observation) {
+  async postObservation(myOfflineObservation: Observation) {
     const newObservationLoaderDialogRef = this.dialog.open(
       MyObservationLoaderDialog,
       {
@@ -74,7 +76,6 @@ export class MyObservationsComponent {
         disableClose: true,
       },
     );
-
     const observation: ObservationFeature = {
       type: 'Feature',
       geometry: {
@@ -90,7 +91,7 @@ export class MyObservationsComponent {
     if (Boolean(myOfflineObservation.name)) {
       observation.properties.name = myOfflineObservation.name;
     }
-    this.observationsService.sendObservation(observation).subscribe({
+    this.observationsService.postObservation(observation).subscribe({
       next: async (observationResponse: any) => {
         for (
           let index = 0;
@@ -99,7 +100,7 @@ export class MyObservationsComponent {
         ) {
           const file = myOfflineObservation.files![index];
           await firstValueFrom(
-            this.observationsService.sendPhotoObservation(
+            this.observationsService.postPhotoObservation(
               observationResponse.id,
               file,
             ),
@@ -149,7 +150,19 @@ export class MyObservationsComponent {
   async sendObservations() {
     for (let index = 0; index < this.myOfflineObservations.length; index++) {
       const myOfflineObservation = this.myOfflineObservations[index];
-      await this.sendObservation(myOfflineObservation);
+      await this.postObservation(myOfflineObservation);
     }
+  }
+
+  editMyOfflineObservation(observation: Observation) {
+    this.router.navigate(['/nouvelle-observation'], {
+      state: { data: observation },
+    });
+  }
+
+  editObservation(observation: ObservationFeature) {
+    this.router.navigate(['/modification-d-une-observation'], {
+      state: { data: observation },
+    });
   }
 }
