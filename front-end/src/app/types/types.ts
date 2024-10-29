@@ -25,16 +25,16 @@ export type Observation = {
   source?: string;
   category: number;
   picture?: string;
-  main_picture?: Picture;
+  main_picture?: Picture | null;
   medias?: Picture[];
   coordinates?: number[];
   files?: File[];
-  observer?: string;
+  observer?: string | null;
 };
 
 export type Picture = {
-  id: number;
-  uuid: string;
+  id?: number;
+  uuid?: string;
   legend: string;
   media_file: string;
   media_type: string;

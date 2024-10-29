@@ -54,7 +54,7 @@ export class ObservationsService {
     );
   }
 
-  sendObservation(observation: ObservationFeature) {
+  postObservation(observation: ObservationFeature) {
     return this.httpClient.post(
       `${this.apiUrl}/api/accounts/me/observations/`,
       { ...observation },
@@ -62,13 +62,28 @@ export class ObservationsService {
     );
   }
 
-  sendPhotoObservation(observationId: any, file: any) {
+  putObservation(observationUuid: string, observation: ObservationFeature) {
+    return this.httpClient.put(
+      `${this.apiUrl}/api/accounts/me/observations/${observationUuid}/`,
+      { ...observation },
+      httpOptions,
+    );
+  }
+
+  postPhotoObservation(observationId: any, file: any) {
     const formData = new FormData();
     formData.append('media_file', file);
     formData.append('media_type', 'image');
     return this.httpClient.post(
       `${this.apiUrl}/api/accounts/me/observations/${observationId}/medias/`,
       formData,
+    );
+  }
+
+  deletePhotoObservation(observationUuid: string, photoId: string) {
+    return this.httpClient.delete(
+      `${this.apiUrl}/api/accounts/me/observations/${observationUuid}/medias/${photoId}`,
+      httpOptions,
     );
   }
 }

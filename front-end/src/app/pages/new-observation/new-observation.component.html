@@ -117,7 +117,7 @@
         </button>
       </div>
       <div class="photos-container mt-16" *ngIf="photoForm.value.photos">
-        @for (photo of photoForm.value.photos; track photo.file.name) {
+        @for (photo of photoForm.value.photos; track photo.uuid) {
           <div class="photo-container">
             <button
               mat-icon-button
@@ -250,6 +250,10 @@
       </div>
       <div class="mr-1 mb-1">
         <button
+          *ngIf="
+            !this.currentObservation ||
+            (this.currentObservation && !this.currentObservation.id)
+          "
           mat-flat-button
           (click)="saveAsDraft()"
           [disabled]="observationIsInvalid"
@@ -263,7 +267,12 @@
           (click)="sendObservation()"
           [disabled]="observationIsInvalid"
         >
-          Envoyer
+          {{
+            !this.currentObservation ||
+            (this.currentObservation && !this.currentObservation.id)
+              ? "Envoyer"
+              : "Modifier"
+          }}
         </button>
       </div>
     </mat-step>

@@ -103,7 +103,9 @@ export class NewObservationComponent {
   });
 
   photoForm: FormGroup<{
-    photos: FormControl<{ file: File; objectUrl: string }[] | null>;
+    photos: FormControl<
+      { file: File | null; objectUrl: string; uuid?: string | null }[] | null
+    >;
   }> = new FormGroup({
     photos: new FormControl<any[]>([]),
   });
@@ -139,8 +141,10 @@ export class NewObservationComponent {
   icons: Icons = [];
 
   observationIsInvalid = true;
+  currentObservation: any = null;
+  photosToDelete: string[] = [];
 
-  ngOnInit() {
+  async ngOnInit() {
     this.mobile = this.platform.ANDROID || this.platform.IOS;
     this.breakpointObserver
       .observe([
@@ -166,6 +170,98 @@ export class NewObservationComponent {
         }
       });
     this.observationsTypes = this.settingsService.settings.value!.categories!;
+    const state = this.router.lastSuccessfulNavigation?.extras?.state;
+
+    if (state && state['data']) {
+      const isOffline = !Boolean(state['data']!.id);
+      this.currentObservation = state['data'];
+
+      const category = isOffline
+        ? this.currentObservation.category
+        : this.currentObservation.properties.category;
+
+      let observationsType =
+        this.observationsTypes.find((type) => type.id === category) || null;
+      if (!observationsType) {
+        for (let index = 0; index < this.observationsTypes.length; index++) {
+          const currentObservationsType = this.observationsTypes[index];
+          observationsType =
+            currentObservationsType.children.find(
+              (children) => children.id === category,
+            ) || null;
+
+          if (observationsType) {
+            this.observationTypeParent = currentObservationsType;
+            this.observationsTypes = currentObservationsType.children;
+            break;
+          }
+        }
+      }
+
+      this.typeForm.setValue({
+        type: observationsType,
+      });
+
+      const files = this.currentObservation!.files;
+
+      const photos: {
+        file: File | null;
+        objectUrl: string;
+        uuid?: string;
+      }[] = [];
+      if (isOffline) {
+        for (let index = 0; index < files!.length; index++) {
+          const photo = {
+            file: files![index],
+            objectUrl: URL.createObjectURL(files![index]),
+            uuid: uuidv4(),
+          };
+          photos.push(photo);
+        }
+      } else {
+        const observation = await firstValueFrom(
+          this.observationsService.getObservation(
+            this.currentObservation.id.toString(),
+          ),
+        );
+        for (
+          let index = 0;
+          index < (observation as ObservationFeature).properties.medias!.length;
+          index++
+        ) {
+          const media = (observation as ObservationFeature).properties!.medias![
+            index
+          ];
+          const photo = {
+            file: null,
+            objectUrl: media.thumbnails!.small,
+            uuid: media.uuid,
+          };
+          photos.push(photo);
+        }
+      }
+      this.photoForm.setValue({ photos });
+
+      const coordinates =
+        this.currentObservation.coordinates ||
+        this.currentObservation.geometry.coordinates;
+      this.mapForm.setValue({
+        position: {
+          lat: coordinates![1],
+          lng: coordinates![0],
+        },
+      });
+
+      const moreData = !isOffline
+        ? this.currentObservation.properties
+        : this.currentObservation;
+
+      this.moreDataForm.setValue({
+        date: moment(moreData.event_date),
+        name: moreData.name!,
+        comment: moreData.comments,
+      });
+    }
   }
   constructor() {
     afterNextRender(async () => {
@@ -182,7 +278,10 @@ export class NewObservationComponent {
 
     this.map = this.L.default.map('map', {
       zoom: environment.baseMaps.zoom,
-      center: environment.baseMaps.center,
+      center:
+        this.mapForm.value.position?.lat && this.mapForm.value.position?.lng
+          ? [this.mapForm.value.position.lat, this.mapForm.value.position.lng]
+          : environment.baseMaps.center,
     });
 
     this.L.control
@@ -284,12 +383,13 @@ export class NewObservationComponent {
       photoSelected &&
       this.photoForm.value.photos &&
       !this.photoForm.value.photos.find(
-        (photo) => photo.file.name === photoSelected.name,
+        (photo) => photo.file?.name === photoSelected.name,
       )
     ) {
       this.photoForm.value.photos.push({
         file: photoSelected,
         objectUrl: URL.createObjectURL(photoSelected),
+        uuid: uuidv4(),
       } as any);
     }
     event.target.value = null;
@@ -303,7 +403,7 @@ export class NewObservationComponent {
 
   async saveAsDraft() {
     const newObservation: Observation = {
-      uuid: uuidv4(),
+      uuid: this.currentObservation ? this.currentObservation.uuid : uuidv4(),
       name: this.moreDataForm.value.name!,
       event_date: moment(this.moreDataForm.value.date!.toDate()).format(
         'YYYY-MM-DD',
@@ -315,12 +415,15 @@ export class NewObservationComponent {
         this.mapForm.value.position!.lng,
         this.mapForm.value.position!.lat,
       ],
-      files: this.photoForm.value.photos!.map((photo) => photo.file),
+      files: this.photoForm.value.photos!.map((photo) => photo.file!),
     };
     await this.offlineService.writeOrUpdateDataInStore('observations', [
       newObservation,
     ]);
     this.offlineService.handleObservationsPending();
+    this.snackBar.open("Brouillon de l'observation enregistré", '', {
+      duration: 2000,
+    });
     this.router.navigate(['/']);
   }
 
@@ -329,7 +432,7 @@ export class NewObservationComponent {
       NewObservationLoaderDialog,
       {
         width: '250px',
-        data: { title: 'Téléchargement en cours' },
+        data: { title: 'Observation en cours de transfert' },
         disableClose: true,
       },
     );
@@ -353,37 +456,84 @@ export class NewObservationComponent {
     if (Boolean(this.moreDataForm.value.name)) {
       observation.properties.name = this.moreDataForm.value.name!;
     }
-    this.observationsService.sendObservation(observation).subscribe({
-      next: async (observationResponse: any) => {
-        for (
-          let index = 0;
-          index < this.photoForm.value.photos!.length;
-          index++
-        ) {
-          const photo = this.photoForm.value.photos![index];
-          await firstValueFrom(
-            this.observationsService.sendPhotoObservation(
-              observationResponse.id,
-              photo.file,
-            ),
-          );
-        }
-        newObservationLoaderDialogRef.close();
-        this.snackBar.open('Observation transférée', '', { duration: 2000 });
-        this.router.navigate(['/']);
-      },
-      error: async () => {
-        newObservationLoaderDialogRef.close();
-        this.snackBar.open(
-          "Une erreur est survenue lors du transfert de l'observation",
-          '',
-          {
-            duration: 2000,
+    if (this.currentObservation) {
+      this.observationsService
+        .putObservation(this.currentObservation.id, observation)
+        .subscribe({
+          next: async (observationResponse: any) => {
+            const photosToSend = this.photoForm.value.photos?.filter(
+              (photo) => photo.file,
+            );
+            for (let index = 0; index < photosToSend!.length; index++) {
+              const photo = photosToSend![index];
+              await firstValueFrom(
+                this.observationsService.postPhotoObservation(
+                  observationResponse.id,
+                  photo.file,
+                ),
+              );
+            }
+
+            for (let index = 0; index < this.photosToDelete!.length; index++) {
+              const photoId = this.photosToDelete![index];
+              await firstValueFrom(
+                this.observationsService.deletePhotoObservation(
+                  observationResponse.id,
+                  photoId,
+                ),
+              );
+            }
+            newObservationLoaderDialogRef.close();
+            this.snackBar.open('Observation modifiée', '', {
+              duration: 2000,
+            });
+            this.router.navigate(['/']);
           },
-        );
-        await this.saveAsDraft();
-      },
-    });
+          error: async () => {
+            newObservationLoaderDialogRef.close();
+            this.snackBar.open(
+              "Une erreur est survenue lors du transfert de l'observation",
+              '',
+              {
+                duration: 2000,
+              },
+            );
+            await this.saveAsDraft();
+          },
+        });
+    } else {
+      this.observationsService.postObservation(observation).subscribe({
+        next: async (observationResponse: any) => {
+          for (
+            let index = 0;
+            index < this.photoForm.value.photos!.length;
+            index++
+          ) {
+            const photo = this.photoForm.value.photos![index];
+            await firstValueFrom(
+              this.observationsService.postPhotoObservation(
+                observationResponse.id,
+                photo.file,
+              ),
+            );
+          }
+          newObservationLoaderDialogRef.close();
+          this.snackBar.open('Observation transférée', '', { duration: 2000 });
+          this.router.navigate(['/']);
+        },
+        error: async () => {
+          newObservationLoaderDialogRef.close();
+          this.snackBar.open(
+            "Une erreur est survenue lors du transfert de l'observation",
+            '',
+            {
+              duration: 2000,
+            },
+          );
+          await this.saveAsDraft();
+        },
+      });
+    }
   }
 
   getEventType(eventTypeId: number) {
@@ -400,9 +550,14 @@ export class NewObservationComponent {
 
   deletePhoto(selectedPhoto: any) {
     this.photoForm.value.photos!.splice(
-      this.photoForm.value.photos!.findIndex(
-        (photo) => photo.file.name === selectedPhoto.file.name,
-      ),
+      this.photoForm.value.photos!.findIndex((photo) => {
+        if (photo.file && selectedPhoto.file) {
+          return photo.file?.name === selectedPhoto.file.name;
+        } else {
+          this.photosToDelete.push(selectedPhoto.uuid);
+          return photo.uuid === selectedPhoto.uuid;
+        }
+      }),
       1,
     );
   }
@@ -424,9 +579,5 @@ export class NewObservationComponent {
       this.observationIsInvalid =
         this.typeForm.invalid || this.moreDataForm.invalid;
     }
-  }
-
-  toggleMapFullscreen() {
-    this.map.toggleFullscreen();
   }
 }
