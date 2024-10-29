@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+1.1.0    (unreleased)
+----------------------
+
+**Warning**
+
+- `NG_APP_API_URL` setting in `.env` has to be updated to include `/api/`
+
 1.0.6    (2024-07-31)
 ----------------------
 
