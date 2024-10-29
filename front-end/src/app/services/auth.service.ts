@@ -28,15 +28,11 @@ export class AuthService {
   }
 
   getAccount() {
-    return this.httpClient.get(`${this.apiUrl}/api/accounts/me/`, httpOptions);
+    return this.httpClient.get(`${this.apiUrl}accounts/me/`, httpOptions);
   }
 
   login(account: { email: string; password: string }) {
-    return this.httpClient.post(
-      `${this.apiUrl}/api/token/`,
-      account,
-      httpOptions,
-    );
+    return this.httpClient.post(`${this.apiUrl}token/`, account, httpOptions);
   }
 
   logout() {
@@ -53,22 +49,19 @@ export class AuthService {
     password: string;
   }) {
     return this.httpClient.post(
-      `${this.apiUrl}/api/accounts/sign-up/`,
+      `${this.apiUrl}accounts/sign-up/`,
       account,
       httpOptions,
     );
   }
 
   deleteAccount() {
-    return this.httpClient.delete(
-      `${this.apiUrl}/api/accounts/me/`,
-      httpOptions,
-    );
+    return this.httpClient.delete(`${this.apiUrl}accounts/me/`, httpOptions);
   }
 
   changePassword(password: string) {
     return this.httpClient.patch(
-      `${this.apiUrl}/api/accounts/me/`,
+      `${this.apiUrl}accounts/me/`,
       { password },
       httpOptions,
     );
@@ -78,7 +71,7 @@ export class AuthService {
 
   refreshToken(refreshRoken: string) {
     return this.httpClient.post(
-      `${this.apiUrl}/api/token/refresh/`,
+      `${this.apiUrl}token/refresh/`,
       {
         refresh: refreshRoken,
       },
