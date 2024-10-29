@@ -284,7 +284,7 @@ export class NewObservationComponent {
           : environment.baseMaps.center,
     });
 
-    this.L.control
+    this.L.default.control
       .fullscreen({
         position: 'topleft',
         title: 'Voir la carte en plein écran',

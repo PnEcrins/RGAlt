@@ -70,6 +70,13 @@ export class ObservationsService {
     );
   }
 
+  deleteObservation(observationUuid: string) {
+    return this.httpClient.delete(
+      `${this.apiUrl}/api/accounts/me/observations/${observationUuid}/`,
+      httpOptions,
+    );
+  }
+
   postPhotoObservation(observationId: any, file: any) {
     const formData = new FormData();
     formData.append('media_file', file);
@@ -82,7 +89,7 @@ export class ObservationsService {
 
   deletePhotoObservation(observationUuid: string, photoId: string) {
     return this.httpClient.delete(
-      `${this.apiUrl}/api/accounts/me/observations/${observationUuid}/medias/${photoId}`,
+      `${this.apiUrl}/api/accounts/me/observations/${observationUuid}/medias/${photoId}/`,
       httpOptions,
     );
   }
