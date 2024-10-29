@@ -11,6 +11,9 @@
   <mat-list class="mat-expansion-panel-body-visible">
     @for (observation of myOfflineObservations; track observation.uuid) {
       <mat-list-item>
+        <span matListItemIcon class="event-type-container"
+          ><img [src]="getEventType(observation.category)!.pictogram"
+        /></span>
         <span matListItemTitle>{{
           observation.name && observation.name !== ""
             ? observation.name
@@ -20,6 +23,13 @@
           observation.event_date | date: "dd/MM/yyyy"
         }}</span>
         <span matListItemMeta>
+          <button
+            mat-icon-button
+            class="mt-16"
+            (click)="deleteMyOfflineObservation(observation)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
           <button
             mat-icon-button
             class="mt-16"
@@ -62,6 +72,13 @@
           {{ getEventType(observation.properties.category)!.label }}</span
         >
         <span matListItemMeta>
+          <button
+            mat-icon-button
+            class="mt-16"
+            (click)="deleteObservation(observation)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
           <button
             mat-icon-button
             class="mt-16"

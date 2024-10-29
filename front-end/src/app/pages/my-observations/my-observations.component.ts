@@ -22,6 +22,7 @@ import { OfflineService } from '../../services/offline.service';
 import { firstValueFrom } from 'rxjs';
 import { MyObservationLoaderDialog } from './dialogs/my-observation-loader-dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { DeleteObservationDialog } from './dialogs/delete-observation-dialog';
 
 @Component({
   selector: 'app-my-observations',
@@ -54,12 +55,7 @@ export class MyObservationsComponent {
 
   async ngOnInit() {
     await this.getMyOfflineObservations();
-    this.observationsService.getMyObservations().subscribe({
-      next: (success: any) => {
-        this.myObservations = success;
-      },
-      error: () => {},
-    });
+    this.refreshObservations();
   }
 
   async getMyOfflineObservations() {
@@ -115,7 +111,7 @@ export class MyObservationsComponent {
         this.offlineService.deleteDataInStore('observations', [
           myOfflineObservation.uuid!,
         ]);
-        await this.refreshObservations();
+        await this.refreshMyOfflineObservations();
       },
       error: () => {
         newObservationLoaderDialogRef.close();
@@ -142,7 +138,7 @@ export class MyObservationsComponent {
     );
   }
 
-  async refreshObservations() {
+  async refreshMyOfflineObservations() {
     this.offlineService.handleObservationsPending();
     await this.getMyOfflineObservations();
   }
@@ -163,6 +159,75 @@ export class MyObservationsComponent {
   editObservation(observation: ObservationFeature) {
     this.router.navigate(['/modification-d-une-observation'], {
       state: { data: observation },
+    });
+  }
+
+  deleteMyOfflineObservation(observation: Observation) {
+    const deleteObservationDialogRef = this.dialog.open(
+      DeleteObservationDialog,
+      {
+        width: '250px',
+        data: {
+          title: 'Supprimer un brouillon',
+          content: 'Êtes vous-sûr de vouloir ce brouillon ?',
+        },
+      },
+    );
+
+    deleteObservationDialogRef.afterClosed().subscribe(async (result) => {
+      if (result && result.deleted) {
+        const loaderDialogRef = this.dialog.open(MyObservationLoaderDialog, {
+          width: '250px',
+          data: { title: 'Suppression en  cours' },
+        });
+        this.offlineService.deleteDataInStore('observations', [
+          observation.uuid!,
+        ]);
+        this.refreshMyOfflineObservations();
+        loaderDialogRef.close();
+        this.snackBar.open('Le brouillon est supprimé', '', {
+          duration: 2000,
+        });
+      }
+    });
+  }
+
+  deleteObservation(observation: ObservationFeature) {
+    const deleteObservationDialogRef = this.dialog.open(
+      DeleteObservationDialog,
+      {
+        width: '250px',
+        data: {
+          title: 'Supprimer une observation',
+          content: 'Êtes vous-sûr de vouloir cette observation ?',
+        },
+      },
+    );
+
+    deleteObservationDialogRef.afterClosed().subscribe(async (result) => {
+      if (result && result.deleted) {
+        const loaderDialogRef = this.dialog.open(MyObservationLoaderDialog, {
+          width: '250px',
+          data: { title: 'Suppression en  cours' },
+        });
+        await firstValueFrom(
+          this.observationsService.deleteObservation(observation.id!),
+        );
+        this.refreshObservations();
+        loaderDialogRef.close();
+        this.snackBar.open("L'observation est supprimée", '', {
+          duration: 2000,
+        });
+      }
+    });
+  }
+
+  refreshObservations() {
+    this.observationsService.getMyObservations().subscribe({
+      next: (success: any) => {
+        this.myObservations = success;
+      },
+      error: () => {},
     });
   }
 }
