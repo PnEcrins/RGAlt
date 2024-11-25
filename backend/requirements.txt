@@ -37,7 +37,7 @@ django==5.0.9
     #   drf-spectacular
 django-constance==3.1.0
     # via -r requirements.in
-django-cors-headers==4.4.0
+django-cors-headers==4.6.0
     # via -r requirements.in
 django-filter==24.3
     # via
