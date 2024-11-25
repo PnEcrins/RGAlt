@@ -1,12 +1,30 @@
 CHANGELOG
 =========
 
-1.1.0    (unreleased)
-----------------------
+1.1.0    (2024-11-25)
+---------------------
 
 **Warning**
 
 - `NG_APP_API_URL` setting in `.env` has to be updated to include `/api/`
+
+**Improvements**
+
+- Improve observations list UI (#133)
+- Improve synthesis UI (#143)
+- Restore synthesis interface context (#144)
+- Improve map configuration (#145)
+- Allow to skip steps on new observation (#149)
+- Improve display of the new observation map (#146)
+- Allow to edit observation (#147)
+- Allow to delete observation (#162)
+- Remove hard-coded `/api/` in `NG_APP_API_URL` setting in `.env` file (#165)
+- Improve "My offline data" UI (#166)
+- Upgrade several dependencies
+
+**Bugfix**
+
+- Add missing icons (128x128.png and 384x384.png)
 
 1.0.6    (2024-07-31)
 ----------------------
