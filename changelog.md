@@ -1,13 +1,12 @@
 CHANGELOG
 =========
 
-1.1.1+dev (unreleased)
+1.1.2     (2024-11-27)
 ----------------------
 
 **Bugfix**
 
-- Revert changes about NG_APP_API_URL. No need to change it in production environments.
-
+- Revert changes about `NG_APP_API_URL`. No need to change it in production environments.
 
 1.1.1    (2024-11-26)
 ---------------------
@@ -18,10 +17,6 @@ CHANGELOG
 
 1.1.0    (2024-11-25)
 ---------------------
-
-**Warning**
-
-- `NG_APP_API_URL` setting in `.env` has to be updated to include `/api/`
 
 **Improvements**
 
