@@ -40,7 +40,7 @@ export class SettingsService {
   }
 
   getSettings() {
-    return this.httpClient.get(`${this.apiUrl}settings/`, httpOptions);
+    return this.httpClient.get(`${this.apiUrl}/api/settings/`, httpOptions);
   }
 
   async setSettings(settings: Settings) {
