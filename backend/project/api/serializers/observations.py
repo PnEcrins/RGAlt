@@ -16,6 +16,7 @@ from project.observations.models import (
 
 
 class ObservationCategorySerializer(serializers.ModelSerializer):
+    pictogram = serializers.FileField(source="inherited_pictogram", read_only=True)
 
     class Meta:
         model = ObservationCategory
