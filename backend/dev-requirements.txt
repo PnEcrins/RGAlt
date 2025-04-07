@@ -28,7 +28,7 @@ click==8.1.7
     # via
     #   black
     #   pip-tools
-coverage==7.6.8
+coverage==7.6.12
     # via -r dev-requirements.in
 curtsies==0.4.2
     # via bpython
