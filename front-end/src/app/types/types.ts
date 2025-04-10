@@ -110,3 +110,5 @@ export type CurrentFilters = {
   observationTypes: any[];
   observationDates: { start: any; end: any };
 };
+
+export type Statistics = { nbEvents: number; nbObservers: number };

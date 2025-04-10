@@ -30,19 +30,6 @@ $panel-height: 100vh;
   height: 100%;
 }
 
-.event-type-container {
-  margin-inline-start: 0px;
-  margin-inline-end: 8px;
-  padding: calc(
-    calc(
-        var(--mdc-icon-button-state-layer-size, 48px) - var(
-            --mdc-icon-button-icon-size,
-            24px
-          )
-      ) / 2
-  );
-}
-
 .synthesis-interface-container {
   display: flex;
   width: 100%;

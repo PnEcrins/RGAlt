@@ -2,61 +2,137 @@
   <h1 id="text-banner">Un collectif pour voir changer la montagne</h1>
 </div>
 
-
-
 <div id="home-container">
   <section class="explanatory-sentence-container mt-1">
     <div class="mat-body-large" id="pres-text">
       <p>
-        Regard d'Altitude est un projet ayant pour objectif la création d'un réseau
-        d'échanges entre acteurs de la montagne, des territoires et de la science
-        autour de la question des transformations de la montagne dans un contexte
-        de changement climatique. Notamment en permettant un inventaire
+        Regard d'Altitude est un projet ayant pour objectif la création d'un
+        réseau d'échanges entre acteurs de la montagne, des territoires et de la
+        science autour de la question des transformations de la montagne dans un
+        contexte de changement climatique. Notamment en permettant un inventaire
         collaboratif des évènements en montagne.
       </p>
-      <button class="text-align" routerLink="/a-propos" mat-flat-button color="primary">
+      <button
+        class="text-align"
+        routerLink="/a-propos"
+        mat-flat-button
+        color="primary"
+      >
         À propos
       </button>
     </div>
-
   </section>
-  <div class="row mt-1 card-button" id="new-observation">
-    <a  [routerLink]="
-    (authService.isAuth | async)
-      ? '/nouvelle-observation'
-      : '/se-connecter'
-    ">
-      <mat-card class="col-6 hover">
-        <img id="add-img"/>
-        <button
-          mat-flat-button
-          extended
-          color="primary"
-          class="card-button"
-        >
-          Saisir une observation
-        </button>
-      </mat-card>
-
-    </a>
-    <!-- <section class="explanatory-sentence-container col-6">
-      <div class="mat-body-large">
-        Un collectif pour voir changer la montagne
+  <mat-divider></mat-divider>
+  <div class="top-container">
+    <div class="statistics-section">
+      <div
+        *ngIf="isLoadingStatistics; else statisticsContent"
+        class="loading-container statistics-loading"
+      >
+        <mat-spinner diameter="30"></mat-spinner>
+        <p>Chargement des statistiques...</p>
       </div>
-    </section> -->
-    <a routerLink="/evenements" >
-      <mat-card class="col-6 hover mb-3">
-        <img id="map-img"/>
-        <button
-          mat-flat-button
-          extended
-          color="primary"
-          class="card-button"
-        >
-          Consulter les évènements
-        </button>
-      </mat-card>
-    </a>
-  </div>
 
+      <ng-template #statisticsContent>
+        <div *ngIf="statistics" class="statistics-container">
+          <div class="statistic-container">
+            <mat-icon
+              aria-hidden="false"
+              aria-label="Nombre d'évènements"
+              fontIcon="location_on"
+            ></mat-icon>
+            {{ statistics.nbEvents }} évènements
+          </div>
+          <div class="statistic-container">
+            <mat-icon
+              aria-hidden="false"
+              aria-label="Nombre d'observateurs"
+              fontIcon="person"
+            ></mat-icon>
+            {{ statistics.nbObservers }} observateurs
+          </div>
+        </div>
+        <div
+          *ngIf="!statistics && !isLoadingStatistics"
+          class="statistics-error"
+        >
+          <p>Impossible de charger les statistiques.</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="new-observation-container">
+      <a
+        [routerLink]="
+          (authService.isAuth | async) ? '/nouvelle-evenement' : '/se-connecter'
+        "
+      >
+        <button mat-flat-button extended color="primary">
+          Saisir un évènement
+        </button>
+      </a>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="bottom-container">
+    <!-- Section du loader -->
+    <div
+      *ngIf="isLoadingRecentObservations; else observationList"
+      class="loading-container"
+    >
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Chargement des derniers évènements...</p>
+    </div>
+
+    <ng-template #observationList>
+      <ng-container
+        *ngIf="
+          recentObservations &&
+          recentObservations.features &&
+          recentObservations.features.length > 0
+        "
+      >
+        <div class="recent-observations">
+          <mat-list>
+            <div mat-subheader>Derniers évènements</div>
+            @for (
+              observation of recentObservations.features;
+              track observation.id
+            ) {
+              <app-observation-list-item
+                [observation]="observation"
+                [withViewObservation]="false"
+              ></app-observation-list-item>
+            }
+          </mat-list>
+        </div>
+      </ng-container>
+
+      <ng-container
+        *ngIf="
+          recentObservations &&
+          recentObservations.features &&
+          recentObservations.features.length === 0
+        "
+      >
+        <div class="no-observations-message">
+          <p>Aucun évènement récent à afficher pour le moment.</p>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!recentObservations">
+        <div class="observations-error">
+          <p>Impossible de charger les évènements.</p>
+        </div>
+      </ng-container>
+    </ng-template>
+
+    <div class="show-observations-container">
+      <a routerLink="/evenements">
+        <button mat-flat-button extended color="primary">
+          Consulter tous les évènements
+        </button>
+      </a>
+    </div>
+  </div>
 </div>

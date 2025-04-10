@@ -35,49 +35,10 @@
           observation of currentObservationsFeatureCollection.features;
           track observation.id
         ) {
-          <mat-list-item>
-            <span matListItemIcon
-              ><button
-                mat-icon-button
-                (click)="handleObservationView(observation)"
-              >
-                <mat-icon>place</mat-icon>
-              </button></span
-            >
-            <span matListItemIcon class="event-type-container"
-              ><img
-                [src]="
-                  getEventType(observation.properties.category)!.pictogram
-                "
-            /></span>
-            <span matListItemTitle>{{
-              observation.properties.name && observation.properties.name !== ""
-                ? observation.properties.name
-                : getEventType(observation.properties.category)!.label
-            }}</span>
-            <span matListItemLine
-              >{{ observation.properties.event_date | date: "dd/MM/yyyy" }} -
-              {{ getEventType(observation.properties.category)!.label }}</span
-            >
-            <span matListItemMeta>
-              <button
-                mat-icon-button
-                class="mt-16"
-                [routerLink]="[
-                  '/evenement',
-                  slugify(
-                    observation.id!.concat(
-                      observation.properties.name
-                        ? '-'.concat(observation.properties.name)
-                        : ''
-                    )
-                  ),
-                ]"
-              >
-                <mat-icon>arrow_forward</mat-icon>
-              </button>
-            </span>
-          </mat-list-item>
+          <app-observation-list-item
+            [observation]="observation"
+            (viewObservation)="handleObservationView($event)"
+          ></app-observation-list-item>
         }
       </mat-list>
     </ng-container>

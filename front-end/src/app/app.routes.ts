@@ -26,11 +26,11 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'nouvelle-observation',
-    title: "Nouvelle observation • Regard d'altitude",
+    path: 'nouvel-evenement',
+    title: "Nouvel évènement • Regard d'altitude",
     component: NewObservationComponent,
     data: {
-      title: 'Nouvelle observation',
+      title: 'Nouvel évènement',
       backButton: true,
       accountButton: false,
       observation: null,
@@ -38,11 +38,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'modification-d-une-observation',
-    title: "Modification d'une observation • Regard d'altitude",
+    path: 'modification-d-un-evenement',
+    title: "Modification d'un évènement • Regard d'altitude",
     component: NewObservationComponent,
     data: {
-      title: "Modification d'une observation",
+      title: "Modification d'un évènement",
       backButton: true,
       accountButton: false,
       observation: null,
@@ -115,10 +115,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'mes-observations',
-    title: "Mes observations • Regard d'altitude",
+    path: 'mes-evenements',
+    title: "Mes évènements • Regard d'altitude",
     component: MyObservationsComponent,
-    data: { title: 'Mes observations', backButton: true, accountButton: false },
+    data: { title: 'Mes évènements', backButton: true, accountButton: false },
     canActivate: [authGuard],
   },
   {

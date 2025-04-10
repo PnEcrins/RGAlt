@@ -19,6 +19,7 @@ import {
 import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
 import { environment } from '../../../environments/environment';
+import { ObservationListItemComponent } from '../../components/observation-list-item/observation-list-item.component';
 
 @Component({
   selector: 'app-synthesis-interface',
@@ -30,6 +31,7 @@ import { environment } from '../../../environments/environment';
     RouterLink,
     MatButtonModule,
     MatListModule,
+    ObservationListItemComponent,
   ],
   templateUrl: './synthesis-interface.component.html',
   styleUrl: './synthesis-interface.component.scss',

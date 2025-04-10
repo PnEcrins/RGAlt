@@ -97,15 +97,13 @@ export class AppComponent {
   sideNavMenuItems = [
     {
       id: 1,
-      text: 'Saisir une nouvelle observation',
+      text: 'Saisir un nouvel évènement',
       routerLink: null,
       authenficated: null,
       click: () => {
         this.sidenavMenu.close();
         this.router.navigate([
-          this.authService.isAuth.value
-            ? '/nouvelle-observation'
-            : '/se-connecter',
+          this.authService.isAuth.value ? '/nouvel-evenement' : '/se-connecter',
         ]);
       },
       observationsPending: false,
@@ -120,8 +118,8 @@ export class AppComponent {
     },
     {
       id: 3,
-      text: 'Mes observations',
-      routerLink: 'mes-observations',
+      text: 'Mes évènements',
+      routerLink: 'mes-evenements',
       authenficated: true,
       click: () => null,
       observationsPending: true,

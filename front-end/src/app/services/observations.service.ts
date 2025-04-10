@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ObservationFeature } from '../types/types';
+import { Observable, of } from 'rxjs';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -22,7 +23,8 @@ export class ObservationsService {
     observationTypesId?: number[],
     startDate?: string,
     endDate?: string,
-  ) {
+    limit?: number,
+  ): Observable<any> {
     let url = `${this.apiUrl}/api/observations/`;
     if (observationTypesId) {
       for (let index = 0; index < observationTypesId.length; index++) {
@@ -37,7 +39,11 @@ export class ObservationsService {
         `${observationTypesId && observationTypesId.length > 0 ? '&' : '?'}event_date_after=${startDate}&event_date_before=${endDate}`,
       );
     }
-    return this.httpClient.get(`${url}`, httpOptions);
+    if (limit) {
+      return this.httpClient.get(`${url}`, httpOptions);
+    } else {
+      return this.httpClient.get(`${url}`, httpOptions);
+    }
   }
 
   getObservation(observationId: string) {
