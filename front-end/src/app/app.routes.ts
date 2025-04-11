@@ -13,6 +13,7 @@ import { authGuard } from './guards/auth.guard';
 import { ObservationDetailComponent } from './pages/observation-detail/observation-detail.component';
 import { LearnMoreComponent } from './pages/learn-more/learn-more.component';
 import { LegalNoticeComponent } from './pages/legal-notice/legal-notice.component';
+import { observationDetailResolver } from './resolvers/observation-detail.resolver';
 
 export const routes: Routes = [
   {
@@ -57,6 +58,9 @@ export const routes: Routes = [
       title: "Détail d'un évènement",
       backButton: true,
       accountButton: false,
+    },
+    resolve: {
+      resolvedData: observationDetailResolver,
     },
   },
   {
