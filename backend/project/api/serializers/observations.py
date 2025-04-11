@@ -3,7 +3,6 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework_gis import serializers as gis_serializers
 from sorl.thumbnail import get_thumbnail
 
 from project.observations.models import (
@@ -70,7 +69,7 @@ class MediaSerializer(serializers.ModelSerializer):
         fields = ("uuid", "legend", "media_file", "media_type", "thumbnails")
 
 
-class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerializer):
+class ObservationMixin(DynamicFieldsMixin, serializers.ModelSerializer):
     source = serializers.SerializerMethodField()
     name = serializers.CharField(source="public_name", required=False, allow_blank=True)
     observer = serializers.SlugRelatedField("nickname", read_only=True)
