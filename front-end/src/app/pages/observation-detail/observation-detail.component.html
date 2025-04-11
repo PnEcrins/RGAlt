@@ -1,15 +1,41 @@
 <ng-container *ngIf="observationData">
-  <div
+  <swiper-container
     class="photos-container"
-    *ngIf="
-      observationData.properties.medias &&
-      observationData.properties.medias.length > 0
+    [navigation]="true"
+    [pagination]="{ clickable: true, dynamicBullets: true }"
+    zoom-min-ratio="1"
+    zoom-max-ratio="4"
+    style="
+      --swiper-navigation-color: var(--mdc-filled-button-container-color);
+      --swiper-pagination-color: var(--mdc-filled-button-container-color);
     "
   >
-    @for (media of observationData.properties.medias; track media.uuid) {
-      <img [src]="media.thumbnails.large" />
+    @if (
+      observationData.properties.medias &&
+      observationData.properties.medias.length > 0
+    ) {
+      @for (media of observationData.properties.medias; track media.uuid) {
+        <swiper-slide>
+          <div class="swiper-zoom-container">
+            <img
+              [src]="media.thumbnails.large"
+              [alt]="
+                'Média pour ' +
+                (observationData.properties.name || 'observation')
+              "
+            />
+          </div>
+        </swiper-slide>
+      }
+    } @else {
+      <swiper-slide class="default-image-slide">
+        <div class="swiper-zoom-container">
+          <mat-icon>image</mat-icon>
+          <span>Aucune image disponible</span>
+        </div>
+      </swiper-slide>
     }
-  </div>
+  </swiper-container>
   <div class="name-container mat-title-large">
     {{
       observationData.properties.name && observationData.properties.name !== ""
@@ -18,6 +44,14 @@
     }}
   </div>
   <div class="type-name-container mat-body-large">
+    <img
+      *ngIf="this.observationType?.pictogram as pictogram"
+      [src]="pictogram"
+      [alt]="this.observationType.label"
+    />
+    <mat-icon *ngIf="!this.observationType?.pictogram as pictogram"
+      >help_outline</mat-icon
+    >
     {{ observationType.label }}
   </div>
   <div class="date-container mat-body-medium">
