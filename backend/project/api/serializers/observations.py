@@ -15,7 +15,6 @@ from project.observations.models import (
 
 
 class ObservationCategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ObservationCategory
         fields = (
@@ -30,6 +29,15 @@ class ObservationCategorySerializer(serializers.ModelSerializer):
         fields = super().get_fields()
         fields["children"] = ObservationCategorySerializer(many=True)
         return fields
+
+
+class SimpleObservationCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ObservationCategory
+        fields = (
+            "id",
+            "label",
+        )
 
 
 class ThumbnailSerializer(serializers.Serializer):
@@ -73,6 +81,7 @@ class ObservationMixin(DynamicFieldsMixin, serializers.ModelSerializer):
     source = serializers.SerializerMethodField()
     name = serializers.CharField(source="public_name", required=False, allow_blank=True)
     observer = serializers.SlugRelatedField("nickname", read_only=True)
+    category = SimpleObservationCategorySerializer()
 
     def get_source(self, obj):
         return obj.source.label if obj.source else _("Regard d'altitude")
