@@ -19,6 +19,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         curl \
         gnupg \
         python3.12 \
+        postgresql-client \
         binutils \
         gdal-bin \
         libproj-dev \
