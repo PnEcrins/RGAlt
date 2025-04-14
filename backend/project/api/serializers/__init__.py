@@ -1,15 +1,16 @@
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_framework_gis.serializers import (
+    GeoFeatureModelListSerializer,
+    GeoFeatureModelSerializer,
+)
 
 
 def override_serializer(format_output, base_serializer_class):
-    """
-    Override Serializer switch output format and dimension data
-    """
+    """Override Serializer switch output format and dimension data"""
     if format_output == "geojson":
 
         class GeneratedGeoSerializer(GeoFeatureModelSerializer, base_serializer_class):
             class Meta(base_serializer_class.Meta):
-                geom_field = "geom"
+                list_serializer_class = GeoFeatureModelListSerializer
 
         final_class = GeneratedGeoSerializer
     else:

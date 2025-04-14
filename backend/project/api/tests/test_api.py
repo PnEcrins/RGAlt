@@ -41,26 +41,28 @@ class ObservationAPITestCase(APITestCase):
     def test_pagination_json(self):
         """Test pagination with JSON format."""
         # Test with page_size=5
-        response = self.client.get(f"{self.url_json}&page_size=5")
+        url = f"{self.url_json}&page_size=5"
+        response = self.client.get(url)
+        data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("results", response.data)
-        self.assertEqual(len(response.data["results"]), 5)
-        self.assertIn("next", response.data)
-        self.assertIsNotNone(response.data["next"])
-        self.assertIn("previous", response.data)
-        self.assertIsNone(response.data["previous"])
-        self.assertIn("count", response.data)
-        self.assertEqual(response.data["count"], 10)
+        self.assertEqual(len(data["results"]), 5, data)
+        self.assertIn("next", data)
+        self.assertIsNotNone(data["next"])
+        self.assertIn("previous", data)
+        self.assertIsNone(data["previous"])
+        self.assertIn("count", data)
+        self.assertEqual(data["count"], 10)
 
         # Test second page
         response = self.client.get(f"{self.url_json}&page_size=5&page=2")
+        data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("results", response.data)
-        self.assertEqual(len(response.data["results"]), 5)
-        self.assertIn("next", response.data)
-        self.assertIsNone(response.data["next"])
-        self.assertIn("previous", response.data)
-        self.assertIsNotNone(response.data["previous"])
+        self.assertIn("results", data)
+        self.assertEqual(len(data["results"]), 5)
+        self.assertIn("next", data)
+        self.assertIsNone(data["next"])
+        self.assertIn("previous", data)
+        self.assertIsNotNone(data["previous"])
 
     def test_pagination_geojson(self):
         """Test pagination with GeoJSON format."""

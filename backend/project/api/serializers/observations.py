@@ -95,12 +95,22 @@ class ObservationMixin(DynamicFieldsMixin, serializers.ModelSerializer):
 
 class ObservationListSerializer(ObservationMixin):
     main_picture = MediaSerializer(read_only=True)
+    detail_json = serializers.HyperlinkedIdentityField(
+        view_name="api:observations-detail", format="json", lookup_field="uuid"
+    )
+    detail_geojson = serializers.HyperlinkedIdentityField(
+        view_name="api:observations-detail", format="geojson", lookup_field="uuid"
+    )
 
     class Meta(ObservationMixin.Meta):
-        fields = ObservationMixin.Meta.fields + ("main_picture",)
+        fields = ObservationMixin.Meta.fields + (
+            "main_picture",
+            "detail_json",
+            "detail_geojson",
+        )
 
 
-class ObservationDetailSerializer(ObservationMixin):
+class ObservationDetailSerializer(ObservationMixin, serializers.ModelSerializer):
     medias = MediaSerializer(many=True, read_only=True)
 
     class Meta(ObservationMixin.Meta):

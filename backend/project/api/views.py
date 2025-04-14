@@ -16,7 +16,7 @@ from rest_framework_gis.pagination import GeoJsonPagination
 
 from project.accounts.models import User
 from project.api.filters import ObservationFilterSet
-from project.api.paginators import PageNumberPagination
+from project.api.pagination import PageNumberPagination
 from project.api.renderers import GeoJSONRenderer
 from project.api.serializers import override_serializer
 from project.api.serializers.accounts import AccountSerializer
