@@ -46,7 +46,7 @@ factory-boy==3.3.3
     # via -r dev-requirements.in
 faker==26.0.0
     # via factory-boy
-flake8==7.1.1
+flake8==7.2.0
     # via -r dev-requirements.in
 greenlet==3.0.3
     # via bpython
@@ -71,9 +71,9 @@ pip-tools==7.4.1
     # via -r dev-requirements.in
 platformdirs==4.2.2
     # via black
-pycodestyle==2.12.0
+pycodestyle==2.13.0
     # via flake8
-pyflakes==3.2.0
+pyflakes==3.3.2
     # via flake8
 pygments==2.18.0
     # via bpython
