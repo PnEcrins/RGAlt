@@ -57,7 +57,7 @@ djangorestframework==3.15.2
     #   drf-spectacular
 djangorestframework-gis==1.1
     # via -r requirements.in
-djangorestframework-simplejwt==5.3.1
+djangorestframework-simplejwt==5.5.0
     # via -r requirements.in
 drf-dynamic-fields==0.4.0
     # via -r requirements.in
