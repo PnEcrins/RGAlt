@@ -81,7 +81,7 @@ class ObservationMixin(DynamicFieldsMixin, serializers.ModelSerializer):
     source = serializers.SerializerMethodField()
     name = serializers.CharField(source="public_name", required=False, allow_blank=True)
     observer = serializers.SlugRelatedField("nickname", read_only=True)
-    category = SimpleObservationCategorySerializer()
+    category_label = serializers.CharField(source="category.label", read_only=True)
 
     def get_source(self, obj):
         return obj.source.label if obj.source else _("Regard d'altitude")
@@ -97,6 +97,7 @@ class ObservationMixin(DynamicFieldsMixin, serializers.ModelSerializer):
             "event_date",
             "source",
             "category",
+            "category_label",
             "observer",
         )
         write_only_fields = ("category__id",)

@@ -1,7 +1,4 @@
-from rest_framework_gis.serializers import (
-    GeoFeatureModelListSerializer,
-    GeoFeatureModelSerializer,
-)
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 
 def override_serializer(format_output, base_serializer_class):
@@ -10,7 +7,7 @@ def override_serializer(format_output, base_serializer_class):
 
         class GeneratedGeoSerializer(GeoFeatureModelSerializer, base_serializer_class):
             class Meta(base_serializer_class.Meta):
-                list_serializer_class = GeoFeatureModelListSerializer
+                pass
 
         final_class = GeneratedGeoSerializer
     else:
