@@ -1,17 +1,24 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.mixins import (
     DestroyModelMixin,
     RetrieveModelMixin,
     UpdateModelMixin,
 )
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_gis.filters import InBBoxFilter
+from rest_framework_gis.pagination import GeoJsonPagination
 
 from project.accounts.models import User
 from project.api.filters import ObservationFilterSet
+from project.api.pagination import PageNumberPagination
+from project.api.renderers import GeoJSONRenderer
+from project.api.serializers import override_serializer
 from project.api.serializers.accounts import AccountSerializer
 from project.api.serializers.common import EndpointsSerializer, SettingsSerializer
 from project.api.serializers.observations import (
@@ -44,9 +51,10 @@ class ObservationViewsSetMixin:
         .select_related("source", "category", "observer")
         .prefetch_related("medias")
     )
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, InBBoxFilter, OrderingFilter)
     filterset_class = ObservationFilterSet
     lookup_field = "uuid"
+    ordering_fields = ["event_date", "created_at"]
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -58,6 +66,28 @@ class ObservationViewsSetMixin:
 
 class ObservationViewSet(ObservationViewsSetMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
+    pagination_class = PageNumberPagination
+    renderer_classes = [JSONRenderer, GeoJSONRenderer]
+
+    @property
+    def paginator(self):
+        """Dynamic override paginator according format required and page size specified (None is no pagination)"""
+        if self.request.query_params.get("page_size"):
+            renderer, media_type = self.perform_content_negotiation(self.request)
+            if getattr(renderer, "format") == "geojson":
+                self.pagination_class = GeoJsonPagination
+            paginator = super().paginator
+        else:
+            paginator = None
+
+        return paginator
+
+    def get_serializer_class(self):
+        """Dynamic override json serializer by geojson serializer according format required"""
+        base_serializer_class = super().get_serializer_class()
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        format_output = getattr(renderer, "format", "json")
+        return override_serializer(format_output, base_serializer_class)
 
 
 class AccountViewSet(

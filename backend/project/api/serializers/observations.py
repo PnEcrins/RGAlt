@@ -3,7 +3,6 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework_gis import serializers as gis_serializers
 from sorl.thumbnail import get_thumbnail
 
 from project.observations.models import (
@@ -70,7 +69,7 @@ class MediaSerializer(serializers.ModelSerializer):
         fields = ("uuid", "legend", "media_file", "media_type", "thumbnails")
 
 
-class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerializer):
+class ObservationMixin(DynamicFieldsMixin, serializers.ModelSerializer):
     source = serializers.SerializerMethodField()
     name = serializers.CharField(source="public_name", required=False, allow_blank=True)
     observer = serializers.SlugRelatedField("nickname", read_only=True)
@@ -96,12 +95,22 @@ class ObservationMixin(DynamicFieldsMixin, gis_serializers.GeoFeatureModelSerial
 
 class ObservationListSerializer(ObservationMixin):
     main_picture = MediaSerializer(read_only=True)
+    detail_json = serializers.HyperlinkedIdentityField(
+        view_name="api:observations-detail", format="json", lookup_field="uuid"
+    )
+    detail_geojson = serializers.HyperlinkedIdentityField(
+        view_name="api:observations-detail", format="geojson", lookup_field="uuid"
+    )
 
     class Meta(ObservationMixin.Meta):
-        fields = ObservationMixin.Meta.fields + ("main_picture",)
+        fields = ObservationMixin.Meta.fields + (
+            "main_picture",
+            "detail_json",
+            "detail_geojson",
+        )
 
 
-class ObservationDetailSerializer(ObservationMixin):
+class ObservationDetailSerializer(ObservationMixin, serializers.ModelSerializer):
     medias = MediaSerializer(many=True, read_only=True)
 
     class Meta(ObservationMixin.Meta):

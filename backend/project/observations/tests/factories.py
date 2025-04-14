@@ -1,10 +1,12 @@
+import factory
 import factory.fuzzy
-from django.contrib.gis.geos import Polygon
+from django.contrib.gis.geos import Point, Polygon
 from factory import random
 from faker import Faker
 from faker.providers import geo
 
-from project.observations.models import Area, ObservationCategory
+from project.accounts.tests.factories import UserFactory
+from project.observations.models import Area, Observation, ObservationCategory, Source
 
 fake = Faker()
 fake.add_provider(geo)
@@ -48,3 +50,22 @@ class CategoryFactory(factory.django.DjangoModelFactory):
 
     label = factory.Faker("word")
     description = factory.Faker("text")
+
+
+class ObservationFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Observation
+
+    name = factory.Faker("sentence", nb_words=4)
+    comments = factory.Faker("text")
+    event_date = factory.Faker("date_object")
+    location = factory.LazyFunction(
+        lambda: Point(float(fake.longitude()), float(fake.latitude()))
+    )
+    observer = factory.SubFactory(UserFactory)
+    source = factory.LazyFunction(
+        lambda: Source.objects.create(
+            label=factory.Faker("word"),
+            description=factory.Faker("text"),
+        )
+    )
