@@ -57,5 +57,6 @@ urlpatterns = [
         SignUpView.as_view(),
         name="signup",
     ),
+    path("api/stats/", api.StatsAPIView.as_view(), name="stats"),
     path("api/", include(router.urls)),
 ]
