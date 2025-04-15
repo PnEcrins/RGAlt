@@ -2,6 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from project.accounts.tests.factories import UserFactory
 from project.observations.models import ObservationCategory
 from project.observations.tests.factories import ObservationFactory
 
@@ -117,3 +118,25 @@ class ObservationAPITestCase(APITestCase):
         self.assertEqual(response.data["id"], str(observation.uuid))
         self.assertEqual(response.data["properties"]["name"], observation.name)
         self.assertEqual(response.data["properties"]["comments"], observation.comments)
+
+
+class StatsAPITestCase(APITestCase):
+    """Test the stats API."""
+
+    @classmethod
+    def setUpTestData(cls):
+        """Set up test data."""
+        cls.url = reverse("api:stats")
+        cls.category = ObservationCategory.add_root(label="Test category")
+        cls.observations = ObservationFactory.create_batch(10, category=cls.category)
+
+    def test_stats(self):
+        """Test the stats endpoint."""
+        UserFactory.create_batch(5)  # create 5 observers without any observations
+        user = UserFactory()
+        ObservationFactory.create_batch(3, observer=user, category=self.category)
+        response = self.client.get(self.url)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data["observations"], 13)
+        self.assertEqual(data["active_contributors"], 11)

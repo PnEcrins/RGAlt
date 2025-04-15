@@ -8,6 +8,8 @@ CHANGELOG
   - In BBox filter
   - Ordering content by field
 
+- Add statistics
+
 
 1.1.2     (2024-11-27)
 ----------------------

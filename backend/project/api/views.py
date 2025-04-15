@@ -20,7 +20,11 @@ from project.api.pagination import PageNumberPagination
 from project.api.renderers import GeoJSONRenderer
 from project.api.serializers import override_serializer
 from project.api.serializers.accounts import AccountSerializer
-from project.api.serializers.common import EndpointsSerializer, SettingsSerializer
+from project.api.serializers.common import (
+    EndpointsSerializer,
+    SettingsSerializer,
+    StatsSerializer,
+)
 from project.api.serializers.observations import (
     MediaSerializer,
     ObservationDetailSerializer,
@@ -159,3 +163,20 @@ class AccountObservationViewset(ObservationViewsSetMixin, viewsets.ModelViewSet)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
+
+
+class StatsAPIView(GenericAPIView):
+    """Provide some stats on application usage"""
+
+    serializer_class = StatsSerializer
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.get_serializer(
+            {
+                "observations": Observation.objects.count(),
+                "active_contributors": User.objects.filter(observations__isnull=False)
+                .distinct()
+                .count(),
+            }
+        )
+        return Response(serializer.data)
