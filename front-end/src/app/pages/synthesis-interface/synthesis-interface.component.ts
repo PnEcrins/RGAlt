@@ -20,7 +20,7 @@ import { FilterDialog } from './dialogs/filter-dialog';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
-import { Subscription } from 'rxjs';
+import { firstValueFrom, Observable, Subscription } from 'rxjs';
 import {
   observationsFeatureCollection,
   ObservationType,
@@ -30,6 +30,7 @@ import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
 import { environment } from '../../../environments/environment';
 import { ObservationListItemComponent } from '../../components/observation-list-item/observation-list-item.component';
+import { ExportDialog } from './dialogs/export-dialog';
 
 import { fromEvent } from 'rxjs';
 import { debounceTime, filter, first } from 'rxjs/operators';
@@ -377,11 +378,6 @@ export class SynthesisInterfaceComponent
     this.setupScrollListener();
   }
 
-  ngOnDestroy() {
-    this.scrollSubscription?.unsubscribe();
-    this.dataSubscription?.unsubscribe();
-  }
-
   loadInitialObservations() {
     this.initObservationsFeatures();
   }
@@ -567,5 +563,54 @@ export class SynthesisInterfaceComponent
           this.isLoading = false;
         },
       });
+  }
+
+  exportObservations() {
+    const observationTypes = this.filter.observationTypes
+      ? this.filter.observationTypes
+          .map((observationType: any) =>
+            observationType.children && observationType.children.length > 0
+              ? observationType.children.map(
+                  (observationTypeChildren: ObservationType) =>
+                    observationTypeChildren.id,
+                )
+              : observationType.id,
+          )
+          .flat()
+      : undefined;
+
+    const downloadObservations: Observable<any> =
+      this.observationsService.getObservations(
+        'geojson',
+        observationTypes,
+        this.filter.observationDates.start
+          ? moment(this.filter.observationDates.start.toDate()).format(
+              'YYYY-MM-DD',
+            )
+          : undefined,
+        this.filter.observationDates.end
+          ? moment(this.filter.observationDates.end.toDate()).format(
+              'YYYY-MM-DD',
+            )
+          : undefined,
+        undefined,
+        undefined,
+      );
+
+    this.dialog.open(ExportDialog, {
+      data: {
+        nbObservations:
+          this.currentObservationsFeatureCollection?.features.length,
+        downloadObservations,
+      },
+    });
+  }
+
+  ngOnDestroy() {
+    this.scrollSubscription?.unsubscribe();
+    this.dataSubscription?.unsubscribe();
+    if (this.map) {
+      this.map.off('moveend', this.handleObservationsWithinBoundsBind);
+    }
   }
 }
