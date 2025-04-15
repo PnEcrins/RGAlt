@@ -16,8 +16,8 @@ env:
   DEBIAN_FRONTEND: noninteractive
 
 jobs:
-    flake8:
-        name: Python Flake8 check
+    ruff:
+        name: Python ruff check
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
