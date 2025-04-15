@@ -21,57 +21,27 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
+            - uses: astral-sh/setup-uv@v5
               with:
+                  version: "latest"
                   python-version-file: ./backend/.python-version
+                  enable-cache: true
+                  cache-suffix: "ruff"
 
-            - name: Install flake8
+            - name: Install ruff
               working-directory: ./backend
               run: |
-                pip install flake8 -c dev-requirements.txt
+                uv pip install ruff -c requirements-dev.txt
 
-            - name: Flake8
+            - name: Lint check
               working-directory: ./backend
               run: |
-                flake8 project
+                ruff check project
 
-    isort:
-        name: Python iSort check
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version-file: ./backend/.python-version
-
-            - name: Install isort
+            - name: Format check
               working-directory: ./backend
               run: |
-                pip install isort -c dev-requirements.txt
-
-            - name: iSort
-              working-directory: ./backend
-              run: |
-                isort -c project
-
-    black:
-        name: Python Black check
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version-file: ./backend/.python-version
-
-            - name: Install black
-              working-directory: ./backend
-              run: |
-                pip install black -c dev-requirements.txt
-
-            - name: black
-              working-directory: ./backend
-              run: |
-                black --check project
+                ruff format --check project
 
     prettier:
         name: JS Prettier check
