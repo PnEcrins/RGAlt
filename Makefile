@@ -1,9 +1,8 @@
 back-lint:
 	@echo "Running back-end linter...\n"
-	docker compose run --rm back black .
-	docker compose run --rm back isort .
-	docker compose run --rm back flake8 .
+	docker compose run --rm back ruff check --fix project
+	docker compose run --rm back ruff format project
 
 back-deps:
 	@echo "Update back-end dependencies...\n"
-	docker compose run --rm back bash -c "pip-compile --strip-extras && pip-compile --strip-extras dev-requirements.in"
+	docker compose run --rm back bash -c "uv pip compile ./requirements.in -o ./requirements.txt && uv pip compile ./requirements-dev.in -o ./requirements-dev.txt"

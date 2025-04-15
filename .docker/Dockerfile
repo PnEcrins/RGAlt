@@ -9,6 +9,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
 
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
 RUN mkdir -p /app/backend app/front-end/dist && chown -R ubuntu:ubuntu /app
 WORKDIR /app
 
@@ -61,17 +63,13 @@ RUN npm ci --no-audit
 
 WORKDIR /app
 
-RUN --mount=type=cache,target=/home/ubuntu/.cache/pip,sharing=locked python3.12 -m venv /app/venv &&  \
-    /app/venv/bin/pip install --upgrade pip wheel setuptools
-COPY backend/requirements.txt /app/requirements.txt
-RUN --mount=type=cache,target=/home/ubuntu/.cache/pip,sharing=locked  \
-    /app/venv/bin/pip install -r /app/requirements.txt
+RUN --mount=type=bind,src=./backend/requirements.txt,dst=/app/requirements.txt --mount=type=cache,target=/home/ubuntu/.cache/uv,sharing=locked,uid=1000,gid=1000  \
+    uv venv /app/venv && UV_PYTHON=/app/venv/bin/python uv pip install -r /app/requirements.txt
 
 FROM build AS dev
 
-COPY backend/dev-requirements.txt /app/dev-requirements.txt
-RUN --mount=type=cache,target=/home/ubuntu/.cache/pip,sharing=locked,uid=1,gid=1  \
-    /app/venv/bin/pip install -r /app/dev-requirements.txt
+RUN --mount=type=bind,src=./backend/requirements-dev.txt,dst=/app/requirements.txt --mount=type=cache,target=/home/ubuntu/.cache/uv,sharing=locked,uid=1000,gid=1000 \
+    UV_PYTHON=/app/venv/bin/python uv pip install -r /app/requirements.txt
 
 WORKDIR /app/backend
 
