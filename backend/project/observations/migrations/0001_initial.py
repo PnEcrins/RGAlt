@@ -12,7 +12,6 @@ import project.utils.db.fields
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [

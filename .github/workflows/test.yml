@@ -49,13 +49,12 @@ jobs:
 
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
+            - uses: astral-sh/setup-uv@v5
               with:
-                  python-version-file: ./backend/.python-version
-                  cache: 'pip'
-                  cache-dependency-path: |
-                      ./backend/requirements.txt
-                      ./backend/dev-requirements.txt
+                  version: "latest"
+                  python-version: "3.12"
+                  enable-cache: true
+                  cache-suffix: "ruff"
 
             - name: Install system libraries
               working-directory: ./backend
@@ -66,7 +65,7 @@ jobs:
             - name: Install dependencies
               working-directory: ./backend
               run: |
-                pip install -r requirements.txt -r dev-requirements.txt
+                uv pip install -r requirements.txt -r requirements-dev.txt
 
             - name: Run django unit tests
               working-directory: ./backend

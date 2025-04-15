@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("observations", "0002_alter_observation_comments"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
