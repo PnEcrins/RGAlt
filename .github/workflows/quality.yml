@@ -24,7 +24,7 @@ jobs:
             - uses: astral-sh/setup-uv@v5
               with:
                   version: "latest"
-                  python-version-file: ./backend/.python-version
+                  python-version: ./backend/.python-version
                   enable-cache: true
                   cache-suffix: "ruff"
 
