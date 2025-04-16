@@ -59,6 +59,7 @@ class ObservationViewsSetMixin:
     filterset_class = ObservationFilterSet
     lookup_field = "uuid"
     ordering_fields = ["event_date", "created_at"]
+    bbox_filter_field = "location"
 
     def get_serializer_class(self):
         if self.action == "list":
