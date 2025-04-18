@@ -579,6 +579,17 @@ export class SynthesisInterfaceComponent
           .flat()
       : undefined;
 
+    let bboxArray: number[] | undefined;
+    const currentBounds = this.settingsService.currentMap?.bounds;
+    if (currentBounds) {
+      bboxArray = [
+        currentBounds.getWest(),
+        currentBounds.getSouth(),
+        currentBounds.getEast(),
+        currentBounds.getNorth(),
+      ];
+    }
+
     const downloadObservations: Observable<any> =
       this.observationsService.getObservations(
         'geojson',
@@ -595,12 +606,14 @@ export class SynthesisInterfaceComponent
           : undefined,
         undefined,
         undefined,
+        undefined,
+        bboxArray,
       );
 
     this.dialog.open(ExportDialog, {
       data: {
         nbObservations:
-          this.currentObservationsFeatureCollection?.features.length,
+          this.observationsFeatureCollectionFiltered?.features.length,
         downloadObservations,
       },
     });
