@@ -13,6 +13,7 @@ import { ObservationsService } from '../../services/observations.service';
 import { MatListModule } from '@angular/material/list';
 import { ObservationListItemComponent } from '../../components/observation-list-item/observation-list-item.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',

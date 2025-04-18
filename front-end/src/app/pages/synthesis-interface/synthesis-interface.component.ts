@@ -20,7 +20,7 @@ import { FilterDialog } from './dialogs/filter-dialog';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
-import { Subscription } from 'rxjs';
+import { firstValueFrom, Observable, Subscription } from 'rxjs';
 import {
   observationsFeatureCollection,
   ObservationType,
@@ -30,6 +30,7 @@ import { ObservationsService } from '../../services/observations.service';
 import { SettingsService } from '../../services/settings.service';
 import { environment } from '../../../environments/environment';
 import { ObservationListItemComponent } from '../../components/observation-list-item/observation-list-item.component';
+import { ExportDialog } from './dialogs/export-dialog';
 
 import { fromEvent } from 'rxjs';
 import { debounceTime, filter, first } from 'rxjs/operators';
@@ -274,7 +275,7 @@ export class SynthesisInterfaceComponent
   }
 
   openFilterDialog() {
-    const deleteDialogRef = this.dialog.open(FilterDialog, {
+    const filterDialogRef = this.dialog.open(FilterDialog, {
       width: '100%',
       maxWidth: '50vw',
       height: '100%',
@@ -282,7 +283,7 @@ export class SynthesisInterfaceComponent
       data: this.filter,
     });
 
-    deleteDialogRef.afterClosed().subscribe(async (result) => {
+    filterDialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.filter) {
         this.initObservationsFeatures();
         this.currentPage = 1;
@@ -324,6 +325,7 @@ export class SynthesisInterfaceComponent
     }
 
     this.updateListForCurrentBounds();
+    this.scrollToTop();
   }
 
   updateListForCurrentBounds(resetBounds?: boolean) {
@@ -332,16 +334,15 @@ export class SynthesisInterfaceComponent
         ? this.settingsService.currentMap?.bounds
         : this.map.getBounds();
     this.settingsService.setCurrentMap(resetBounds ? null : mapBounds);
+
     this.currentPage = 1;
     this.hasMoreData = true;
-    if (this.observationsFeatureCollectionFiltered) {
-      this.observationsFeatureCollectionFiltered.features = [];
-    } else {
-      this.observationsFeatureCollectionFiltered = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-    }
+
+    this.observationsFeatureCollectionFiltered = {
+      type: 'FeatureCollection',
+      features: [],
+    };
+
     this.handleFeaturesOnList();
   }
 
@@ -377,35 +378,22 @@ export class SynthesisInterfaceComponent
     this.setupScrollListener();
   }
 
-  ngOnDestroy() {
-    this.scrollSubscription?.unsubscribe();
-    this.dataSubscription?.unsubscribe();
-  }
-
   loadInitialObservations() {
     this.initObservationsFeatures();
   }
 
   initObservationsFeatures() {
-    if (this.currentObservationsFeatureCollection) {
-      this.currentObservationsFeatureCollection.features = [];
-    } else {
-      this.currentObservationsFeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-    }
+    this.currentObservationsFeatureCollection = {
+      type: 'FeatureCollection',
+      features: [],
+    };
 
     this.currentPage = 1;
     this.hasMoreData = true;
-    if (this.observationsFeatureCollectionFiltered) {
-      this.observationsFeatureCollectionFiltered.features = [];
-    } else {
-      this.observationsFeatureCollectionFiltered = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-    }
+    this.observationsFeatureCollectionFiltered = {
+      type: 'FeatureCollection',
+      features: [],
+    };
   }
 
   setupScrollListener() {
@@ -567,5 +555,73 @@ export class SynthesisInterfaceComponent
           this.isLoading = false;
         },
       });
+  }
+
+  exportObservations() {
+    const observationTypes = this.filter.observationTypes
+      ? this.filter.observationTypes
+          .map((observationType: any) =>
+            observationType.children && observationType.children.length > 0
+              ? observationType.children.map(
+                  (observationTypeChildren: ObservationType) =>
+                    observationTypeChildren.id,
+                )
+              : observationType.id,
+          )
+          .flat()
+      : undefined;
+
+    let bboxArray: number[] | undefined;
+    const currentBounds = this.settingsService.currentMap?.bounds;
+    if (currentBounds) {
+      bboxArray = [
+        currentBounds.getWest(),
+        currentBounds.getSouth(),
+        currentBounds.getEast(),
+        currentBounds.getNorth(),
+      ];
+    }
+
+    const downloadObservations: Observable<any> =
+      this.observationsService.getObservations(
+        'geojson',
+        observationTypes,
+        this.filter.observationDates.start
+          ? moment(this.filter.observationDates.start.toDate()).format(
+              'YYYY-MM-DD',
+            )
+          : undefined,
+        this.filter.observationDates.end
+          ? moment(this.filter.observationDates.end.toDate()).format(
+              'YYYY-MM-DD',
+            )
+          : undefined,
+        undefined,
+        undefined,
+        undefined,
+        bboxArray,
+      );
+
+    this.dialog.open(ExportDialog, {
+      data: {
+        nbObservations:
+          this.observationsFeatureCollectionFiltered?.features.length,
+        downloadObservations,
+      },
+    });
+  }
+
+  ngOnDestroy() {
+    this.scrollSubscription?.unsubscribe();
+    this.dataSubscription?.unsubscribe();
+    if (this.map) {
+      this.map.off('moveend', this.handleObservationsWithinBoundsBind);
+    }
+  }
+
+  scrollToTop() {
+    if (this.listContainer && this.listContainer.nativeElement) {
+      this.listContainer.nativeElement.scrollTop = 0;
+    }
   }
 }

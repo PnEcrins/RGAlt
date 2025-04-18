@@ -23,12 +23,27 @@
             </div>
           </div>
           <div>
-            <button mat-raised-button (click)="openFilterDialog()">
+            <button
+              class="filter-button"
+              mat-raised-button
+              (click)="openFilterDialog()"
+            >
               <mat-icon>filter_list</mat-icon> Filtrer{{
                 currentFiltersNumber
-                  ? " (" + currentFiltersNumber.toString() + ")"
+                  ? "
+              ("
+                      .concat(currentFiltersNumber.toString())
+                      .concat(")")
                   : ""
               }}
+            </button>
+
+            <button
+              class="export-button"
+              mat-raised-button
+              (click)="exportObservations()"
+            >
+              <mat-icon>upload_file</mat-icon> Exporter
             </button>
           </div>
         </ng-container>
