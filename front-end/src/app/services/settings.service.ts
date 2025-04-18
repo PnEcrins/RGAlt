@@ -150,10 +150,6 @@ export class SettingsService {
   }
 
   getStatistics(): Observable<any> {
-    // return this.httpClient.get(`${this.apiUrl}/api/statistics/`, httpOptions);
-    return of({
-      nbEvents: 0,
-      nbObservers: 0,
-    });
+    return this.httpClient.get(`${this.apiUrl}/api/stats/`, httpOptions);
   }
 }

@@ -8,11 +8,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDivider } from '@angular/material/divider';
 import { SettingsService } from '../../services/settings.service';
 import { finalize, first } from 'rxjs/operators';
-import {
-  ObservationFeature,
-  observationsFeatureCollection,
-  Statistics,
-} from '../../types/types';
+import { observationsFeatureCollection, Statistics } from '../../types/types';
 import { ObservationsService } from '../../services/observations.service';
 import { MatListModule } from '@angular/material/list';
 import { ObservationListItemComponent } from '../../components/observation-list-item/observation-list-item.component';
@@ -53,10 +49,10 @@ export class HomeComponent implements OnInit {
       )
       .subscribe({
         next: (statistics) => {
-          this.statistics = statistics;
-        },
-        error: (err) => {
-          console.error('Erreur lors du chargement des statistiques:', err);
+          this.statistics = {
+            nbObservations: statistics.observations,
+            nbObservers: statistics.active_contributors,
+          };
         },
       });
 
@@ -72,13 +68,6 @@ export class HomeComponent implements OnInit {
             ...observations,
             features: observations.features,
           };
-        },
-        error: (err) => {
-          console.error(
-            'Erreur lors du chargement des observations récentes:',
-            err,
-          );
-          this.recentObservations = null;
         },
       });
   }
