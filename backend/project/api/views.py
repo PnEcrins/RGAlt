@@ -63,10 +63,19 @@ class ObservationViewsSetMixin:
 
     def get_serializer_class(self):
         if self.action == "list":
-            return ObservationListSerializer
+            base_serializer = ObservationListSerializer
         elif self.action in ("add_media", "update_media"):
-            return MediaSerializer
-        return ObservationDetailSerializer
+            base_serializer = MediaSerializer
+        else:
+            base_serializer = ObservationDetailSerializer
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        format_output = getattr(renderer, "format", "json")
+        if self.action == "create":
+            # force geojson in creation mode
+            final_serializer = override_serializer("geojson", base_serializer)
+        else:
+            final_serializer = override_serializer(format_output, base_serializer)
+        return final_serializer
 
 
 class ObservationViewSet(ObservationViewsSetMixin, viewsets.ReadOnlyModelViewSet):
@@ -86,13 +95,6 @@ class ObservationViewSet(ObservationViewsSetMixin, viewsets.ReadOnlyModelViewSet
             paginator = None
 
         return paginator
-
-    def get_serializer_class(self):
-        """Dynamic override json serializer by geojson serializer according format required"""
-        base_serializer_class = super().get_serializer_class()
-        renderer, media_type = self.perform_content_negotiation(self.request)
-        format_output = getattr(renderer, "format", "json")
-        return override_serializer(format_output, base_serializer_class)
 
 
 class AccountViewSet(
@@ -156,14 +158,17 @@ class AccountObservationViewset(ObservationViewsSetMixin, viewsets.ModelViewSet)
     def update_media(self, request, uuid_media, *args, **kwargs):
         observation = self.get_object()
         media = get_object_or_404(Media, uuid=uuid_media, observation=observation)
+        result_status, content = status.HTTP_200_OK, None
+
         if request.method == "DELETE":
             media.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            result_status = status.HTTP_204_NO_CONTENT
         elif request.method == "PATCH":
             serializer = self.get_serializer(media, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response(serializer.data)
+            content = serializer.data
+        return Response(content, status=result_status)
 
 
 class StatsAPIView(GenericAPIView):
