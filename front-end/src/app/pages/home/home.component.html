@@ -94,7 +94,9 @@
       >
         <div class="recent-observations">
           <mat-list>
-            <div mat-subheader>Derniers évènements</div>
+            <div mat-subheader class="recent-observations-title">
+              Derniers évènements
+            </div>
             @for (
               observation of recentObservations.features;
               track observation.id
