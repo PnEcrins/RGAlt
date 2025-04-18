@@ -60,6 +60,7 @@ class ObservationViewsSetMixin:
     lookup_field = "uuid"
     ordering_fields = ["event_date", "created_at"]
     bbox_filter_field = "location"
+    renderer_classes = [JSONRenderer, GeoJSONRenderer]
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -81,7 +82,6 @@ class ObservationViewsSetMixin:
 class ObservationViewSet(ObservationViewsSetMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
     pagination_class = PageNumberPagination
-    renderer_classes = [JSONRenderer, GeoJSONRenderer]
 
     @property
     def paginator(self):
