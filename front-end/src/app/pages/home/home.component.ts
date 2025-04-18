@@ -61,7 +61,7 @@ export class HomeComponent implements OnInit {
       });
 
     this.observationsService
-      .getObservations(undefined, undefined, undefined, 3)
+      .getObservations('geojson', undefined, undefined, undefined, 1, 3)
       .pipe(
         first(),
         finalize(() => (this.isLoadingRecentObservations = false)),
@@ -70,17 +70,7 @@ export class HomeComponent implements OnInit {
         next: (observations) => {
           this.recentObservations = {
             ...observations,
-            features: observations.features
-              .sort((a: ObservationFeature, b: ObservationFeature) => {
-                const dateA = a.properties.event_date
-                  ? new Date(a.properties.event_date).getTime()
-                  : 0;
-                const dateB = b.properties.event_date
-                  ? new Date(b.properties.event_date).getTime()
-                  : 0;
-                return dateB - dateA;
-              })
-              .slice(0, 3),
+            features: observations.features,
           };
         },
         error: (err) => {

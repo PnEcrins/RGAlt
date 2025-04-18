@@ -20,42 +20,54 @@ export class ObservationsService {
   constructor() {}
 
   getObservations(
+    format: string,
     observationTypesId?: number[],
     startDate?: string,
     endDate?: string,
-    limit?: number,
+    page?: number,
+    page_size?: number,
+    fields?: string[],
+    in_bbox?: number[],
   ): Observable<any> {
-    let url = `${this.apiUrl}/api/observations/`;
+    let url = `${this.apiUrl}/api/observations/?format=${format}`;
+
     if (observationTypesId) {
       for (let index = 0; index < observationTypesId.length; index++) {
         const observationTypeId = observationTypesId[index];
-        url = url.concat(
-          `${index === 0 ? '?' : '&'}categories=${observationTypeId}`,
-        );
+        url = url.concat(`&categories=${observationTypeId}`);
       }
     }
     if (startDate && endDate) {
       url = url.concat(
-        `${observationTypesId && observationTypesId.length > 0 ? '&' : '?'}event_date_after=${startDate}&event_date_before=${endDate}`,
+        `&event_date_after=${startDate}&event_date_before=${endDate}`,
       );
     }
-    if (limit) {
-      return this.httpClient.get(`${url}`, httpOptions);
-    } else {
-      return this.httpClient.get(`${url}`, httpOptions);
+
+    if (fields) {
+      url = url.concat(`&fields=${fields.join(',')}`);
     }
+
+    if (in_bbox) {
+      url = url.concat(`&in_bbox=${in_bbox.join(',')}`);
+    }
+
+    if (page && page_size) {
+      url = url.concat(`&page=${page}&page_size=${page_size}`);
+    }
+
+    return this.httpClient.get(`${url}`, httpOptions);
   }
 
   getObservation(observationId: string) {
     return this.httpClient.get(
-      `${this.apiUrl}/api/observations/${observationId}/`,
+      `${this.apiUrl}/api/observations/${observationId}/?format=geojson`,
       httpOptions,
     );
   }
 
   getMyObservations() {
     return this.httpClient.get(
-      `${this.apiUrl}/api/accounts/me/observations/`,
+      `${this.apiUrl}/api/accounts/me/observations/?format=geojson`,
       httpOptions,
     );
   }
