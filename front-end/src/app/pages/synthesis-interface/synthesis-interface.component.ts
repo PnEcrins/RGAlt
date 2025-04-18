@@ -20,7 +20,7 @@ import { FilterDialog } from './dialogs/filter-dialog';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import moment from 'moment';
-import { firstValueFrom, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import {
   observationsFeatureCollection,
   ObservationType,
@@ -470,7 +470,6 @@ export class SynthesisInterfaceComponent
 
           this.observationsClusterGroup.clearLayers();
           this.observationsClusterGroup.addLayer(this.observationsLayer);
-          this.isInitialFit = true;
           this.fitToCurrentObservations();
           this.map.off('moveend', this.handleObservationsWithinBoundsBind);
           this.map.on('moveend', this.handleObservationsWithinBoundsBind);
@@ -604,8 +603,7 @@ export class SynthesisInterfaceComponent
 
     this.dialog.open(ExportDialog, {
       data: {
-        nbObservations:
-          this.observationsFeatureCollectionFiltered?.features.length,
+        nbObservations: this.currentObservationsCount,
         downloadObservations,
       },
     });
