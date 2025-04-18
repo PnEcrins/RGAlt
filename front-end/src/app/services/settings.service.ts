@@ -1,7 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { CurrentFilters, CurrentMap, Settings } from '../types/types';
+import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
+import {
+  CurrentFilters,
+  CurrentMap,
+  Settings,
+  Statistics,
+} from '../types/types';
 import { OfflineService } from './offline.service';
 import { isPlatformBrowser } from '@angular/common';
 import { LatLngBounds } from 'leaflet';
@@ -142,5 +147,9 @@ export class SettingsService {
       observationTypes: [],
       observationDates: { start: null, end: null },
     };
+  }
+
+  getStatistics(): Observable<any> {
+    return this.httpClient.get(`${this.apiUrl}/api/stats/`, httpOptions);
   }
 }

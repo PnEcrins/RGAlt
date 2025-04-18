@@ -191,7 +191,7 @@
     <mat-step>
       <ng-template matStepLabel>Récapitulatif</ng-template>
       <div>
-        Type d'observation
+        Type d'évènement
         <div *ngIf="typeForm.value.type">
           <span *ngIf="observationTypeParent"
             >{{ observationTypeParent.label }} -
@@ -199,7 +199,7 @@
           {{ typeForm.value.type.label }}
         </div>
         <mat-error *ngIf="typeForm.invalid"
-          >Le type d'observation est obligatoire</mat-error
+          >Le type d'évènement est obligatoire</mat-error
         >
       </div>
       <div *ngIf="photoForm.value.photos" class="mt-16">
@@ -228,9 +228,9 @@
       <div class="mt-16">
         <div>Informations complémentaires</div>
         <div>
-          Date de l'observation :
+          Date de l'évènement :
           <mat-error *ngIf="moreDataForm.invalid"
-            >La date d'observation est obligatoire</mat-error
+            >La date d'évènement est obligatoire</mat-error
           >
 
           <span *ngIf="moreDataForm.value.date">
@@ -239,7 +239,7 @@
         </div>
 
         <div *ngIf="moreDataForm.value.name">
-          Nom de l'observation : {{ moreDataForm.value.name }}
+          Nom de l'évènement : {{ moreDataForm.value.name }}
         </div>
         <div *ngIf="moreDataForm.value.comment">
           Commentaire libre : {{ moreDataForm.value.comment }}

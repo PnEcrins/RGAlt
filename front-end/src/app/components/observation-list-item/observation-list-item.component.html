@@ -1,0 +1,69 @@
+<mat-list-item class="observation-item">
+  <span matListItemIcon class="observation-thumbnail">
+    @if (
+      observation.properties.main_picture?.thumbnails?.small;
+      as smallThumb
+    ) {
+      <img
+        [src]="smallThumb"
+        [alt]="
+          'Miniature pour ' + (observation.properties.name || 'observation')
+        "
+        class="thumbnail-image"
+      />
+    } @else {
+      <mat-icon>image</mat-icon>
+    }
+  </span>
+
+  <span matListItemTitle>
+    {{
+      observation.properties.name && observation.properties.name !== ""
+        ? observation.properties.name
+        : getEventType(observation.properties.category)?.label || "Type inconnu"
+    }}
+  </span>
+  <span matListItemLine class="observation-subline">
+    {{ observation.properties.event_date | date: "dd/MM/yyyy" }}
+  </span>
+  <span matListItemLine class="observation-subline">
+    <img
+      *ngIf="
+        getEventType(observation.properties.category)?.pictogram as pictogram
+      "
+      [src]="pictogram"
+      [alt]="getEventType(observation.properties.category)?.label"
+    />
+    <mat-icon *ngIf="!getEventType(observation.properties.category)?.pictogram"
+      >help_outline</mat-icon
+    >
+    {{ getEventType(observation.properties.category)?.label || "Type inconnu" }}
+  </span>
+  <span matListItemMeta class="list-item-end">
+    @if (withViewObservation) {
+      <span matListItemIcon>
+        <button mat-icon-button (click)="onViewClick()">
+          <mat-icon>place</mat-icon>
+        </button>
+      </span>
+    }
+
+    <button
+      mat-icon-button
+      class="mt-16 go-to-observation-button"
+      [routerLink]="[
+        '/evenement',
+        slugify(
+          observation.id!.concat(
+            observation.properties.name
+              ? '-'.concat(observation.properties.name)
+              : ''
+          ),
+          { lower: true, strict: true }
+        ),
+      ]"
+    >
+      <mat-icon>arrow_forward</mat-icon>
+    </button>
+  </span>
+</mat-list-item>

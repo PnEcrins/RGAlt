@@ -1,33 +1,3 @@
-.card-button {
-  border-radius: 0px 0px 10px 10px;
-}
-
-.new-observation-container {
-  justify-content: end;
-}
-
-mat-card img {
-  height: 300px;
-}
-
-.hover:hover {
-  opacity: 85%;
-  cursor: pointer;
-}
-
-.mb-3 {
-  margin-bottom: 3em;
-}
-
-#add-img {
-  background-image: url("/061245.jpg");
-  background-size: cover;
-}
-
-.text-align {
-  text-align: center;
-}
-
 #pres-text {
   text-align: center;
   margin: 2rem;
@@ -65,21 +35,72 @@ mat-card img {
   font-family: Afacad !important;
 }
 
-#map-img {
-  background-image: url("/carte.jpg");
-  background-size: cover;
-}
-
 @media (min-width: 992px) {
-  #home-container {
+  .explanatory-sentence-container {
     margin: auto;
     width: 50%;
   }
 }
 
 @media (min-width: 1200px) {
-  #home-container {
+  .explanatory-sentence-container {
     margin: auto;
     width: 60%;
   }
+}
+
+.top-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 24px 0px;
+  .statistics-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 48px;
+    mat-icon {
+      width: 48px;
+      height: 48px;
+      font-size: 48px;
+      color: var(--mdc-filled-button-container-color);
+    }
+    .statistic-container {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      font-size: 24px;
+      font-weight: 700;
+    }
+  }
+  .new-observation-container {
+    margin-top: 24px;
+  }
+}
+
+.bottom-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0px;
+  .recent-observations {
+    max-width: 100%;
+  }
+  .show-observations-container {
+    margin-top: 12px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  p {
+    margin-top: 12px;
+  }
+}
+
+.recent-observations-title {
+  font-size: 24px;
+  font-weight: 700;
 }
