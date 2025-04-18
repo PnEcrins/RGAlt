@@ -71,7 +71,7 @@ class ObservationViewsSetMixin:
             base_serializer = ObservationDetailSerializer
         renderer, media_type = self.perform_content_negotiation(self.request)
         format_output = getattr(renderer, "format", "json")
-        if self.action == "create":
+        if self.action in ("create", "update", "partial_update"):
             # force geojson in creation mode
             final_serializer = override_serializer("geojson", base_serializer)
         else:
