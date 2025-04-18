@@ -111,3 +111,14 @@ mat-list {
 .export-button {
   margin-left: 12px;
 }
+
+@media (max-width: 400px) {
+  .export-button,
+  .filter-button {
+    margin-left: 4px;
+    padding: 0px 12px;
+    mat-icon {
+      margin-right: 2px;
+    }
+  }
+}

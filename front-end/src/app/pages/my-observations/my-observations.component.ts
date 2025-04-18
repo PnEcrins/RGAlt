@@ -151,7 +151,7 @@ export class MyObservationsComponent {
   }
 
   editMyOfflineObservation(observation: Observation) {
-    this.router.navigate(['/nouvelle-evenement'], {
+    this.router.navigate(['/nouvel-evenement'], {
       state: { data: observation },
     });
   }
