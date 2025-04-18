@@ -25,6 +25,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { OfflineService } from './services/offline.service';
 import { AuthService } from './services/auth.service';
 import { SettingsService } from './services/settings.service';
+import { register } from 'swiper/element/bundle';
 
 @Component({
   selector: 'app-root',
@@ -172,6 +173,7 @@ export class AppComponent {
   isPlatformBrowser: boolean = false;
 
   constructor() {
+    register();
     this.isPlatformBrowser = isPlatformBrowser(this.platformId);
     if (this.isPlatformBrowser) {
       this.authService.checkAuth();
