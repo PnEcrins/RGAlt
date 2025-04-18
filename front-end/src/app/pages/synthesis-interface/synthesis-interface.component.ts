@@ -275,7 +275,7 @@ export class SynthesisInterfaceComponent
   }
 
   openFilterDialog() {
-    const deleteDialogRef = this.dialog.open(FilterDialog, {
+    const filterDialogRef = this.dialog.open(FilterDialog, {
       width: '100%',
       maxWidth: '50vw',
       height: '100%',
@@ -283,7 +283,7 @@ export class SynthesisInterfaceComponent
       data: this.filter,
     });
 
-    deleteDialogRef.afterClosed().subscribe(async (result) => {
+    filterDialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.filter) {
         this.initObservationsFeatures();
         this.currentPage = 1;
@@ -325,6 +325,7 @@ export class SynthesisInterfaceComponent
     }
 
     this.updateListForCurrentBounds();
+    this.scrollToTop();
   }
 
   updateListForCurrentBounds(resetBounds?: boolean) {
@@ -333,16 +334,15 @@ export class SynthesisInterfaceComponent
         ? this.settingsService.currentMap?.bounds
         : this.map.getBounds();
     this.settingsService.setCurrentMap(resetBounds ? null : mapBounds);
+
     this.currentPage = 1;
     this.hasMoreData = true;
-    if (this.observationsFeatureCollectionFiltered) {
-      this.observationsFeatureCollectionFiltered.features = [];
-    } else {
-      this.observationsFeatureCollectionFiltered = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-    }
+
+    this.observationsFeatureCollectionFiltered = {
+      type: 'FeatureCollection',
+      features: [],
+    };
+
     this.handleFeaturesOnList();
   }
 
@@ -383,25 +383,17 @@ export class SynthesisInterfaceComponent
   }
 
   initObservationsFeatures() {
-    if (this.currentObservationsFeatureCollection) {
-      this.currentObservationsFeatureCollection.features = [];
-    } else {
-      this.currentObservationsFeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-    }
+    this.currentObservationsFeatureCollection = {
+      type: 'FeatureCollection',
+      features: [],
+    };
 
     this.currentPage = 1;
     this.hasMoreData = true;
-    if (this.observationsFeatureCollectionFiltered) {
-      this.observationsFeatureCollectionFiltered.features = [];
-    } else {
-      this.observationsFeatureCollectionFiltered = {
-        type: 'FeatureCollection',
-        features: [],
-      };
-    }
+    this.observationsFeatureCollectionFiltered = {
+      type: 'FeatureCollection',
+      features: [],
+    };
   }
 
   setupScrollListener() {
@@ -624,6 +616,12 @@ export class SynthesisInterfaceComponent
     this.dataSubscription?.unsubscribe();
     if (this.map) {
       this.map.off('moveend', this.handleObservationsWithinBoundsBind);
+    }
+  }
+
+  scrollToTop() {
+    if (this.listContainer && this.listContainer.nativeElement) {
+      this.listContainer.nativeElement.scrollTop = 0;
     }
   }
 }
