@@ -47,6 +47,7 @@ class ObservationViewsSetMixin:
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ObservationFilterSet
     lookup_field = "uuid"
+    ordering = ["event_date"]
 
     def get_serializer_class(self):
         if self.action == "list":
