@@ -61,6 +61,7 @@ class ObservationViewsSetMixin:
     ordering_fields = ["event_date", "created_at"]
     bbox_filter_field = "location"
     renderer_classes = [JSONRenderer, GeoJSONRenderer]
+    ordering = ["-event_date"]
 
     def get_serializer_class(self):
         if self.action == "list":

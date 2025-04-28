@@ -7,6 +7,7 @@ CHANGELOG
   - JSON and GeoJSON content and pagination
   - In BBox filter
   - Ordering content by field
+  - Default ordering by decrease event date
 
 - Add statistics
 
