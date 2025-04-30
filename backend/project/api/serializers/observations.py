@@ -3,6 +3,7 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 from sorl.thumbnail import get_thumbnail
 
 from project.observations.models import (
@@ -105,12 +106,23 @@ class ObservationMixin(DynamicFieldsMixin, serializers.ModelSerializer):
 
 class ObservationListSerializer(ObservationMixin):
     main_picture = MediaSerializer(read_only=True)
-    detail_json = serializers.HyperlinkedIdentityField(
-        view_name="api:observations-detail", format="json", lookup_field="uuid"
-    )
-    detail_geojson = serializers.HyperlinkedIdentityField(
-        view_name="api:observations-detail", format="geojson", lookup_field="uuid"
-    )
+    detail_json = serializers.SerializerMethodField()
+    detail_geojson = serializers.SerializerMethodField()
+
+    def get_detail_json(self, obj):
+        return self.context["request"].build_absolute_uri(
+            reverse(
+                "api:observations-detail", kwargs={"uuid": obj.uuid, "format": "json"}
+            )
+        )
+
+    def get_detail_geojson(self, obj):
+        return self.context["request"].build_absolute_uri(
+            reverse(
+                "api:observations-detail",
+                kwargs={"uuid": obj.uuid, "format": "geojson"},
+            )
+        )
 
     class Meta(ObservationMixin.Meta):
         fields = ObservationMixin.Meta.fields + (
