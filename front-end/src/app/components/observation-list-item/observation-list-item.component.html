@@ -16,8 +16,8 @@
     }
   </span>
 
-  <span matListItemTitle>
-    {{
+  <span matListItemTitle class="observation-title-wrap"
+    >{{
       observation.properties.name && observation.properties.name !== ""
         ? observation.properties.name
         : getEventType(observation.properties.category)?.label || "Type inconnu"
@@ -42,7 +42,11 @@
   <span matListItemMeta class="list-item-end">
     @if (withViewObservation) {
       <span matListItemIcon>
-        <button mat-icon-button (click)="onViewClick()">
+        <button
+          mat-icon-button
+          (click)="onViewClick()"
+          matTooltip="Voir sur la carte"
+        >
           <mat-icon>place</mat-icon>
         </button>
       </span>
@@ -62,6 +66,7 @@
           { lower: true, strict: true }
         ),
       ]"
+      matTooltip="Accéder à l'observation"
     >
       <mat-icon>arrow_forward</mat-icon>
     </button>

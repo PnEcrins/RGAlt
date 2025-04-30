@@ -8,9 +8,8 @@ describe('ObservationListItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ObservationListItemComponent]
-    })
-    .compileComponents();
+      imports: [ObservationListItemComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ObservationListItemComponent);
     component = fixture.componentInstance;

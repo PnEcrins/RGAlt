@@ -61,7 +61,7 @@ export class ExportDialog {
 
           const link = document.createElement('a');
           link.href = url;
-          link.download = 'observations_export.json';
+          link.download = 'observations_export.geojson';
           link.target = '_blank';
           document.body.appendChild(link);
           link.click();

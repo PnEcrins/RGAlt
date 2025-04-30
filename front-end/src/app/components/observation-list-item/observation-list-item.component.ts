@@ -8,6 +8,7 @@ import slugify from 'slugify';
 
 import { ObservationFeature, ObservationType } from '../../types/types'; // Assurez-vous que le chemin est correct
 import { SettingsService } from '../../services/settings.service'; // Assurez-vous que le chemin est correct
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-observation-list-item',
@@ -18,7 +19,8 @@ import { SettingsService } from '../../services/settings.service'; // Assurez-vo
     MatIconModule,
     MatButtonModule,
     RouterLink,
-    DatePipe, // Importez DatePipe pour le formatage de la date
+    DatePipe,
+    MatTooltipModule,
   ],
   templateUrl: './observation-list-item.component.html',
   styleUrl: './observation-list-item.component.scss',
