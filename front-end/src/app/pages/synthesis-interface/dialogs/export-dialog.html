@@ -1,6 +1,9 @@
 <h2 mat-dialog-title>Exporter</h2>
 <mat-dialog-content>
-  Êtes-vous sûr de vouloir exporter ces {{data.nbObservations}} évènements ?
+  <div class="licences-container">
+    Êtes-vous sûr de vouloir exporter ces {{data.nbObservations}} évènements ?
+  </div>
+  <app-licences></app-licences>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button (click)="filterCancel()" [disabled]="isExporting">

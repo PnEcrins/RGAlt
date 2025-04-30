@@ -11,6 +11,7 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Observable, Subscription } from 'rxjs';
+import { LicencesComponent } from '../../../components/licences/licences.component';
 
 @Component({
   selector: 'export-dialog',
@@ -24,9 +25,10 @@ import { Observable, Subscription } from 'rxjs';
     MatDialogContent,
     MatProgressSpinnerModule,
     MatIcon,
+    LicencesComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrl: './filter-dialog.scss',
+  styleUrl: './export-dialog.scss',
 })
 export class ExportDialog {
   data = inject<{
