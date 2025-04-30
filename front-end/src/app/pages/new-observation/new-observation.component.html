@@ -190,8 +190,8 @@
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Récapitulatif</ng-template>
-      <div>
-        Type d'évènement
+      <div class="mt-16">
+        <div class="mat-headline-medium">Type d'évènement</div>
         <div *ngIf="typeForm.value.type">
           <span *ngIf="observationTypeParent"
             >{{ observationTypeParent.label }} -
@@ -203,7 +203,7 @@
         >
       </div>
       <div *ngIf="photoForm.value.photos" class="mt-16">
-        <div>Contenu multimédia</div>
+        <div class="mat-headline-medium">Contenu multimédia</div>
         <div
           *ngIf="!photoForm.value.photos || photoForm.value.photos.length === 0"
           class="photos-container"
@@ -219,16 +219,16 @@
         </div>
       </div>
       <div *ngIf="mapForm.value.position" class="mt-16">
-        <div>Localisation</div>
+        <div class="mat-headline-medium">Localisation</div>
         <mat-chip-set aria-label="Lat-lng">
           <mat-chip>Latitude : {{ mapForm.value.position.lat }}</mat-chip>
           <mat-chip>Longitude : {{ mapForm.value.position.lng }}</mat-chip>
         </mat-chip-set>
       </div>
       <div class="mt-16">
-        <div>Informations complémentaires</div>
+        <div class="mat-headline-medium">Informations complémentaires</div>
         <div>
-          Date de l'évènement :
+          <span class="mat-title-medium">Date de l'évènement : </span>
           <mat-error *ngIf="moreDataForm.invalid"
             >La date d'évènement est obligatoire</mat-error
           >
@@ -239,10 +239,12 @@
         </div>
 
         <div *ngIf="moreDataForm.value.name">
-          Nom de l'évènement : {{ moreDataForm.value.name }}
+          <span class="mat-title-medium">Nom de l'évènement : </span>
+          <span>{{ moreDataForm.value.name }}</span>
         </div>
         <div *ngIf="moreDataForm.value.comment">
-          Commentaire libre : {{ moreDataForm.value.comment }}
+          <span class="mat-title-medium">Commentaire libre : </span>
+          <span>{{ moreDataForm.value.comment }}</span>
         </div>
       </div>
       <div class="mr-1 mb-1 mt-1">
