@@ -32,7 +32,7 @@ django==5.0.14
     #   djangorestframework-simplejwt
     #   drf-spectacular
 django-constance==3.1.0
-    # via -r requirements.in
+    # via -r ./requirements.in
 django-cors-headers==4.7.0
     # via -r ./requirements.in
 django-filter==24.3
@@ -54,7 +54,7 @@ djangorestframework==3.15.2
 djangorestframework-gis==1.1
     # via -r ./requirements.in
 djangorestframework-simplejwt==5.5.0
-    # via -r requirements.in
+    # via -r ./requirements.in
 drf-dynamic-fields==0.4.0
     # via -r ./requirements.in
 drf-spectacular==0.28.0
