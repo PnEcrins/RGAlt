@@ -20,27 +20,24 @@ certifi==2024.6.2
     #   sentry-sdk
 charset-normalizer==3.3.2
     # via requests
-django==5.0.14
+django==5.2.1
     # via
     #   -r ./requirements.in
     #   django-cors-headers
     #   django-filter
-    #   django-picklefield
     #   django-storages
     #   django-treebeard
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-constance==3.1.0
-    # via -r ./requirements.in
+django-constance==4.3.2
+    # via -r requirements.in
 django-cors-headers==4.7.0
     # via -r ./requirements.in
 django-filter==24.3
     # via
     #   -r ./requirements.in
     #   djangorestframework-gis
-django-picklefield==3.2
-    # via django-constance
 django-storages==1.14.3
     # via -r ./requirements.in
 django-treebeard==4.7.1
