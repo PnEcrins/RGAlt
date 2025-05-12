@@ -6,7 +6,7 @@
 #
 asgiref==3.8.1
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   django
 black==24.10.0
     # via -r dev-requirements.in
@@ -18,11 +18,11 @@ build==1.2.1
     # via pip-tools
 certifi==2024.6.2
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   requests
 charset-normalizer==3.3.2
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   requests
 click==8.1.7
     # via
@@ -36,9 +36,9 @@ cwcwidth==0.1.9
     # via
     #   bpython
     #   curtsies
-django==5.0.14
+django==5.2.1
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   django-debug-toolbar
 django-debug-toolbar==5.2.0
     # via -r dev-requirements.in
@@ -52,7 +52,7 @@ greenlet==3.0.3
     # via bpython
 idna==3.7
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   requests
 isort==6.0.1
     # via -r dev-requirements.in
@@ -62,7 +62,7 @@ mypy-extensions==1.0.0
     # via black
 packaging==24.1
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   black
     #   build
 pathspec==0.12.1
@@ -83,29 +83,29 @@ pyproject-hooks==1.1.0
     #   pip-tools
 python-dateutil==2.9.0.post0
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   faker
 pyxdg==0.28
     # via bpython
 requests==2.32.3
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   bpython
 six==1.16.0
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   blessed
     #   python-dateutil
 sqlparse==0.5.0
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   django
     #   django-debug-toolbar
 tblib==3.1.0
     # via -r dev-requirements.in
 urllib3==2.2.2
     # via
-    #   -c requirements.txt
+    #   -c /app/backend/requirements.txt
     #   requests
 wcwidth==0.2.13
     # via blessed
