@@ -73,8 +73,16 @@ CHANGELOG
 - Fix offline tiles download
 - Improve frontend documentation
 
+1.0.12+dev
+----------
+
+**Improvements**
+
+- Category now return first parent pictogram available if not defined
+
+
 1.0.2    (2024-07-24)
-----------------------
+---------------------
 
 **Bugfix**
 
@@ -86,7 +94,7 @@ CHANGELOG
 - Improve UI
 
 1.0.1    (2024-07-24)
-----------------------
+---------------------
 
 **Improvements**
 
