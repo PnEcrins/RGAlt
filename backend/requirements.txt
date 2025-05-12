@@ -20,7 +20,7 @@ certifi==2024.6.2
     #   sentry-sdk
 charset-normalizer==3.3.2
     # via requests
-django==5.0.12
+django==5.0.14
     # via
     #   -r ./requirements.in
     #   django-cors-headers
@@ -32,8 +32,8 @@ django==5.0.12
     #   djangorestframework-simplejwt
     #   drf-spectacular
 django-constance==3.1.0
-    # via -r ./requirements.in
-django-cors-headers==4.6.0
+    # via -r requirements.in
+django-cors-headers==4.7.0
     # via -r ./requirements.in
 django-filter==24.3
     # via
@@ -53,8 +53,8 @@ djangorestframework==3.15.2
     #   drf-spectacular
 djangorestframework-gis==1.1
     # via -r ./requirements.in
-djangorestframework-simplejwt==5.3.1
-    # via -r ./requirements.in
+djangorestframework-simplejwt==5.5.0
+    # via -r requirements.in
 drf-dynamic-fields==0.4.0
     # via -r ./requirements.in
 drf-spectacular==0.28.0
@@ -75,9 +75,9 @@ jsonschema-specifications==2023.12.1
     # via jsonschema
 packaging==24.1
     # via gunicorn
-pillow==11.1.0
+pillow==11.2.1
     # via -r ./requirements.in
-psycopg==3.2.3
+psycopg==3.2.8
     # via -r ./requirements.in
 pyjwt==2.8.0
     # via djangorestframework-simplejwt
@@ -101,7 +101,7 @@ rpds-py==0.18.1
     #   referencing
 s3transfer==0.10.2
     # via boto3
-sentry-sdk==2.22.0
+sentry-sdk==2.27.0
     # via -r ./requirements.in
 six==1.16.0
     # via python-dateutil
