@@ -23,6 +23,7 @@ import { firstValueFrom } from 'rxjs';
 import { MyObservationLoaderDialog } from './dialogs/my-observation-loader-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteObservationDialog } from './dialogs/delete-observation-dialog';
+import { ObservationListItemComponent } from '../../components/observation-list-item/observation-list-item.component';
 
 @Component({
   selector: 'app-my-observations',
@@ -34,6 +35,7 @@ import { DeleteObservationDialog } from './dialogs/delete-observation-dialog';
     MatButtonModule,
     RouterLink,
     MatSnackBarModule,
+    ObservationListItemComponent,
   ],
   templateUrl: './my-observations.component.html',
   styleUrl: './my-observations.component.scss',
@@ -63,7 +65,31 @@ export class MyObservationsComponent {
       await this.offlineService.getAllDataInStore('observations');
   }
 
-  async postObservation(myOfflineObservation: Observation) {
+  transformToObservationFeature(
+    offlineObservation: Observation,
+  ): ObservationFeature {
+    const observationFeature: ObservationFeature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: offlineObservation.coordinates!,
+      },
+      properties: {
+        comments: offlineObservation.comments,
+        event_date: offlineObservation.event_date,
+        category: offlineObservation.category,
+      },
+    };
+    if (offlineObservation.name) {
+      observationFeature.properties.name = offlineObservation.name;
+    }
+    return observationFeature;
+  }
+
+  async postObservation(
+    myOfflineObservation: Observation,
+    withRefresh: boolean = true,
+  ) {
     const newObservationLoaderDialogRef = this.dialog.open(
       MyObservationLoaderDialog,
       {
@@ -72,21 +98,9 @@ export class MyObservationsComponent {
         disableClose: true,
       },
     );
-    const observation: ObservationFeature = {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: myOfflineObservation.coordinates!,
-      },
-      properties: {
-        comments: myOfflineObservation.comments,
-        event_date: myOfflineObservation.event_date,
-        category: myOfflineObservation.category,
-      },
-    };
-    if (Boolean(myOfflineObservation.name)) {
-      observation.properties.name = myOfflineObservation.name;
-    }
+    const observation =
+      this.transformToObservationFeature(myOfflineObservation);
+
     this.observationsService.postObservation(observation).subscribe({
       next: async (observationResponse: any) => {
         for (
@@ -112,6 +126,7 @@ export class MyObservationsComponent {
           myOfflineObservation.uuid!,
         ]);
         await this.refreshMyOfflineObservations();
+        this.refreshObservations();
       },
       error: () => {
         newObservationLoaderDialogRef.close();
@@ -146,23 +161,24 @@ export class MyObservationsComponent {
   async sendObservations() {
     for (let index = 0; index < this.myOfflineObservations.length; index++) {
       const myOfflineObservation = this.myOfflineObservations[index];
-      await this.postObservation(myOfflineObservation);
+      await this.postObservation(myOfflineObservation, false);
     }
+    this.refreshObservations();
   }
 
-  editMyOfflineObservation(observation: Observation) {
+  editMyOfflineObservation(observation: any) {
     this.router.navigate(['/nouvel-evenement'], {
       state: { data: observation },
     });
   }
 
-  editObservation(observation: ObservationFeature) {
+  editObservation(observation: any) {
     this.router.navigate(['/modification-d-un-evenement'], {
       state: { data: observation },
     });
   }
 
-  deleteMyOfflineObservation(observation: Observation) {
+  deleteMyOfflineObservation(observation: any) {
     const deleteObservationDialogRef = this.dialog.open(
       DeleteObservationDialog,
       {
@@ -192,7 +208,7 @@ export class MyObservationsComponent {
     });
   }
 
-  deleteObservation(observation: ObservationFeature) {
+  deleteObservation(observation: any) {
     const deleteObservationDialogRef = this.dialog.open(
       DeleteObservationDialog,
       {

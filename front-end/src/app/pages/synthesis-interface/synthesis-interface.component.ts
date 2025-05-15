@@ -74,7 +74,7 @@ export class SynthesisInterfaceComponent
   observationsFeatureCollection: observationsFeatureCollection | null = null;
   currentObservationsFeatureCollection: observationsFeatureCollection | null =
     null;
-  currentObservationsCount = 0;
+  currentObservationsCount: number | null = null;
 
   observationsFeatureCollectionFiltered: observationsFeatureCollection | null =
     null;

@@ -40,6 +40,21 @@
     {{ getEventType(observation.properties.category)?.label || "Type inconnu" }}
   </span>
   <span matListItemMeta class="list-item-end">
+    @if (withOptions) {
+      <button mat-icon-button class="mt-16" (click)="onDeleteObservation()">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button class="mt-16" (click)="onEditObservation()">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      @if (isOfflineObservation) {
+        <button mat-icon-button class="mt-16" (click)="onPostObservation()">
+          <mat-icon>send</mat-icon>
+        </button>
+      }
+    }
+
     @if (withViewObservation) {
       <span matListItemIcon>
         <button
@@ -52,23 +67,25 @@
       </span>
     }
 
-    <button
-      mat-icon-button
-      class="mt-16 go-to-observation-button"
-      [routerLink]="[
-        '/evenement',
-        slugify(
-          observation.id!.concat(
-            observation.properties.name
-              ? '-'.concat(observation.properties.name)
-              : ''
+    @if (!isOfflineObservation) {
+      <button
+        mat-icon-button
+        class="mt-16 go-to-observation-button"
+        [routerLink]="[
+          '/evenement',
+          slugify(
+            observation.id!.concat(
+              observation.properties.name
+                ? '-'.concat(observation.properties.name)
+                : ''
+            ),
+            { lower: true, strict: true }
           ),
-          { lower: true, strict: true }
-        ),
-      ]"
-      matTooltip="Accéder à l'observation"
-    >
-      <mat-icon>arrow_forward</mat-icon>
-    </button>
+        ]"
+        matTooltip="Accéder à l'observation"
+      >
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    }
   </span>
 </mat-list-item>

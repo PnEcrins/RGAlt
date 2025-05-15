@@ -6,7 +6,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import slugify from 'slugify';
 
-import { ObservationFeature, ObservationType } from '../../types/types'; // Assurez-vous que le chemin est correct
+import {
+  Observation,
+  ObservationFeature,
+  ObservationType,
+} from '../../types/types'; // Assurez-vous que le chemin est correct
 import { SettingsService } from '../../services/settings.service'; // Assurez-vous que le chemin est correct
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -27,8 +31,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class ObservationListItemComponent {
   @Input({ required: true }) observation!: ObservationFeature;
+  @Input({ required: false }) offlineObservation!: Observation;
   @Input({ required: false }) withViewObservation = true;
+  @Input({ required: false }) withOptions = false;
+  @Input({ required: false }) isOfflineObservation = false;
   @Output() viewObservation = new EventEmitter<ObservationFeature>();
+  @Output() deleteObservation = new EventEmitter<
+    ObservationFeature | Observation
+  >();
+  @Output() editObservation = new EventEmitter<
+    ObservationFeature | Observation
+  >();
+  @Output() postObservation = new EventEmitter<Observation>();
 
   settingsService = inject(SettingsService);
 
@@ -49,7 +63,23 @@ export class ObservationListItemComponent {
     );
   }
 
-  onViewClick(): void {
+  onViewClick() {
     this.viewObservation.emit(this.observation);
+  }
+
+  onDeleteObservation() {
+    this.deleteObservation.emit(
+      this.isOfflineObservation ? this.offlineObservation : this.observation,
+    );
+  }
+
+  onEditObservation() {
+    this.editObservation.emit(
+      this.isOfflineObservation ? this.offlineObservation : this.observation,
+    );
+  }
+
+  onPostObservation() {
+    this.postObservation.emit(this.offlineObservation);
   }
 }

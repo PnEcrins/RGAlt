@@ -12,7 +12,8 @@
         <ng-container
           *ngIf="
             currentObservationsFeatureCollection &&
-            currentObservationsFeatureCollection.features.length > 0
+            currentObservationsFeatureCollection.features.length > 0 &&
+            currentObservationsCount !== null
           "
         >
           <div>
