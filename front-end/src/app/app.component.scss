@@ -33,3 +33,11 @@ main {
   height: calc(100% - 8px);
   margin-right: 8px;
 }
+
+::ng-deep {
+  .export-button .mdc-button__label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

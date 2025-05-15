@@ -2,7 +2,6 @@
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#authentication-settings
 #
 # from storages.backends.s3 import S3Storage
-
 #
 # class StaticStorage(S3Storage):
 #     location = "static"
@@ -23,3 +22,9 @@
 #         "OPTIONS": {},
 #     },
 # }
+#
+# uncomment and set settings here to increase session duration for token refresh
+# from datetime import timedelta
+#
+# SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"] = timedelta(days=180)
+#

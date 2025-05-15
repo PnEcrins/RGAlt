@@ -50,6 +50,7 @@ import { firstValueFrom } from 'rxjs';
 import { NewObservationLoaderDialog } from './dialogs/new-observation-loader-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
+import { LicencesComponent } from '../../components/licences/licences.component';
 
 const moment = _rollupMoment || _moment;
 
@@ -74,6 +75,7 @@ const moment = _rollupMoment || _moment;
     MatTooltipModule,
     MatSnackBarModule,
     MatChipsModule,
+    LicencesComponent,
   ],
   templateUrl: './new-observation.component.html',
   styleUrl: './new-observation.component.scss',

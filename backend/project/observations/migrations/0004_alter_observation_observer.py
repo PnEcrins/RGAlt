@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("observations", "0003_alter_area_description_alter_area_max_zoom_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

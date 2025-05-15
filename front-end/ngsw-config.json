@@ -13,8 +13,20 @@
           "/manifest.webmanifest",
           "/*.css",
           "/*.js",
-          "/061245.jpg",
-          "/carte.jpg"
+          "apropos.jpg",
+          "financement.png",
+          "home.jpg",
+          "labo.png",
+          "logo.png",
+          "parn.png",
+          "pne.jpg",
+          "sngm.png",
+          "tutelle.png",
+          "media/layers-2x.png",
+          "media/layers.png",
+          "media/icon-fullscreen.svg",
+          "assets/marker-icon-2x.png",
+          "assets/marker-icon.png"
         ]
       }
     }

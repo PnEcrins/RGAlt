@@ -73,7 +73,7 @@ class Command(BaseCommand):
         file_path = settings.CONF_DIR / options["file_path"]
         if not os.path.exists(file_path):
             raise CommandError(
-                f"File {options["file_path"]} does not exist in config directory"
+                f"File {options['file_path']} does not exist in config directory"
             )
         ds = DataSource(self.file_path)
 

@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+**Improvements**
+
+- Improve observation API to handle
+  - JSON and GeoJSON content and pagination
+  - In BBox filter
+  - Ordering content by field
+  - Default ordering by decrease event date
+
+- Add statistics
+
+
 1.1.2     (2024-11-27)
 ----------------------
 

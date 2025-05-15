@@ -7,81 +7,93 @@
   </div>
 
   <div class="list-container">
-    <ng-container
-      *ngIf="
-        currentObservationsFeatureCollection &&
-        currentObservationsFeatureCollection.features
-      "
-    >
+    <ng-container>
       <div class="mat-body-large current-observations-title-list-container">
-        <div>
-          {{ currentObservationsFeatureCollection.features.length }} évènements
+        <ng-container
+          *ngIf="
+            currentObservationsFeatureCollection &&
+            currentObservationsFeatureCollection.features.length > 0 &&
+            currentObservationsCount !== null
+          "
+        >
+          <div>
+            <div>
+              {{ currentObservationsCount }}
+              <span *ngIf="currentObservationsCount <= 1"> évènement </span>
+              <span *ngIf="currentObservationsCount > 1"> évènements </span>
+            </div>
+          </div>
+          <div>
+            <button
+              class="filter-button"
+              mat-raised-button
+              (click)="openFilterDialog()"
+            >
+              <mat-icon>filter_list</mat-icon> Filtrer{{
+                currentFiltersNumber
+                  ? "
+              ("
+                      .concat(currentFiltersNumber.toString())
+                      .concat(")")
+                  : ""
+              }}
+            </button>
+
+            <button
+              class="export-button"
+              mat-raised-button
+              (click)="exportObservations()"
+            >
+              <mat-icon>upload_file</mat-icon> Exporter
+            </button>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="list-content" #listContainer>
+        <mat-list *ngIf="observationsFeatureCollectionFiltered">
+          @for (
+            observation of observationsFeatureCollectionFiltered.features;
+            track observation.id
+          ) {
+            <app-observation-list-item
+              [observation]="observation"
+              (viewObservation)="handleObservationView($event)"
+            ></app-observation-list-item>
+          }
+        </mat-list>
+
+        <div *ngIf="isLoading" class="loading-indicator">
+          <mat-spinner diameter="30"></mat-spinner>
+          <span>Chargement...</span>
         </div>
-        <div>
-          <button mat-raised-button (click)="openFilterDialog()">
-            <mat-icon>filter_list</mat-icon> Filtrer{{
-              currentFiltersNumber
-                ? "
-            ("
-                    .concat(currentFiltersNumber.toString())
-                    .concat(")")
-                : ""
-            }}
-          </button>
+
+        <div
+          *ngIf="
+            !hasMoreData &&
+            observationsFeatureCollectionFiltered &&
+            observationsFeatureCollectionFiltered.features.length > 0
+          "
+          class="no-more-data"
+        >
+          Fin de la liste.
+        </div>
+
+        <div
+          *ngIf="
+            !isLoading &&
+            !hasMoreData &&
+            observationsFeatureCollectionFiltered &&
+            observationsFeatureCollectionFiltered.features.length === 0
+          "
+          class="no-data"
+        >
+          Aucun évènement à afficher.
         </div>
       </div>
-      <mat-list>
-        @for (
-          observation of currentObservationsFeatureCollection.features;
-          track observation.id
-        ) {
-          <mat-list-item>
-            <span matListItemIcon
-              ><button
-                mat-icon-button
-                (click)="handleObservationView(observation)"
-              >
-                <mat-icon>place</mat-icon>
-              </button></span
-            >
-            <span matListItemIcon class="event-type-container"
-              ><img
-                [src]="
-                  getEventType(observation.properties.category)!.pictogram
-                "
-            /></span>
-            <span matListItemTitle>{{
-              observation.properties.name && observation.properties.name !== ""
-                ? observation.properties.name
-                : getEventType(observation.properties.category)!.label
-            }}</span>
-            <span matListItemLine
-              >{{ observation.properties.event_date | date: "dd/MM/yyyy" }} -
-              {{ getEventType(observation.properties.category)!.label }}</span
-            >
-            <span matListItemMeta>
-              <button
-                mat-icon-button
-                class="mt-16"
-                [routerLink]="[
-                  '/evenement',
-                  slugify(
-                    observation.id!.concat(
-                      observation.properties.name
-                        ? '-'.concat(observation.properties.name)
-                        : ''
-                    )
-                  ),
-                ]"
-              >
-                <mat-icon>arrow_forward</mat-icon>
-              </button>
-            </span>
-          </mat-list-item>
-        }
-      </mat-list>
     </ng-container>
   </div>
+
   <div class="map-container" [class.hide-map-on-small-view]="!showMap">
     <div id="map"></div>
   </div>

@@ -1,0 +1,91 @@
+<mat-list-item class="observation-item">
+  <span matListItemIcon class="observation-thumbnail">
+    @if (
+      observation.properties.main_picture?.thumbnails?.small;
+      as smallThumb
+    ) {
+      <img
+        [src]="smallThumb"
+        [alt]="
+          'Miniature pour ' + (observation.properties.name || 'observation')
+        "
+        class="thumbnail-image"
+      />
+    } @else {
+      <mat-icon>image</mat-icon>
+    }
+  </span>
+
+  <span matListItemTitle class="observation-title-wrap"
+    >{{
+      observation.properties.name && observation.properties.name !== ""
+        ? observation.properties.name
+        : getEventType(observation.properties.category)?.label || "Type inconnu"
+    }}
+  </span>
+  <span matListItemLine class="observation-subline">
+    {{ observation.properties.event_date | date: "dd/MM/yyyy" }}
+  </span>
+  <span matListItemLine class="observation-subline">
+    <img
+      *ngIf="
+        getEventType(observation.properties.category)?.pictogram as pictogram
+      "
+      [src]="pictogram"
+      [alt]="getEventType(observation.properties.category)?.label"
+    />
+    <mat-icon *ngIf="!getEventType(observation.properties.category)?.pictogram"
+      >help_outline</mat-icon
+    >
+    {{ getEventType(observation.properties.category)?.label || "Type inconnu" }}
+  </span>
+  <span matListItemMeta class="list-item-end">
+    @if (withOptions) {
+      <button mat-icon-button class="mt-16" (click)="onDeleteObservation()">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button class="mt-16" (click)="onEditObservation()">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      @if (isOfflineObservation) {
+        <button mat-icon-button class="mt-16" (click)="onPostObservation()">
+          <mat-icon>send</mat-icon>
+        </button>
+      }
+    }
+
+    @if (withViewObservation) {
+      <span matListItemIcon>
+        <button
+          mat-icon-button
+          (click)="onViewClick()"
+          matTooltip="Voir sur la carte"
+        >
+          <mat-icon>place</mat-icon>
+        </button>
+      </span>
+    }
+
+    @if (!isOfflineObservation) {
+      <button
+        mat-icon-button
+        class="mt-16 go-to-observation-button"
+        [routerLink]="[
+          '/evenement',
+          slugify(
+            observation.id!.concat(
+              observation.properties.name
+                ? '-'.concat(observation.properties.name)
+                : ''
+            ),
+            { lower: true, strict: true }
+          ),
+        ]"
+        matTooltip="Accéder à l'observation"
+      >
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    }
+  </span>
+</mat-list-item>
