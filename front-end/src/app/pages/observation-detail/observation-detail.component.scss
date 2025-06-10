@@ -50,7 +50,7 @@
 .observation-detail-container {
   display: flex;
   width: 100%;
-  height: calc(100vh - 64px - 64px);
+  height: calc(100dvh - 64px - 64px);
   .observation-data-container {
     width: 50%;
     max-height: 100%;
@@ -74,7 +74,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: calc(100vh - 56px - 56px);
+    height: calc(100dvh - 56px - 56px);
     overflow: scroll;
     .observation-data-container {
       width: 100%;

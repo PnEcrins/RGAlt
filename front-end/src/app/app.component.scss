@@ -1,6 +1,6 @@
 mat-sidenav-container {
   height: calc(
-    100vh - var(--mat-toolbar-standard-height) - var(
+    100dvh - var(--mat-toolbar-standard-height) - var(
         --mat-toolbar-standard-height
       )
   );
@@ -8,16 +8,19 @@ mat-sidenav-container {
 }
 
 .mat-sidenav-container-home {
-  height: calc(100vh - var(--mat-toolbar-standard-height));
+  height: calc(100dvh - var(--mat-toolbar-standard-height));
 }
 
 @media (max-width: 599px) {
   mat-sidenav-container {
     height: calc(
-      100vh - var(--mat-toolbar-mobile-height) - var(
+      100dvh - var(--mat-toolbar-mobile-height) - var(
           --mat-toolbar-mobile-height
         )
     );
+  }
+  .mat-sidenav-container-home {
+    height: calc(100dvh - var(--mat-toolbar-mobile-height));
   }
 }
 

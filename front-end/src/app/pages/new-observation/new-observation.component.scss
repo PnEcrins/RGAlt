@@ -64,7 +64,7 @@ mat-grid-list {
 
 #map {
   height: calc(
-    100vh - var(--mat-toolbar-standard-height) - var(
+    100dvh - var(--mat-toolbar-standard-height) - var(
         --mat-toolbar-standard-height
       ) - 200px
   );
@@ -74,7 +74,7 @@ mat-grid-list {
 @media (max-width: 599px) {
   #map {
     height: calc(
-      100vh - var(--mat-toolbar-mobile-height) - var(
+      100dvh - var(--mat-toolbar-mobile-height) - var(
           --mat-toolbar-mobile-height
         ) - 200px
     );
