@@ -28,7 +28,7 @@ click==8.1.7
     # via
     #   black
     #   pip-tools
-coverage==7.8.0
+coverage==7.8.2
     # via -r dev-requirements.in
 curtsies==0.4.2
     # via bpython
@@ -36,7 +36,7 @@ cwcwidth==0.1.9
     # via
     #   bpython
     #   curtsies
-django==5.2.1
+django==5.2.2
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
