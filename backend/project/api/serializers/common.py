@@ -70,3 +70,10 @@ class SettingsSerializer(serializers.Serializer):
                 "attribution": config.SATELLITE_BASE_MAP_ATTRIBUTION,
             },
         }
+
+
+class StatsSerializer(serializers.Serializer):
+    observations = serializers.IntegerField(help_text="Total contributions")
+    active_contributors = serializers.IntegerField(
+        help_text="Contributor with at least one contribution"
+    )

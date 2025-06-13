@@ -9,6 +9,7 @@ on:
       - master
       - main
       - next
+      - develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

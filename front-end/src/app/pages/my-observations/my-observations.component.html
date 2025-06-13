@@ -2,108 +2,46 @@
   *ngIf="myOfflineObservations.length > 0"
   class="offline-observations-container"
 >
-  <div class="mat-title-medium">Mes observations à envoyer</div>
+  <div class="mat-title-medium">Mes évènements à envoyer</div>
   <div class="send-observations-container">
     <button mat-flat-button color="primary" (click)="sendObservations()">
-      Envoyer toutes mes observations
+      Envoyer tous mes évènements
     </button>
   </div>
   <mat-list class="mat-expansion-panel-body-visible">
     @for (observation of myOfflineObservations; track observation.uuid) {
-      <mat-list-item>
-        <span matListItemIcon class="event-type-container"
-          ><img [src]="getEventType(observation.category)!.pictogram"
-        /></span>
-        <span matListItemTitle>{{
-          observation.name && observation.name !== ""
-            ? observation.name
-            : getEventType(observation.category)!.label
-        }}</span>
-        <span matListItemLine>{{
-          observation.event_date | date: "dd/MM/yyyy"
-        }}</span>
-        <span matListItemMeta>
-          <button
-            mat-icon-button
-            class="mt-16"
-            (click)="deleteMyOfflineObservation(observation)"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            class="mt-16"
-            (click)="editMyOfflineObservation(observation)"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            class="mt-16"
-            (click)="postObservation(observation)"
-          >
-            <mat-icon>send</mat-icon>
-          </button>
-        </span>
-      </mat-list-item>
+      <app-observation-list-item
+        [observation]="transformToObservationFeature(observation)"
+        [offlineObservation]="observation"
+        [withViewObservation]="false"
+        [withOptions]="true"
+        [isOfflineObservation]="true"
+        (deleteObservation)="deleteMyOfflineObservation($event)"
+        (editObservation)="editMyOfflineObservation($event)"
+        (postObservation)="postObservation($event)"
+      ></app-observation-list-item>
     }
   </mat-list>
 </div>
 
 <div
-  *ngIf="myObservations && myObservations.features.length > 0"
+  *ngIf="
+    myObservations &&
+    myObservations.features &&
+    myObservations.features.length > 0
+  "
   class="observations-container"
 >
-  <div class="mat-title-medium">Mes observations</div>
+  <div class="mat-title-medium">Mes évènements</div>
   <mat-list class="mat-expansion-panel-body-visible">
     @for (observation of myObservations.features; track observation.id) {
-      <mat-list-item>
-        <span matListItemIcon class="event-type-container"
-          ><img
-            [src]="getEventType(observation.properties.category)!.pictogram"
-        /></span>
-        <span matListItemTitle>{{
-          observation.properties.name && observation.properties.name !== ""
-            ? observation.properties.name
-            : getEventType(observation.properties.category)!.label
-        }}</span>
-        <span matListItemLine
-          >{{ observation.properties.event_date | date: "dd/MM/yyyy" }} -
-          {{ getEventType(observation.properties.category)!.label }}</span
-        >
-        <span matListItemMeta>
-          <button
-            mat-icon-button
-            class="mt-16"
-            (click)="deleteObservation(observation)"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            class="mt-16"
-            (click)="editObservation(observation)"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            class="mt-16"
-            [routerLink]="[
-              '/evenement',
-              slugify(
-                observation.id!.concat(
-                  observation.properties.name
-                    ? '-'.concat(observation.properties.name)
-                    : ''
-                )
-              ),
-            ]"
-          >
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
-        </span>
-      </mat-list-item>
+      <app-observation-list-item
+        [observation]="observation"
+        [withViewObservation]="false"
+        [withOptions]="true"
+        (deleteObservation)="deleteObservation($event)"
+        (editObservation)="editObservation($event)"
+      ></app-observation-list-item>
     }
   </mat-list>
 </div>

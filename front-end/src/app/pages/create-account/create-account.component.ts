@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { LicencesComponent } from '../../components/licences/licences.component';
 
 @Component({
   selector: 'app-create-account',
@@ -25,6 +26,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatButtonModule,
     RouterLink,
     MatSnackBarModule,
+    LicencesComponent,
   ],
   templateUrl: './create-account.component.html',
   styleUrl: './create-account.component.scss',
