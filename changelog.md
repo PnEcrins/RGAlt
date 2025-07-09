@@ -1,7 +1,18 @@
 CHANGELOG
 =========
 
-**Improvements**
+1.2.1     (2025-07-09)
+----------------------
+
+**Bugfix**
+
+* Fix /admin/ access after offline mode loaded @bastyen in https://github.com/PnEcrins/RGAlt/commit/5c90f92b4d7a0a821bb59b91c7acc1c89448e173
+
+
+1.2.0     (2025-06-13)
+----------------------
+
+* **Improvements**
 
 - Improve observation API to handle
   - JSON and GeoJSON content and pagination
