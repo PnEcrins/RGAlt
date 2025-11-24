@@ -48,7 +48,7 @@ jobs:
                     - 11211:11211
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - uses: astral-sh/setup-uv@v5
               with:
                   version: "latest"
@@ -84,7 +84,7 @@ jobs:
         name: JS tests
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - uses: actions/setup-node@v4
               with:
                   node-version-file: ./front-end/.nvmrc
@@ -107,7 +107,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Docker meta
               id: meta
