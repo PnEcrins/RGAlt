@@ -20,7 +20,7 @@ jobs:
         name: Python ruff check
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - uses: astral-sh/setup-uv@v5
               with:
                   version: "latest"
@@ -47,7 +47,7 @@ jobs:
         name: JS Prettier check
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - uses: actions/setup-node@v4
               with:
                   node-version-file: ./front-end/.nvmrc
@@ -68,7 +68,7 @@ jobs:
         name: JS Type check
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - uses: actions/setup-node@v4
               with:
                   node-version-file: ./front-end/.nvmrc
