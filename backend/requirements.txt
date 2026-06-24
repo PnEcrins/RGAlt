@@ -4,6 +4,8 @@ asgiref==3.8.1
     # via
     #   django
     #   django-cors-headers
+async-timeout==5.0.1
+    # via redis
 attrs==23.2.0
     # via
     #   jsonschema
@@ -20,44 +22,45 @@ certifi==2024.6.2
     #   sentry-sdk
 charset-normalizer==3.3.2
     # via requests
-django==5.2.2
+django==4.2.23
     # via
-    #   -r ./requirements.in
+    #   -r requirements.in
     #   django-cors-headers
     #   django-filter
     #   django-storages
     #   django-treebeard
     #   djangorestframework
+    #   djangorestframework-gis
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-constance==4.3.2
-    # via -r ./requirements.in
+django-constance[redis]==4.3.2
+    # via -r requirements.in
 django-cors-headers==4.7.0
-    # via -r ./requirements.in
+    # via -r requirements.in
 django-filter==24.3
     # via
-    #   -r ./requirements.in
+    #   -r requirements.in
     #   djangorestframework-gis
-django-storages==1.14.3
-    # via -r ./requirements.in
+django-storages[s3]==1.14.3
+    # via -r requirements.in
 django-treebeard==4.7.1
-    # via -r ./requirements.in
+    # via -r requirements.in
 djangorestframework==3.15.2
     # via
-    #   -r ./requirements.in
+    #   -r requirements.in
     #   djangorestframework-gis
     #   djangorestframework-simplejwt
     #   drf-spectacular
-djangorestframework-gis==1.1
-    # via -r ./requirements.in
+djangorestframework-gis==1.2.0
+    # via -r requirements.in
 djangorestframework-simplejwt==5.5.0
-    # via -r ./requirements.in
+    # via -r requirements.in
 drf-dynamic-fields==0.4.0
-    # via -r ./requirements.in
+    # via -r requirements.in
 drf-spectacular==0.28.0
-    # via -r ./requirements.in
+    # via -r requirements.in
 gunicorn==23.0.0
-    # via -r ./requirements.in
+    # via -r requirements.in
 idna==3.7
     # via requests
 inflection==0.5.1
@@ -79,7 +82,7 @@ psycopg==3.2.9
 pyjwt==2.8.0
     # via djangorestframework-simplejwt
 pymemcache==4.0.0
-    # via -r ./requirements.in
+    # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via botocore
 pyyaml==6.0.1
@@ -91,7 +94,7 @@ referencing==0.35.1
     #   jsonschema
     #   jsonschema-specifications
 requests==2.32.3
-    # via -r ./requirements.in
+    # via -r requirements.in
 rpds-py==0.18.1
     # via
     #   jsonschema
@@ -103,14 +106,17 @@ sentry-sdk==2.29.1
 six==1.16.0
     # via python-dateutil
 sorl-thumbnail==12.11.0
-    # via -r ./requirements.in
+    # via -r requirements.in
 sqlparse==0.5.0
     # via django
 typing-extensions==4.13.2
-    # via psycopg
+    # via
+    #   asgiref
+    #   drf-spectacular
+    #   psycopg
 uritemplate==4.1.1
     # via drf-spectacular
-urllib3==2.2.2
+urllib3==1.26.20
     # via
     #   botocore
     #   requests
